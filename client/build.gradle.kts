@@ -26,7 +26,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("com.voicechat.client")
-    mainClass.set("com.voicechat.client.HelloApplication")
+    mainClass.set("com.voicechat.client.VoiceChatApplication")
 }
 
 javafx {

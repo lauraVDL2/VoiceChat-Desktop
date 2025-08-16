@@ -10,10 +10,16 @@ public class ConnectController {
     private Label messageLabel;
 
     // Call this method when connected
-    public void onConnected() {
+    public void showConnecting() {
         // Update UI components safely on JavaFX Application Thread
         Platform.runLater(() -> {
             messageLabel.setText("Trying to connect");
+        });
+    }
+
+    public void showConnectionFailed() {
+        Platform.runLater(() -> {
+            messageLabel.setText("Connection failed...");
         });
     }
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.Region?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.LoginController" styleClass="loginPane">
+    <VBox alignment="TOP_CENTER" minWidth="300" prefWidth="600" maxWidth="600"
+          minHeight="200" prefHeight="400" maxHeight="400" styleClass="loginBox">
+
+        <VBox minWidth="200" maxWidth="400">
+
+            <Region minHeight="20"/>
+
+            <VBox alignment="CENTER">
+
+                <Label fx:id="loginLabel" text="Welcome back !" styleClass="logLabel"/>
+
+                <Region minHeight="5"/>
+
+                <Label fx:id="subLogLabel" text="Log in or register !" styleClass="subLogLabel" />
+            </VBox>
+
+            <Region minHeight="25"/>
+
+            <Label fx:id="emailAddressLabel" text="Enter email address" styleClass="loginLabel"/>
+
+            <Region minHeight="10"/>
+
+            <TextField fx:id="usernameField" promptText="Enter email address" styleClass="loginTextField" minWidth="200" maxWidth="400"/>
+
+            <Region minHeight="20"/>
+
+            <Label fx:id="passwordLabel" text="Enter password" styleClass="loginLabel"/>
+
+            <Region minHeight="10"/>
+
+            <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="loginTextField" minWidth="200" maxWidth="400"/>
+
+            <Region minHeight="20"/>
+
+            <Button fx:id="loginButton" text="Log In" styleClass="loginButton" minWidth="200" maxWidth="400"/>
+
+            <Region minHeight="20"/>
+
+            <Label fx:id="switchRegisterLabel" text="Need an account ? Register now !" styleClass="switchRegisterLabel" />
+        </VBox>
+    </VBox>
+</StackPane>

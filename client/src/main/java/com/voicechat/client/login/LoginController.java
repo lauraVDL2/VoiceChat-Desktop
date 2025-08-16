@@ -10,11 +10,13 @@ public class LoginController {
     @FXML
     private Label loginText;
     @FXML
-    private Label statusLabel;
-    @FXML
     private Button loginButton;
     @FXML
     private TextField usernameField;
+    @FXML
+    private Label emailAddressLabel;
+    @FXML
+    private Label passwordLabel;
 
     @FXML
     protected void onHelloButtonClick() {
@@ -25,10 +27,10 @@ public class LoginController {
     public void onConnected() {
         // Update UI components safely on JavaFX Application Thread
         Platform.runLater(() -> {
-            statusLabel.setText("Connected to server!");
             loginButton.setDisable(false);
             usernameField.setDisable(false);
-            // Any other UI updates you want
+            emailAddressLabel.setText(emailAddressLabel.getText().toUpperCase());
+            passwordLabel.setText(passwordLabel.getText().toUpperCase());
         });
     }
 }

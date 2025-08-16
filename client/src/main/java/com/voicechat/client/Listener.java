@@ -1,9 +1,13 @@
 package com.voicechat.client;
 
+import com.voicechat.client.login.ConnectController;
 import com.voicechat.client.login.LoginController;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import javafx.application.Platform;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,10 +36,10 @@ public class Listener {
 
     }
 
-    public static void connect(LoginController loginController) {
+    public static void connect(LoginController loginController, ConnectController connectController, Stage stage, Parent loginRoot) {
+        displayConnectPanel(connectController);
         // Wrap connection logic in a supplier
         Supplier<Socket> socketSupplier = () -> {
-            System.out.println("Trying to connect to server...");
             try {
                 return new Socket(SERVER_HOST, SERVER_PORT);
             } catch (IOException e) {
@@ -55,12 +59,7 @@ public class Listener {
                 BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter serverOut = new PrintWriter(socket.getOutputStream(), true);
 
-                // Notify UI that connection is successful
-                Platform.runLater(() -> {
-                    if (loginController != null) {
-                        loginController.onConnected();
-                    }
-                });
+                displayLogPanel(loginController, stage, loginRoot);
 
                 // Asynchronously read messages from server
                 CompletableFuture.runAsync(() -> {
@@ -82,6 +81,28 @@ public class Listener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }, executor).join(); // Wait for completion or keep the app alive
+        }, executor);
     }
+
+    public static void displayLogPanel(LoginController loginController, Stage stage, Parent loginRoot) {
+        // Notify UI that connection is successful
+        Platform.runLater(() -> {
+            if (loginController != null) {
+                Scene scene = new Scene(loginRoot,  300, 300);
+                scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/login.css").toExternalForm());
+                stage.setScene(scene);
+                loginController.onConnected();
+            }
+        });
+    }
+
+    public static void displayConnectPanel(ConnectController connectController) {
+        System.out.println("toto");
+        Platform.runLater(() -> {
+            if (connectController != null) {
+                connectController.showConnecting();
+            }
+        });
+    }
+
 }
