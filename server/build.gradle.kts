@@ -13,8 +13,8 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/lauraVDL2/VoiceChat-Common")
         credentials {
-            username = "lauraVDL2"
-            password = "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"
+            username = System.getenv("COMMON_USERNAME")
+            password = System.getenv("COMMON_TOKEN")
         }
     }
 }
