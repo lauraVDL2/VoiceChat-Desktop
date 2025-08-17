@@ -10,6 +10,8 @@ module com.voicechat.client {
     requires eu.hansolo.tilesfx;
     requires javafx.graphics;
     requires io.github.resilience4j.retry;
+    requires voicechat.common;
+    requires com.fasterxml.jackson.databind;
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;

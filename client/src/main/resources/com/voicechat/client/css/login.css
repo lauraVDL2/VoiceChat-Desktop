@@ -34,7 +34,7 @@
     -fx-background-size: cover;
 }
 
-.loginBox {
+.loginBox, .registerBox {
     -fx-background-color: rgba(0, 29, 100, 0.9);
     -fx-border-radius: 15;
     -fx-background-radius: 15;    /* radius for rounded corners */

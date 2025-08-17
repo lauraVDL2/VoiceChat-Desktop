@@ -46,7 +46,8 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0")
+    implementation("shared-lib:voicechat-common:1.0.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("io.github.resilience4j:resilience4j-all:1.7.0")
     /*implementation("io.github.resilience4j:resilience4j-bom:1.7.0")*/
     implementation("org.controlsfx:controlsfx:11.2.1")

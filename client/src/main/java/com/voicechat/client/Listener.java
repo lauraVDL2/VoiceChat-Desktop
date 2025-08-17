@@ -32,6 +32,10 @@ public class Listener {
 
     private static final Retry retry = Retry.of("socketRetry", config);
 
+    private static Socket socket;
+
+    private static PrintWriter serverOut;
+
     public Listener() {
 
     }
@@ -41,7 +45,8 @@ public class Listener {
         // Wrap connection logic in a supplier
         Supplier<Socket> socketSupplier = () -> {
             try {
-                return new Socket(SERVER_HOST, SERVER_PORT);
+                socket = new Socket(SERVER_HOST, SERVER_PORT);
+                return socket;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -57,7 +62,7 @@ public class Listener {
             try {
                 BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
                 BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter serverOut = new PrintWriter(socket.getOutputStream(), true);
+                serverOut = new PrintWriter(socket.getOutputStream(), true);
 
                 displayLogPanel(loginController, stage, loginRoot);
 
@@ -97,12 +102,19 @@ public class Listener {
     }
 
     public static void displayConnectPanel(ConnectController connectController) {
-        System.out.println("toto");
         Platform.runLater(() -> {
             if (connectController != null) {
                 connectController.showConnecting();
             }
         });
+    }
+
+    public static Socket getSocket() {
+        return socket;
+    }
+
+    public static PrintWriter getServerOut() {
+        return serverOut;
     }
 
 }

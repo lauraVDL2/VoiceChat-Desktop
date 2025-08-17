@@ -1,5 +1,10 @@
 package org.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.server.dao.UserDao;
+import org.shared.Message;
+import org.shared.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,6 +38,17 @@ public class Server {
                 while ((message = in.readLine()) != null) {
                     System.out.println("Received: " + message);
                     out.println("Echo: " + message);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Message messageObj = objectMapper.readValue(message, Message.class);
+                    switch (messageObj.getMessageType()) {
+                        case USER:
+                            User user = objectMapper.readValue(messageObj.getMsg(), User.class);
+                            UserDao userDao = new UserDao();
+                            userDao.saveUser(user);
+                            System.out.println("User saved !");
+                            userDao.close();
+                            break;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
