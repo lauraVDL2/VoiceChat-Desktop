@@ -1,64 +1,49 @@
 package org.server.dao;
 
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.Session;
+import org.neo4j.ogm.config.Configuration;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
 import org.server.config.Neo4jConfig;
-import org.shared.User;
+import org.shared.entity.User;
 
+import java.util.Collections;
 import java.util.UUID;
 
 public class UserDao {
-    private Driver driver;
+    private SessionFactory sessionFactory;
 
     public UserDao() {
         // Initialize the driver once
-        this.driver = Neo4jConfig.getConfiguration();
+        this.sessionFactory = Neo4jConfig.getSessionFactory();
     }
 
-    // Create constraints method
     public void createConstraints() {
-        try (Session session = driver.session()) {
-            String cypher = "CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.emailAddress IS UNIQUE";
-
-            // Execute query
-            session.executeWrite(tx -> {
-                tx.run(cypher);
-                return null;
-            });
+        try {
+            Session session = this.sessionFactory.openSession();
+            session.query("CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.emailAddress IS UNIQUE", Collections.emptyMap());
+            this.sessionFactory.close();
         } catch (Exception e) {
             e.printStackTrace();
+            if (sessionFactory != null) {
+                this.sessionFactory.close();
+            }
         }
     }
 
-    // Save user method
     public boolean saveUser(User user) {
-        createConstraints();
-        try (Session session = driver.session()) {
-            session.executeWrite(tx -> {
-                String cypher = "MERGE (u:User {id: $id, emailAddress: $emailAddress," +
-                        " displayName: $displayName, password: $password})";
-                tx.run(cypher,
-                        org.neo4j.driver.Values.parameters(
-                                "id", UUID.randomUUID().toString(),
-                                "emailAddress", user.getEmailAddress(),
-                                "displayName", user.getDisplayName(),
-                                "password", user.getPassword()
-                        )
-                );
-                return null;
-            });
+        try {
+            this.createConstraints();
+            Session session = this.sessionFactory.openSession();
+            session.save(user);
+            this.sessionFactory.close();
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Close driver on shutdown
-    public void close() {
-        if (driver != null) {
-            driver.close();
+            if (sessionFactory != null) {
+                this.sessionFactory.close();
+            }
+            return false;
         }
     }
 }

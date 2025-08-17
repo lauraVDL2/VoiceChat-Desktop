@@ -3,6 +3,7 @@ package org.server;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.dao.UserDao;
+import org.shared.entity.User;
 import org.shared.*;
 
 import java.io.*;
@@ -39,7 +40,7 @@ public class Server {
                     ServerResponse serverResponse = new ServerResponse();
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
-                            User user = objectMapper.readValue(messageObj.getMsg(), User.class);
+                            User user = objectMapper.readValue(messageObj.getPayload(), User.class);
                             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
                             user.setPassword(hashedPassword);
                             UserDao userDao = new UserDao();
@@ -49,7 +50,6 @@ public class Server {
                                 serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
                                 out.println(objectMapper.writeValueAsString(serverResponse));
                             }
-                            userDao.close();
                             break;
                     }
                 }

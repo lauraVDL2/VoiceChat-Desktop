@@ -1,6 +1,6 @@
 package com.voicechat.client.login;
 
-import org.shared.User;
+import org.shared.entity.User;
 
 public enum UserSession {
     INSTANCE;

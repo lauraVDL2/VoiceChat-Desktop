@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.shared.*;
+import org.shared.entity.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -6,7 +6,7 @@ import com.voicechat.client.Listener;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
-import org.shared.User;
+import org.shared.entity.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
