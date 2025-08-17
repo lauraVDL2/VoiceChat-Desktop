@@ -1,7 +1,7 @@
 package com.voicechat.client;
 
-import com.voicechat.client.login.ConnectController;
-import com.voicechat.client.login.LoginController;
+import com.voicechat.client.login.controller.ConnectController;
+import com.voicechat.client.login.controller.LoginController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

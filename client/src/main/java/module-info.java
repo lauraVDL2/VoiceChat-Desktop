@@ -15,7 +15,12 @@ module com.voicechat.client {
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;
+    opens com.voicechat.client.mainpage to javafx.fxml;
 
     exports com.voicechat.client;
     exports com.voicechat.client.login;
+    exports com.voicechat.client.login.controller;
+    exports com.voicechat.client.mainpage;
+
+    opens com.voicechat.client.login.controller to javafx.fxml;
 }

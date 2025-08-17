@@ -1,4 +1,4 @@
-package com.voicechat.client.login;
+package com.voicechat.client.login.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;

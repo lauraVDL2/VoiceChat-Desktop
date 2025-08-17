@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.mainpage.MainPageController" styleClass="loginPane">
+    <VBox alignment="TOP_CENTER" minWidth="300" prefWidth="600" maxWidth="600"
+          minHeight="200" prefHeight="400" maxHeight="400" styleClass="loginBox">
+        <Label fx:id="test" text="Logged in !"/>
+    </VBox>
+</StackPane>

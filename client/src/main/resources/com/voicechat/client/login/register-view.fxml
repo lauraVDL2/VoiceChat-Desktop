@@ -9,7 +9,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.Region?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.RegisterController" styleClass="loginPane">
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.controller.RegisterController" styleClass="loginPane">
     <VBox alignment="TOP_CENTER" minWidth="300" prefWidth="600" maxWidth="600"
           minHeight="300" prefHeight="500" maxHeight="500" styleClass="registerBox">
 
@@ -34,7 +34,9 @@
 
             <TextField fx:id="emailAddressField" promptText="Enter your email address" styleClass="loginTextField" minWidth="200" maxWidth="400"/>
 
-            <Region minHeight="25"/>
+            <Label fx:id="errorEmail" styleClass="errorMessageLog" text="Your email address must be valid !" visible="false" />
+
+            <Region minHeight="15"/>
 
             <Label fx:id="displayedNameLabel" text="Enter your displayed name" styleClass="loginLabel"/>
 

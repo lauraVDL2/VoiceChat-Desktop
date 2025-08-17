@@ -9,7 +9,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.Region?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.LoginController" styleClass="loginPane">
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.controller.LoginController" styleClass="loginPane">
     <VBox alignment="TOP_CENTER" minWidth="300" prefWidth="600" maxWidth="600"
           minHeight="200" prefHeight="400" maxHeight="400" styleClass="loginBox">
 

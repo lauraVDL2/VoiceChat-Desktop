@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.ConnectController">
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.login.controller.ConnectController">
     <VBox alignment="CENTER"
           prefWidth="Infinity"
           prefHeight="Infinity"

@@ -1,14 +1,11 @@
 package org.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mindrot.jbcrypt.BCrypt;
 import org.server.dao.UserDao;
-import org.shared.Message;
-import org.shared.User;
+import org.shared.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
@@ -37,15 +34,21 @@ public class Server {
                 String message;
                 while ((message = in.readLine()) != null) {
                     System.out.println("Received: " + message);
-                    out.println("Echo: " + message);
                     ObjectMapper objectMapper = new ObjectMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
+                    ServerResponse serverResponse = new ServerResponse();
                     switch (messageObj.getMessageType()) {
-                        case USER:
+                        case USER_CREATE:
                             User user = objectMapper.readValue(messageObj.getMsg(), User.class);
+                            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+                            user.setPassword(hashedPassword);
                             UserDao userDao = new UserDao();
-                            userDao.saveUser(user);
-                            System.out.println("User saved !");
+                            if (userDao.saveUser(user)) {
+                                System.out.println("User saved !");
+                                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                                serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
+                                out.println(objectMapper.writeValueAsString(serverResponse));
+                            }
                             userDao.close();
                             break;
                     }
@@ -55,4 +58,5 @@ public class Server {
             }
         }, executor);
     }
+
 }

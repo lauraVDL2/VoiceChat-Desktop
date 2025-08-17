@@ -1,13 +1,15 @@
 package com.voicechat.client;
 
-import com.voicechat.client.login.ConnectController;
-import com.voicechat.client.login.LoginController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.login.controller.ConnectController;
+import com.voicechat.client.login.controller.LoginController;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.shared.ServerResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,6 +38,8 @@ public class Listener {
 
     private static PrintWriter serverOut;
 
+    private static BufferedReader serverIn;
+
     public Listener() {
 
     }
@@ -61,13 +65,13 @@ public class Listener {
         socketFuture.thenAcceptAsync(socket -> {
             try {
                 BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-                BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 serverOut = new PrintWriter(socket.getOutputStream(), true);
 
                 displayLogPanel(loginController, stage, loginRoot);
 
                 // Asynchronously read messages from server
-                CompletableFuture.runAsync(() -> {
+                /*CompletableFuture.runAsync(() -> {
                     String messageFromServer;
                     try {
                         while ((messageFromServer = serverIn.readLine()) != null) {
@@ -76,12 +80,21 @@ public class Listener {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }, executor);
+                }, executor);*/
 
                 // Send user input to server
                 String userMessage;
                 while ((userMessage = userInput.readLine()) != null) {
                     serverOut.println(userMessage);
+                    /*ObjectMapper objectMapper = new ObjectMapper();
+                    ServerResponse response = objectMapper.readValue(userMessage, ServerResponse.class);
+                    switch (response.getServerResponseStatus()) {
+                        case SUCCESS:
+                            switch (response.getServerResponseMessage()) {
+                                case USER_CREATED:
+                            }
+                            break;
+                    }*/
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -115,6 +128,10 @@ public class Listener {
 
     public static PrintWriter getServerOut() {
         return serverOut;
+    }
+
+    public static BufferedReader getServerIn() {
+        return serverIn;
     }
 
 }

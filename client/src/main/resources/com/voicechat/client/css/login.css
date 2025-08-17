@@ -5,6 +5,13 @@
     -fx-font-family: "Helvetica";
 }
 
+.errorMessageLog {
+    -fx-font-size: 12px;
+    -fx-font-family: "Helvetica";
+    -fx-font-weight: bold;
+    -fx-text-fill: "#af2e2e";
+}
+
 .subLogLabel {
     -fx-text-fill: "#006abc";
 }
