@@ -53,6 +53,8 @@ public class RegisterController {
 
     @FXML
     private Label errorEmail;
+    @FXML
+    private Label errorMessageLog;
 
     private final RegisterService registerService = new RegisterService();
 
@@ -109,11 +111,11 @@ public class RegisterController {
                             stage.setScene(scene);
                         } catch (IOException e) {
                             e.printStackTrace();
-                            return;
                         }
                     }
                     else {
-                        return;
+                        errorMessageLog.setText(serverResponse.getMessage());
+                        errorMessageLog.setVisible(true);
                     }
                 }
             }

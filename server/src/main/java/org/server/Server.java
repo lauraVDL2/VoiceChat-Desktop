@@ -3,6 +3,7 @@ package org.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mindrot.jbcrypt.BCrypt;
+import org.server.action.UserAction;
 import org.server.dao.UserDao;
 import org.shared.entity.User;
 import org.shared.*;
@@ -41,10 +42,10 @@ public class Server {
                     ServerResponse serverResponse = new ServerResponse();
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
-                            userCreate(objectMapper, messageObj, serverResponse, out);
+                            UserAction.userCreate(objectMapper, messageObj, serverResponse, out);
                             break;
                         case USER_LOG_IN:
-                            userLogIn(objectMapper, messageObj, serverResponse, out);
+                            UserAction.userLogIn(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }
@@ -54,44 +55,6 @@ public class Server {
         }, executor);
     }
 
-    public static void userCreate(ObjectMapper objectMapper, Message messageObj,
-                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
-        User user = objectMapper.readValue(messageObj.getPayload(), User.class);
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
-        UserDao userDao = new UserDao();
-        if (userDao.saveUser(user)) {
-            System.out.println("User saved !");
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            out.println(objectMapper.writeValueAsString(serverResponse));
-        }
-        else {
-            System.out.println("Registration failed !");
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            out.println(objectMapper.writeValueAsString(serverResponse));
-        }
-    }
 
-    public static void userLogIn(ObjectMapper objectMapper, Message messageObj,
-                                 ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
-        User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
-        UserDao userDao = new UserDao();
-        User resultUser = userDao.login(userLogged);
-        if (resultUser != null) {
-            System.out.println("User connected !");
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            serverResponse.setPayload(objectMapper.writeValueAsString(resultUser));
-            out.println(objectMapper.writeValueAsString(serverResponse));
-        }
-        else {
-            System.out.println("Connection failed !");
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            out.println(objectMapper.writeValueAsString(serverResponse));
-        }
-    }
 
 }

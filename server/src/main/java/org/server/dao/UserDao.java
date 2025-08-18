@@ -10,6 +10,7 @@ import java.util.*;
 
 public class UserDao {
     private SessionFactory sessionFactory;
+    public static String errorMessage = "";
 
     public UserDao() {
         // Initialize the driver once
@@ -32,22 +33,21 @@ public class UserDao {
     public User login(User user) {
         try {
             Session session = sessionFactory.openSession();
-            var result = session.query(User.class, "MATCH (u:User {emailAddress:$emailAddress}) RETURN u",
+            User loggedUser = session.queryForObject(User.class, "MATCH (u:User {emailAddress:$emailAddress}) RETURN u",
                     Map.of("emailAddress", user.getEmailAddress()));
-            Iterator<User> iterator = result.iterator();
-            if (iterator.hasNext()) {
-                User loggedUser = iterator.next();
+            if (loggedUser != null) {
                 if (BCrypt.checkpw(user.getPassword(), loggedUser.getPassword())) {
+                    sessionFactory.close();
                     return loggedUser;
                 }
             }
-            sessionFactory.close();
         } catch (Exception e) {
             e.printStackTrace();
             if (sessionFactory != null) {
                 sessionFactory.close();
             }
         }
+        errorMessage = "Invalid email address or password";
         return null;
     }
 
@@ -60,6 +60,7 @@ public class UserDao {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            errorMessage = "This email address already exists in the database";
             if (sessionFactory != null) {
                 this.sessionFactory.close();
             }

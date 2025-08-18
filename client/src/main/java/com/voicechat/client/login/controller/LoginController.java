@@ -36,6 +36,8 @@ public class LoginController {
     private Label passwordLabel;
     @FXML
     private Label switchRegisterLabel;
+    @FXML
+    private Label errorMessageLog;
 
     private final LoginService loginService = new LoginService();
 
@@ -66,7 +68,7 @@ public class LoginController {
                 User user = new User(email, password);
                 serverResponse = loginService.login(user);
             } catch (IOException e) {
-                e.printStackTrace();;
+                e.printStackTrace();
             }
 
             if (serverResponse != null) {
@@ -85,11 +87,11 @@ public class LoginController {
                             stage.setScene(scene);
                         } catch (IOException e) {
                             e.printStackTrace();
-                            return;
                         }
                     }
                     else {
-                        return;
+                        errorMessageLog.setVisible(true);
+                        errorMessageLog.setText(serverResponse.getMessage());
                     }
                 }
             }

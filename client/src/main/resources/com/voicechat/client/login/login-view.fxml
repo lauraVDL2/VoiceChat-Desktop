@@ -24,6 +24,8 @@
                 <Region minHeight="5"/>
 
                 <Label fx:id="subLogLabel" text="Log in or register !" styleClass="subLogLabel" />
+
+                <Label fx:id="errorMessageLog" styleClass="errorMessageLog" visible="false" />
             </VBox>
 
             <Region minHeight="25"/>
