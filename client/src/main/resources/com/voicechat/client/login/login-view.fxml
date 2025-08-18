@@ -32,7 +32,7 @@
 
             <Region minHeight="10"/>
 
-            <TextField fx:id="usernameField" promptText="Enter your email address" styleClass="loginTextField" minWidth="200" maxWidth="400"/>
+            <TextField fx:id="emailAddressField" promptText="Enter your email address" styleClass="loginTextField" minWidth="200" maxWidth="400"/>
 
             <Region minHeight="20"/>
 

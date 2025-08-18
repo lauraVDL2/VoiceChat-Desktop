@@ -1,14 +1,12 @@
 package org.server.dao;
 
-import org.neo4j.driver.Driver;
-import org.neo4j.ogm.config.Configuration;
+import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.server.config.Neo4jConfig;
 import org.shared.entity.User;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 public class UserDao {
     private SessionFactory sessionFactory;
@@ -29,6 +27,28 @@ public class UserDao {
                 this.sessionFactory.close();
             }
         }
+    }
+
+    public User login(User user) {
+        try {
+            Session session = sessionFactory.openSession();
+            var result = session.query(User.class, "MATCH (u:User {emailAddress:$emailAddress}) RETURN u",
+                    Map.of("emailAddress", user.getEmailAddress()));
+            Iterator<User> iterator = result.iterator();
+            if (iterator.hasNext()) {
+                User loggedUser = iterator.next();
+                if (BCrypt.checkpw(user.getPassword(), loggedUser.getPassword())) {
+                    return loggedUser;
+                }
+            }
+            sessionFactory.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
     }
 
     public boolean saveUser(User user) {

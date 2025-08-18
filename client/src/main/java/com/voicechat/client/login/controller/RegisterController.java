@@ -96,21 +96,26 @@ public class RegisterController {
             }
 
             // Handle the response directly on the JavaFX thread
-            if (serverResponse != null)
-                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_CREATED &&
-                    serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                UserSession.INSTANCE.setUser(new User(email, displayedName, password));
-                try {
-                    // Load main page
-                    FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
-                    Parent root = mainPageLoader.load();
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    Scene scene = new Scene(root, 300, 300);
-                    stage.setScene(scene);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_CREATED) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        UserSession.INSTANCE.setUser(new User(email, displayedName, password));
+                        try {
+                            // Load main page
+                            FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
+                            Parent root = mainPageLoader.load();
+                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            Scene scene = new Scene(root, 300, 300);
+                            stage.setScene(scene);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    else {
+                        return;
+                    }
                 }
-            } else {
             }
 
         });

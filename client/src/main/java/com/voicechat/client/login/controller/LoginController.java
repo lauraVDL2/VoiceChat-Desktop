@@ -1,6 +1,9 @@
 package com.voicechat.client.login.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
+import com.voicechat.client.login.UserSession;
+import com.voicechat.client.login.service.LoginService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +14,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.shared.ServerResponse;
+import org.shared.ServerResponseMessage;
+import org.shared.ServerResponseStatus;
+import org.shared.entity.User;
 
 import java.io.IOException;
 
@@ -20,7 +27,9 @@ public class LoginController {
     @FXML
     private Button loginButton;
     @FXML
-    private TextField usernameField;
+    private TextField emailAddressField;
+    @FXML
+    private TextField passwordField;
     @FXML
     private Label emailAddressLabel;
     @FXML
@@ -28,9 +37,12 @@ public class LoginController {
     @FXML
     private Label switchRegisterLabel;
 
+    private final LoginService loginService = new LoginService();
+
     @FXML
     public void initialize() {
         switchRegisterView();
+        logUserIn();
     }
 
     // Call this method when connected
@@ -38,9 +50,49 @@ public class LoginController {
         // Update UI components safely on JavaFX Application Thread
         Platform.runLater(() -> {
             loginButton.setDisable(false);
-            usernameField.setDisable(false);
+            emailAddressField.setDisable(false);
             emailAddressLabel.setText(emailAddressLabel.getText().toUpperCase());
             passwordLabel.setText(passwordLabel.getText().toUpperCase());
+        });
+    }
+
+    public void logUserIn() {
+        loginButton.setOnMouseClicked(event -> {
+            String email = emailAddressField.getText();
+            String password = passwordField.getText();
+
+            ServerResponse serverResponse = null;
+            try {
+                User user = new User(email, password);
+                serverResponse = loginService.login(user);
+            } catch (IOException e) {
+                e.printStackTrace();;
+            }
+
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_LOGGED_IN) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        try {
+                            String payload = serverResponse.getPayload();
+                            ObjectMapper mapper = new ObjectMapper();
+                            User loggedUser = mapper.readValue(payload, User.class);
+                            UserSession.INSTANCE.setUser(loggedUser);
+                            // Load main page
+                            FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
+                            Parent root = mainPageLoader.load();
+                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            Scene scene = new Scene(root, 300, 300);
+                            stage.setScene(scene);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    else {
+                        return;
+                    }
+                }
+            }
         });
     }
 
