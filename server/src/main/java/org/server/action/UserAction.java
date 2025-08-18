@@ -9,10 +9,14 @@ import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 
 public class UserAction {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
     public static void userCreate(ObjectMapper objectMapper, Message messageObj,
                                   ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
@@ -21,13 +25,13 @@ public class UserAction {
         user.setPassword(hashedPassword);
         UserDao userDao = new UserDao();
         if (userDao.saveUser(user)) {
-            System.out.println("User saved !");
+            logger.info("User saved !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             out.println(objectMapper.writeValueAsString(serverResponse));
         }
         else {
-            System.out.println("Registration failed !");
+            logger.error("Registration failed !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             serverResponse.setMessage(UserDao.errorMessage);
@@ -41,14 +45,14 @@ public class UserAction {
         UserDao userDao = new UserDao();
         User resultUser = userDao.login(userLogged);
         if (resultUser != null) {
-            System.out.println("User connected !");
+            logger.info("User connected !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setPayload(objectMapper.writeValueAsString(resultUser));
             out.println(objectMapper.writeValueAsString(serverResponse));
         }
         else {
-            System.out.println("Connection failed !");
+            logger.error("Connection failed !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setMessage(UserDao.errorMessage);

@@ -7,6 +7,8 @@ import org.server.action.UserAction;
 import org.server.dao.UserDao;
 import org.shared.entity.User;
 import org.shared.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -18,10 +20,11 @@ import java.util.concurrent.Executors;
 public class Server {
     public final static int SERVER_PORT = 8080;
     private final static ExecutorService executor = Executors.newCachedThreadPool();
+    private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
-            System.out.println("Server started, waiting for clients...");
+            logger.info("Server started, waiting for clients...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 handleClientAsync(clientSocket);
@@ -36,7 +39,7 @@ public class Server {
 
                 String message;
                 while ((message = in.readLine()) != null) {
-                    System.out.println("Received: " + message);
+                    logger.info(message);
                     ObjectMapper objectMapper = new ObjectMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
