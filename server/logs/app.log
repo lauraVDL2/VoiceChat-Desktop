@@ -1,53 +1,47 @@
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG o.n.o.drivers.bolt.driver.BoltDriver - Using default for bolt logging.
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo - No index for package org.shared.entity, aborting index scan.
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo - Processing: org.shared.entity.User -> java.lang.Object
-2025-08-18 21:17:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
-2025-08-18 21:17:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
-2025-08-18 21:17:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo -  - User implements 0 interfaces
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo - Post-processing: org.shared.entity.User
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo - Checking for @Transient classes....
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.DomainInfo - Registering converters and deregistering transient fields and methods....
-2025-08-18 21:17:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.u.i.l.InternalLoggerFactory - Using SLF4J as the default logging framework
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.c.MultithreadEventLoopGroup - -Dio.netty.eventLoopThreads: 32
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG io.netty.channel.nio.NioIoHandler - -Dio.netty.noKeySetOptimization: false
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG io.netty.channel.nio.NioIoHandler - -Dio.netty.selectorAutoRebuildThreshold: 512
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.u.concurrent.GlobalEventExecutor - -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.u.i.InternalThreadLocalMap - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.u.i.InternalThreadLocalMap - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - Java version: 21
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - -Dio.netty.noUnsafe: false
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - sun.misc.Unsafe.theUnsafe: available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - sun.misc.Unsafe base methods: all available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.Buffer.address: available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.Bits.unaligned: available, true
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: symbolic reference class is not accessible: class jdk.internal.misc.Unsafe, from class io.netty.util.internal.PlatformDependent0 (unnamed module @3bc2dcd1)
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - sun.misc.Unsafe: available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.tmpdir: /tmp (java.io.tmpdir)
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.bitMode: 64 (sun.arch.data.model)
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.maxDirectMemory: -1 bytes
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG io.netty.util.internal.CleanerJava9 - java.nio.ByteBuffer.cleaner(): available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.noPreferDirect: false
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG i.n.util.internal.PlatformDependent - org.jctools-core.MpscChunkedArrayQueue: available
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG o.n.o.d.b.t.BoltTransaction - No current transaction, starting a new one
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG o.n.o.d.b.t.BoltTransaction - Native transaction: org.neo4j.driver.internal.InternalTransaction@505c22aa
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG o.n.o.d.bolt.request.BoltRequest - Request: MATCH (u:User {emailAddress:$emailAddress}) RETURN u with params {emailAddress=toto.toto@yahoo.fr}
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.MetaData - looking for concrete class to resolve label: User
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.MetaData - concrete class found: ClassInfo{className='org.shared.entity.User', neo4jName='User'}. comparing with what's already been found previously...
-2025-08-18 21:17:35 [pool-1-thread-1] DEBUG org.neo4j.ogm.metadata.MetaData - User resolving class: ClassInfo{className='org.shared.entity.User', neo4jName='User'}
-2025-08-18 21:17:36 [pool-1-thread-1] DEBUG o.n.o.d.b.t.BoltTransaction - Committing native transaction: org.neo4j.driver.internal.InternalTransaction@505c22aa
-2025-08-18 21:17:36 [pool-1-thread-1] DEBUG o.neo4j.ogm.transaction.Transaction - Thread 28: Committed
-2025-08-18 21:17:36 [pool-1-thread-1] DEBUG o.neo4j.ogm.transaction.Transaction - Thread 28: Commit transaction extent: 0
-2025-08-18 21:17:36 [pool-1-thread-1] DEBUG o.neo4j.ogm.transaction.Transaction - Thread 28: Close transaction extent: 0
-2025-08-18 21:17:36 [pool-1-thread-1] DEBUG o.neo4j.ogm.transaction.Transaction - Thread 28: Closing transaction
-2025-08-18 21:17:36 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@367c972 
-2025-08-18 21:17:36 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
-2025-08-18 21:20:12 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"fff\",\"emailAddress\":\"fff\"}"}
-2025-08-18 21:20:12 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
-2025-08-18 21:20:12 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
-2025-08-18 21:20:12 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
-2025-08-18 21:20:12 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
-2025-08-18 21:20:12 [pool-1-thread-1] ERROR org.server.action.UserAction - Connection failed !
+2025-08-19 18:56:14 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-19 18:57:19 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\"}"}
+2025-08-19 18:57:19 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-19 18:57:19 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-19 18:57:19 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
+2025-08-19 18:57:19 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-19 18:57:20 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@31652063 
+2025-08-19 18:57:21 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-19 19:00:06 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\"}"}
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-19 19:00:21 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4d13e70f 
+2025-08-19 19:00:22 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\"}"}
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6b2ec900 
+2025-08-19 19:00:57 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-19 19:07:49 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-19 19:08:01 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\"}"}
+2025-08-19 19:08:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-19 19:08:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-19 19:08:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
+2025-08-19 19:08:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-19 19:08:02 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4d13e70f 
+2025-08-19 19:08:02 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_CREATE","payload":"{\"id\":null,\"userName\":null,\"displayName\":\"toto1\",\"password\":\"toto\",\"emailAddress\":\"toto1.toto@yahoo.fr\"}"}
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 1 classes
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  o.n.o.d.bolt.response.BoltResponse - Neo.ClientNotification.Schema.IndexOrConstraintAlreadyExists: `CREATE CONSTRAINT IF NOT EXISTS FOR (e:User) REQUIRE (e.emailAddress) IS UNIQUE` has no effect.
+	CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.emailAddress IS UNIQUE
+	^
+`CONSTRAINT constraint_65bd8d58 FOR (e:User) REQUIRE (e.emailAddress) IS UNIQUE` already exists.
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  o.n.o.d.bolt.response.BoltResponse - Neo.ClientNotification.Schema.IndexOrConstraintAlreadyExists: `CREATE CONSTRAINT IF NOT EXISTS FOR (e:User) REQUIRE (e.emailAddress) IS UNIQUE` has no effect.
+	CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.emailAddress IS UNIQUE
+	^
+`CONSTRAINT constraint_65bd8d58 FOR (e:User) REQUIRE (e.emailAddress) IS UNIQUE` already exists.
+2025-08-19 19:08:53 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5751f75f 
+2025-08-19 19:08:54 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3c8dc533 
+2025-08-19 19:08:54 [pool-1-thread-1] INFO  org.server.action.UserAction - User saved !

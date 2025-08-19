@@ -65,34 +65,22 @@ public class LoginController {
 
             ServerResponse serverResponse = null;
             try {
+                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
+                Parent root = mainPageLoader.load();
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root, 300, 300);
+                stage.setScene(scene);
                 User user = new User(email, password);
                 serverResponse = loginService.login(user);
+                ConnectController.loadUserScreen(serverResponse, stage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             if (serverResponse != null) {
-                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_LOGGED_IN) {
-                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                        try {
-                            String payload = serverResponse.getPayload();
-                            ObjectMapper mapper = new ObjectMapper();
-                            User loggedUser = mapper.readValue(payload, User.class);
-                            UserSession.INSTANCE.setUser(loggedUser);
-                            // Load main page
-                            FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
-                            Parent root = mainPageLoader.load();
-                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                            Scene scene = new Scene(root, 300, 300);
-                            stage.setScene(scene);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    else {
-                        errorMessageLog.setVisible(true);
-                        errorMessageLog.setText(serverResponse.getMessage());
-                    }
+                if(serverResponse.getServerResponseStatus() == ServerResponseStatus.FAILURE) {
+                    errorMessageLog.setVisible(true);
+                    errorMessageLog.setText(serverResponse.getMessage());
                 }
             }
         });

@@ -115,11 +115,11 @@ public class Listener {
     }
 
     public static void displayConnectPanel(ConnectController connectController) {
-        Platform.runLater(() -> {
+        /*Platform.runLater(() -> {
             if (connectController != null) {
                 connectController.showConnecting();
             }
-        });
+        });*/
     }
 
     public static Socket getSocket() {

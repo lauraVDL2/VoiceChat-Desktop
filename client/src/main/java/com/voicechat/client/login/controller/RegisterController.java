@@ -90,32 +90,27 @@ public class RegisterController {
             // Synchronously call the registration service (blocking)
             ServerResponse serverResponse = null;
             try {
+                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
+                Parent root = mainPageLoader.load();
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root, 300, 300);
+                stage.setScene(scene);
+
                 User user = new User(email, displayedName, password);
                 serverResponse = registerService.register(user);
+                ConnectController.loadUserScreen(serverResponse, stage);
             } catch (IOException e) {
                 e.printStackTrace();
-                // Optionally show an error alert here
             }
 
             // Handle the response directly on the JavaFX thread
             if (serverResponse != null) {
                 if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_CREATED) {
-                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                        UserSession.INSTANCE.setUser(new User(email, displayedName, password));
-                        try {
-                            // Load main page
-                            FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
-                            Parent root = mainPageLoader.load();
-                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                            Scene scene = new Scene(root, 300, 300);
-                            stage.setScene(scene);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    else {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.FAILURE) {
                         errorMessageLog.setText(serverResponse.getMessage());
                         errorMessageLog.setVisible(true);
+                    } else {
+                        UserSession.INSTANCE.setUser(new User(email, displayedName, password));
                     }
                 }
             }
