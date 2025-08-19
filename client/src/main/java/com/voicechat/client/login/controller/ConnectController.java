@@ -55,6 +55,7 @@ public class ConnectController {
                         mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
                         root = mainPageLoader.load();
                         scene = new Scene(root, 300, 300);
+                        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
                         stage.setScene(scene);
                         break;
                     case USER_CREATED:
@@ -62,6 +63,7 @@ public class ConnectController {
                         mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
                         root = mainPageLoader.load();
                         scene = new Scene(root, 300, 300);
+                        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
                         stage.setScene(scene);
                         break;
                 }

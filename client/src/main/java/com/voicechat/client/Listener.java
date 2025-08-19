@@ -84,9 +84,9 @@ public class Listener {
 
                 // Send user input to server
                 String userMessage;
-                while ((userMessage = userInput.readLine()) != null) {
+                /*while ((userMessage = userInput.readLine()) != null) {
                     serverOut.println(userMessage);
-                    /*ObjectMapper objectMapper = new ObjectMapper();
+                    *//*ObjectMapper objectMapper = new ObjectMapper();
                     ServerResponse response = objectMapper.readValue(userMessage, ServerResponse.class);
                     switch (response.getServerResponseStatus()) {
                         case SUCCESS:
@@ -94,8 +94,8 @@ public class Listener {
                                 case USER_CREATED:
                             }
                             break;
-                    }*/
-                }
+                    }*//*
+                }*/
             } catch (IOException e) {
                 e.printStackTrace();
             }

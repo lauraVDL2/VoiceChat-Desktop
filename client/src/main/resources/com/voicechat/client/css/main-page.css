@@ -1,0 +1,18 @@
+.leftPane {
+    -fx-background-color: "#b6d1ff";
+}
+
+.topPane {
+    -fx-background-color: "#006abc";
+}
+
+.infoLeftPane {
+    -fx-background-color: "#006abc";
+}
+
+.gridMainPane {
+     -fx-background-image: url("../images/background.jpg");
+     -fx-background-repeat: no-repeat;
+     -fx-background-position: center;
+     -fx-background-size: cover;
+ }

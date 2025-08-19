@@ -6,9 +6,53 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.mainpage.MainPageController" styleClass="loginPane">
-    <VBox alignment="TOP_CENTER" minWidth="300" prefWidth="600" maxWidth="600"
-          minHeight="200" prefHeight="400" maxHeight="400" styleClass="loginBox">
-        <Label fx:id="test" text="Logged in !"/>
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.mainpage.MainPageController" styleClass="gridMainPane">
+    <columnConstraints>
+        <ColumnConstraints prefWidth="100"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <!--<ColumnConstraints hgrow="ALWAYS"/>-->
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints prefHeight="50" minHeight="50" maxHeight="50"/>
+        <RowConstraints vgrow="ALWAYS"/>
+    </rowConstraints>
+
+    <!-- Top Pane (Header) -->
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3"
+          styleClass="topPane" alignment="CENTER" spacing="10" prefWidth="400">
+        <!-- Spacer on the left -->
+        <Region HBox.hgrow="ALWAYS" />
+
+        <!-- Centered TextField -->
+        <TextField fx:id="searchField" promptText="Search..." />
+
+        <!-- Spacer on the right to push the button -->
+        <Region HBox.hgrow="ALWAYS" />
+
+        <!-- Button aligned to the far right -->
+        <Button text="Item 1"/>
+    </HBox>
+
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"
+          styleClass="infoLeftPane">
+        <Button text="Item 1"/>
+        <Button text="Item 2"/>
+        <Button text="Item 3"/>
     </VBox>
-</StackPane>
+
+    <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="splitPane">
+        <!-- Left Panel -->
+        <VBox styleClass="leftPane" fx:id="leftPane" prefWidth="350" minWidth="350" maxWidth="350">
+            <Button text="Item 1"/>
+            <Button text="Item 2"/>
+            <Button text="Item 3"/>
+        </VBox>
+
+        <!-- Main Content -->
+        <BorderPane style="-fx-background-color: #d8d8d8;">
+            <center>
+                <Label text="Main Content" style="-fx-font-size: 20px;"/>
+            </center>
+        </BorderPane>
+    </SplitPane>
+</GridPane>
