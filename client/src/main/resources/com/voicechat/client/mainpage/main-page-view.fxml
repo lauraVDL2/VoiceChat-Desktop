@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.mainpage.MainPageController" styleClass="gridMainPane">
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.voicechat.client.mainpage.controller.MainPageController" styleClass="gridMainPane">
     <columnConstraints>
         <ColumnConstraints prefWidth="100"/>
         <ColumnConstraints hgrow="ALWAYS"/>
@@ -18,13 +18,20 @@
     </rowConstraints>
 
     <!-- Top Pane (Header) -->
-    <HBox GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3"
+    <HBox fx:id="topPane" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3"
           styleClass="topPane" alignment="CENTER" spacing="10" prefWidth="400">
         <!-- Spacer on the left -->
         <Region HBox.hgrow="ALWAYS" />
 
         <!-- Centered TextField -->
-        <TextField fx:id="searchField" promptText="Search..." />
+
+        <VBox alignment="CENTER" spacing="10" prefHeight="50" minHeight="50" maxHeight="50">
+            <!-- Search TextField -->
+            <Region VBox.vgrow="ALWAYS" />
+            <TextField fx:id="searchField" promptText="Search..." alignment="CENTER"/>
+            <!-- Optional spacer or container -->
+            <Pane fx:id="searchPane" prefHeight="5" />
+        </VBox>
 
         <!-- Spacer on the right to push the button -->
         <Region HBox.hgrow="ALWAYS" />

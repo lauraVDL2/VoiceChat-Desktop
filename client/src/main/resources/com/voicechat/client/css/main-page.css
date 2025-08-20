@@ -10,9 +10,15 @@
     -fx-background-color: "#006abc";
 }
 
-.gridMainPane {
-     -fx-background-image: url("../images/background.jpg");
-     -fx-background-repeat: no-repeat;
-     -fx-background-position: center;
-     -fx-background-size: cover;
- }
+.searchLabel {
+    -fx-background-color: "#b6d1ff";
+    -fx-pref-width: 250;
+    -fx-max-width: 250;
+    -fx-min-width: 250;
+    -fx-padding: 1;
+    -fx-margin: 2;
+    -fx-alignment: CENTER;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-font-family: "Helvetica";
+}

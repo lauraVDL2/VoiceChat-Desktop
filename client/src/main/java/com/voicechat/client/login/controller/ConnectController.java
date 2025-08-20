@@ -22,23 +22,6 @@ import java.io.IOException;
 
 public class ConnectController {
 
-    /*@FXML
-    private Label messageLabel;
-
-    // Call this method when connected
-    public void showConnecting() {
-        // Update UI components safely on JavaFX Application Thread
-        Platform.runLater(() -> {
-            messageLabel.setText("Trying to connect");
-        });
-    }
-
-    public void showConnectionFailed() {
-        Platform.runLater(() -> {
-            messageLabel.setText("Connection failed...");
-        });
-    }*/
-
     public static void loadUserScreen(ServerResponse serverResponse, Stage stage) throws IOException {
         if (serverResponse != null) {
             if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {

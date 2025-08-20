@@ -7,6 +7,7 @@ import org.server.config.Neo4jConfig;
 import org.shared.entity.User;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class UserDao {
     private SessionFactory sessionFactory;
@@ -66,5 +67,20 @@ public class UserDao {
             }
             return false;
         }
+    }
+
+    public List<User> searchUsers(String searchField) {
+        try {
+            Session session = sessionFactory.openSession();
+            String pattern = "(?i).*" + Pattern.quote(searchField) + ".*";
+            Iterable<User> usersIterable = session.query(User.class, "MATCH (u:User) WHERE u.displayName =~ $displayName RETURN u LIMIT 20",
+                    Map.of("displayName", pattern));
+            List<User> usersFound = new ArrayList<>();
+            usersIterable.forEach(usersFound::add);
+            return usersFound;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }

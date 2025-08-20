@@ -20,8 +20,9 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.9")
+    implementation("shared-lib:voicechat-common:1.0.11")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("org.apache.commons:commons-collections4:4.4")
     implementation("org.neo4j:neo4j-ogm-core:4.0.19")
     implementation("org.neo4j:neo4j-ogm-bolt-driver:4.0.19")
     implementation("ch.qos.logback:logback-classic:1.5.13")

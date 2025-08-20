@@ -43,12 +43,19 @@ public class Server {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
+                    UserAction userAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
-                            UserAction.userCreate(objectMapper, messageObj, serverResponse, out);
+                            userAction = new UserAction();
+                            userAction.userCreate(objectMapper, messageObj, serverResponse, out);
                             break;
                         case USER_LOG_IN:
-                            UserAction.userLogIn(objectMapper, messageObj, serverResponse, out);
+                            userAction = new UserAction();
+                            userAction.userLogIn(objectMapper, messageObj, serverResponse, out);
+                            break;
+                        case USER_SEARCH:
+                            userAction = new UserAction();
+                            userAction.userSearch(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }

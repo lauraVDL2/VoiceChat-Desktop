@@ -2,6 +2,7 @@ package org.server.action;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.dao.UserDao;
 import org.shared.Message;
@@ -13,12 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 public class UserAction {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
-    public static void userCreate(ObjectMapper objectMapper, Message messageObj,
+    public void userCreate(ObjectMapper objectMapper, Message messageObj,
                                   ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
@@ -39,7 +41,7 @@ public class UserAction {
         }
     }
 
-    public static void userLogIn(ObjectMapper objectMapper, Message messageObj,
+    public void userLogIn(ObjectMapper objectMapper, Message messageObj,
                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
         UserDao userDao = new UserDao();
@@ -56,6 +58,28 @@ public class UserAction {
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setMessage(UserDao.errorMessage);
+            out.println(objectMapper.writeValueAsString(serverResponse));
+        }
+    }
+
+    public void userSearch(ObjectMapper objectMapper, Message messageObj,
+                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+        User userSearch = objectMapper.readValue(messageObj.getPayload(), User.class);
+        String displayNameSearch = userSearch.getDisplayName();
+        UserDao userDao = new UserDao();
+        List<User> users = userDao.searchUsers(displayNameSearch);
+        if (!CollectionUtils.isEmpty(users)) {
+            logger.info("Users found !");
+            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
+            serverResponse.setPayload(objectMapper.writeValueAsString(users));
+            out.println(objectMapper.writeValueAsString(serverResponse));
+        }
+        else {
+            logger.info("Users not found !");
+            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
+            serverResponse.setMessage("No user found !");
             out.println(objectMapper.writeValueAsString(serverResponse));
         }
     }
