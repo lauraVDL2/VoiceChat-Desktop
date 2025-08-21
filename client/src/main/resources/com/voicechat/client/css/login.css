@@ -50,7 +50,8 @@
 
 .loginTextField {
     -fx-font-family: "Quicksand";
-    -fx-background-color: "#c3ced5";
+    -fx-background-color: "#b6d1ff";
+    -fx-alignment: CENTER;
    -fx-font-size: 18;
    -fx-padding: 5,1,5,1;
    -fx-border-color: grey;

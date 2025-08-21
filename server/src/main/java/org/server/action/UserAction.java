@@ -13,6 +13,8 @@ import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -20,17 +22,19 @@ public class UserAction {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
-    public void userCreate(ObjectMapper objectMapper, Message messageObj,
+    public User userCreate(ObjectMapper objectMapper, Message messageObj,
                                   ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
+        user.setAvatar("/images/avatar/avatar_default.png");
         UserDao userDao = new UserDao();
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             out.println(objectMapper.writeValueAsString(serverResponse));
+            return user;
         }
         else {
             logger.error("Registration failed !");
@@ -39,9 +43,10 @@ public class UserAction {
             serverResponse.setMessage(UserDao.errorMessage);
             out.println(objectMapper.writeValueAsString(serverResponse));
         }
+        return null;
     }
 
-    public void userLogIn(ObjectMapper objectMapper, Message messageObj,
+    public User userLogIn(ObjectMapper objectMapper, Message messageObj,
                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
         UserDao userDao = new UserDao();
@@ -52,6 +57,7 @@ public class UserAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setPayload(objectMapper.writeValueAsString(resultUser));
             out.println(objectMapper.writeValueAsString(serverResponse));
+            return resultUser;
         }
         else {
             logger.error("Connection failed !");
@@ -60,6 +66,7 @@ public class UserAction {
             serverResponse.setMessage(UserDao.errorMessage);
             out.println(objectMapper.writeValueAsString(serverResponse));
         }
+        return null;
     }
 
     public void userSearch(ObjectMapper objectMapper, Message messageObj,
@@ -81,6 +88,15 @@ public class UserAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
             serverResponse.setMessage("No user found !");
             out.println(objectMapper.writeValueAsString(serverResponse));
+        }
+    }
+
+    public byte[] getAvatarBytes(String resourcePath) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            if (is == null) {
+                logger.error("Resource not found: " + resourcePath);
+            }
+            return is.readAllBytes(); // Java 9+; for earlier versions, use a buffer loop
         }
     }
 }

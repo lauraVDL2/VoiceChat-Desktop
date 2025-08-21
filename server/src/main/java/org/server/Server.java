@@ -2,6 +2,7 @@ package org.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.action.UserAction;
 import org.server.dao.UserDao;
@@ -43,15 +44,22 @@ public class Server {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     UserAction userAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
-                            userAction.userCreate(objectMapper, messageObj, serverResponse, out);
+                            User userCreated = userAction.userCreate(objectMapper, messageObj, serverResponse, out);
+                            if (userCreated != null) {
+                                readMyAvatar(dataOutputStream, userAction, userCreated);
+                            }
                             break;
                         case USER_LOG_IN:
                             userAction = new UserAction();
-                            userAction.userLogIn(objectMapper, messageObj, serverResponse, out);
+                            User userLogged = userAction.userLogIn(objectMapper, messageObj, serverResponse, out);
+                            if (userLogged != null) {
+                                readMyAvatar(dataOutputStream, userAction, userLogged);
+                            }
                             break;
                         case USER_SEARCH:
                             userAction = new UserAction();
@@ -65,6 +73,14 @@ public class Server {
         }, executor);
     }
 
-
+    public static void readMyAvatar(DataOutputStream dataOutputStream, UserAction userAction, User user) throws IOException {
+        String avatarPath = user.getAvatar();
+        if (StringUtils.isNotBlank(avatarPath)) {
+            byte[] avatarBytes = userAction.getAvatarBytes(user.getAvatar());
+            dataOutputStream.writeInt(avatarBytes.length);
+            dataOutputStream.write(avatarBytes);
+            dataOutputStream.flush();
+        }
+    }
 
 }

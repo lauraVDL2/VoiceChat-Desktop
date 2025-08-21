@@ -10,14 +10,27 @@
     -fx-background-color: "#006abc";
 }
 
-.searchLabel {
+.searchField {
     -fx-background-color: "#b6d1ff";
-    -fx-pref-width: 250;
-    -fx-max-width: 250;
-    -fx-min-width: 250;
+    -fx-min-width: 200;
+    -fx-pref-width: 400;
+    -fx-max-width: 400;
+    -fx-alignment: CENTER;
+    -fx-padding: 5;
+    -fx-transition: 1s;
+}
+
+.searchField:focused {
+    -fx-background-color: "#d8d8d8";
+}
+
+.searchLabel {
+    -fx-background-color: "#e7e7e7";
+    -fx-pref-width: 400;
+    -fx-max-width: 400;
+    -fx-min-width: 200;
     -fx-padding: 1;
     -fx-margin: 2;
-    -fx-alignment: CENTER;
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-family: "Helvetica";
