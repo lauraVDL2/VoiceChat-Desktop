@@ -19,38 +19,38 @@ import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class ConnectController {
 
-    public static void loadUserScreen(ServerResponse serverResponse, Stage stage) throws IOException {
-        if (serverResponse != null) {
-            if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                FXMLLoader mainPageLoader = null;
-                Parent root = null;
-                Scene scene = null;
-                switch (serverResponse.getServerResponseMessage()) {
-                    case USER_LOGGED_IN:
+    public static void loadUserScreen(ServerResponse serverResponse, Stage stage) {
+        if (serverResponse != null && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    // Deserialize payload if needed
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_LOGGED_IN) {
                         String payload = serverResponse.getPayload();
                         ObjectMapper mapper = new ObjectMapper();
                         User loggedUser = mapper.readValue(payload, User.class);
                         UserSession.INSTANCE.setUser(loggedUser);
-                        // Load main page
-                        mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
-                        root = mainPageLoader.load();
-                        scene = new Scene(root, 300, 300);
-                        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
-                        stage.setScene(scene);
-                        break;
-                    case USER_CREATED:
-                        // Load main page
-                        mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
-                        root = mainPageLoader.load();
-                        scene = new Scene(root, 300, 300);
-                        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
-                        stage.setScene(scene);
-                        break;
+                    }
+                    // Load FXML
+                    FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
+                    Parent root = mainPageLoader.load();
+                    return root;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
                 }
-            }
+            }).thenAcceptAsync(root -> {
+                if (root != null) {
+                    Scene scene = new Scene(root, 300, 300);
+                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
+                    Platform.runLater(() -> {
+                        stage.setScene(scene);
+                    });
+                }
+            });
         }
     }
 

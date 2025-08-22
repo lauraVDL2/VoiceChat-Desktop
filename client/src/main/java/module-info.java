@@ -12,10 +12,10 @@ module com.voicechat.client {
     requires io.github.resilience4j.retry;
     requires voicechat.common;
     requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;
-    opens com.voicechat.client.mainpage to javafx.fxml;
 
     exports com.voicechat.client;
     exports com.voicechat.client.login;

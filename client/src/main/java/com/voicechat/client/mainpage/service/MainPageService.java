@@ -12,19 +12,5 @@ import java.io.PrintWriter;
 
 public class MainPageService {
 
-    public ServerResponse searchUser(String field) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = new User();
-        user.setDisplayName(field);
-        String json = mapper.writeValueAsString(user);
-        Message message = new Message(MessageType.USER_SEARCH, json);
-        PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
-
-
-
-        String serverInLine = Listener.getServerIn().readLine();
-        return mapper.readValue(serverInLine, ServerResponse.class);
-    }
 }

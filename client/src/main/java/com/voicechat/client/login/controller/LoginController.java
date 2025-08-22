@@ -20,6 +20,7 @@ import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class LoginController {
     @FXML
@@ -62,27 +63,47 @@ public class LoginController {
         loginButton.setOnMouseClicked(event -> {
             String email = emailAddressField.getText();
             String password = passwordField.getText();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            ServerResponse serverResponse = null;
-            try {
-                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
-                Parent root = mainPageLoader.load();
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root, 300, 300);
-                stage.setScene(scene);
+            // Run login process asynchronously
+            CompletableFuture.supplyAsync(() -> {
                 User user = new User(email, password);
-                serverResponse = loginService.login(user);
-                ConnectController.loadUserScreen(serverResponse, stage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (serverResponse != null) {
-                if(serverResponse.getServerResponseStatus() == ServerResponseStatus.FAILURE) {
-                    errorMessageLog.setVisible(true);
-                    errorMessageLog.setText(serverResponse.getMessage());
+                try {
+                    return loginService.login(user); // potentially blocking call
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
                 }
-            }
+            }).thenAcceptAsync(serverResponse -> {
+                if (serverResponse != null) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.FAILURE) {
+                        // Show error message on JavaFX thread
+                        Platform.runLater(() -> {
+                            errorMessageLog.setVisible(true);
+                            errorMessageLog.setText(serverResponse.getMessage());
+                        });
+                    } else {
+                        // Successful login, load main page
+                        Platform.runLater(() -> {
+                            try {
+                                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
+                                Parent root = mainPageLoader.load();
+                                Scene scene = new Scene(root, 300, 300);
+                                stage.setScene(scene);
+                                ConnectController.loadUserScreen(serverResponse, stage);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                } else {
+                    // Handle null response if needed
+                    Platform.runLater(() -> {
+                        errorMessageLog.setVisible(true);
+                        errorMessageLog.setText("Login failed due to an error.");
+                    });
+                }
+            });
         });
     }
 

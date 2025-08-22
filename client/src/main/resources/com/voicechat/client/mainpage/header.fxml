@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.voicechat.client.mainpage.controller.HeaderController"
+      fx:id="topPane" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3"
+      styleClass="topPane" alignment="CENTER" spacing="10" prefWidth="400">
+    <!-- Spacer on the left -->
+    <Region HBox.hgrow="ALWAYS" />
+
+    <!-- Centered TextField -->
+
+    <VBox alignment="CENTER" spacing="10" prefHeight="50" minHeight="50" maxHeight="50">
+        <!-- Search TextField -->
+        <Region VBox.vgrow="ALWAYS" />
+        <StackPane fx:id="searchStackPane" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" promptText="Search..." styleClass="searchField" />
+            <ImageView fx:id="searchIcon" fitWidth="20" fitHeight="20" />
+        </StackPane>
+        <!-- Optional spacer or container -->
+        <Pane fx:id="searchPane" prefHeight="5" />
+    </VBox>
+
+    <!-- Spacer on the right to push the button -->
+    <Region HBox.hgrow="ALWAYS" />
+
+    <ImageView fx:id="myAvatar" fitWidth="50" fitHeight="50"/>
+</HBox>
+
