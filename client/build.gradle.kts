@@ -46,10 +46,11 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.11")
+    implementation("shared-lib:voicechat-common:1.0.14")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("io.github.resilience4j:resilience4j-all:1.7.0")
-    /*implementation("io.github.resilience4j:resilience4j-bom:1.7.0")*/
+    implementation("org.apache.commons:commons-collections4:4.4")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.openjfx:javafx-fxml:17")
     implementation("com.dlsc.formsfx:formsfx-core:11.6.0") {

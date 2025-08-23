@@ -4,18 +4,20 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
+import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import org.apache.commons.lang3.StringUtils;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
@@ -23,6 +25,7 @@ import org.shared.entity.User;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -41,6 +44,8 @@ public class HeaderController {
     private StackPane searchStackPane;
     @FXML
     private ImageView myAvatar;
+
+    private List<HBox> contactBoxes;
 
     private final HeaderService headerService = new HeaderService();
 
@@ -90,6 +95,7 @@ public class HeaderController {
             String searchDisplayName = searchField.getText().trim();
 
             searchPane.getChildren().clear();
+            contactBoxes = new ArrayList<>();
 
             // Avoid empty searches
             if (searchDisplayName.isEmpty()) {
@@ -115,15 +121,27 @@ public class HeaderController {
                                 // Update UI on JavaFX thread
                                 Platform.runLater(() -> {
                                     VBox vBox = new VBox();
+                                    contactBoxes = new ArrayList<>();
                                     for (User user : users) {
-                                        Label label = new Label();
-                                        label.getStyleClass().add("searchLabel");
-                                        label.setText(user.getDisplayName());
-                                        label.setLineSpacing(3);
+                                        HBox hBox = new HBox();
+                                        hBox.getStyleClass().add("searchLabel");
+                                        Label displayLabel = new Label();
+                                        displayLabel.setText(user.getDisplayName());
+                                        displayLabel.setLineSpacing(3);
+                                        Label emailAddress = new Label();
+                                        emailAddress.setText("(" + user.getEmailAddress() + ")");
+                                        emailAddress.setLineSpacing(3);
+                                        hBox.toFront();
+                                        hBox.getChildren().add(displayLabel);
+                                        hBox.getChildren().add(emailAddress);
+                                        contactBoxes.add(hBox);
                                         vBox.toFront();
-                                        vBox.getChildren().add(label);
+                                        vBox.getChildren().add(hBox);
                                     }
                                     searchPane.getChildren().add(vBox);
+                                    for (var hBox : vBox.getChildren()) {
+                                        startConversation((HBox) hBox);
+                                    }
                                 });
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -135,7 +153,104 @@ public class HeaderController {
         });
     }
 
+    public void startConversation(HBox hBox) {
+        hBox.setOnMouseClicked((mouseEvent -> {
+            Node node = hBox.getChildren().get(1);
+            Node displayNameNode = hBox.getChildren().get(0);
+            if (node instanceof Label && displayNameNode instanceof Label) {
+                Label label = (Label) node;
+                Label displayNameLabel = (Label) displayNameNode;
+                String targetEmailAddress = label.getText()
+                        .replace("(", "").replace(")", "");
+                String targetDisplayName = displayNameLabel.getText();
+                org.shared.entity.User user = UserSession.INSTANCE.getUser();
+                User targetUser = new User();
+                targetUser.setEmailAddress(targetEmailAddress);
+                targetUser.setDisplayName(targetDisplayName);
+                List<User> users = new ArrayList<>();
+                users.add(user);
+                users.add(targetUser);
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return headerService.searchConversationIfExists(users);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executor).thenAcceptAsync((serverResponse) -> {
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SEARCHED) {
+                                System.out.println("conversation exists !");
+                            }
+                        }
+                        else if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {
+                            newConversation(targetUser);
+                        }
+                        else {
+                            System.out.println("ERROR");
+                        }
+                    }
+                }, executor);
+            }
+        }));
+    }
+
+    public void newConversation(User targetUser) {
+        Platform.runLater(() -> {
+            GridPane gridPane = (GridPane) topPane.getParent();
+            SplitPane splitPane = (SplitPane) gridPane.getChildren().stream()
+                    .filter(child -> child instanceof SplitPane && StringUtils.equals(child.getId(), "splitPane"))
+                    .findFirst().orElse(null);
+            BorderPane borderPane = (BorderPane) splitPane.getItems().stream()
+                    .filter(child -> child instanceof BorderPane && StringUtils.equals(child.getId(), "mainPane"))
+                    .findFirst().orElse(null);
+            searchPane.getChildren().clear();
+
+            HBox hBox = new HBox();
+            hBox.getStyleClass().add("topConversationBox");
+            hBox.setPrefHeight(40.);
+            hBox.setMaxHeight(40.);
+            hBox.setMinHeight(40.);
+            hBox.setAlignment(Pos.CENTER);
+
+            HBox targetUserInfo = new HBox();
+            targetUserInfo.getStyleClass().add("topConversationLabels");
+
+            Label introLabel = new Label();
+            introLabel.setText("Your conversation with : #");
+            Label displayNameLabel = new Label();
+            targetUserInfo.getChildren().add(introLabel);
+            displayNameLabel.setText(targetUser.getDisplayName());
+            targetUserInfo.getChildren().add(displayNameLabel);
+            Label emailAddressLabel = new Label();
+            emailAddressLabel.setText("(" + targetUser.getEmailAddress() + ")");
+            targetUserInfo.setAlignment(Pos.CENTER);
+            targetUserInfo.getChildren().add(emailAddressLabel);
+            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
+            hBox.getChildren().add(targetUserInfo);
+
+            HBox optionsBox = new HBox();
+            HBox.setHgrow(optionsBox, Priority.ALWAYS);
+            optionsBox.setAlignment(Pos.CENTER_RIGHT);
+            TextField searchMessage = new TextField();
+            optionsBox.getChildren().add(searchMessage);
+            hBox.getChildren().add(optionsBox);
+
+            borderPane.setTop(hBox);
+            HBox hBox1 = new HBox();
+            TextField messageField = new TextField();
+            hBox1.getChildren().add(messageField);
+            borderPane.setBottom(hBox1);
+        });
+
+    }
+
     public TextField getSearchField() {
         return searchField;
+    }
+
+    public List<HBox> getContactBoxes() {
+        return contactBoxes;
     }
 }

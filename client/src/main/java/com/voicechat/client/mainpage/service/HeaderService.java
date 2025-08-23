@@ -9,6 +9,7 @@ import org.shared.entity.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class HeaderService {
 
@@ -23,6 +24,18 @@ public class HeaderService {
         serverOut.println(mapper.writeValueAsString(message));
 
 
+
+        String serverInLine = Listener.getServerIn().readLine();
+        return mapper.readValue(serverInLine, ServerResponse.class);
+    }
+
+    public ServerResponse searchConversationIfExists(List<User> users) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(users);
+        Message message = new Message(MessageType.CONVERSATION_SEARCH, json);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(mapper.writeValueAsString(message));
 
         String serverInLine = Listener.getServerIn().readLine();
         return mapper.readValue(serverInLine, ServerResponse.class);

@@ -36,10 +36,8 @@
         </VBox>
 
         <!-- Main Content -->
-        <BorderPane style="-fx-background-color: #d8d8d8;">
-            <center>
-                <Label text="Main Content" style="-fx-font-size: 20px;"/>
-            </center>
+        <BorderPane style="-fx-background-color: #d8d8d8;" fx:id="mainPane">
+
         </BorderPane>
     </SplitPane>
 </GridPane>

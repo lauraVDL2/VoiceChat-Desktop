@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
+import org.server.action.ConversationAction;
 import org.server.action.UserAction;
 import org.server.dao.UserDao;
 import org.shared.entity.User;
@@ -46,6 +47,7 @@ public class Server {
                     ServerResponse serverResponse = new ServerResponse();
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     UserAction userAction = null;
+                    ConversationAction conversationAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -64,6 +66,10 @@ public class Server {
                         case USER_SEARCH:
                             userAction = new UserAction();
                             userAction.userSearch(objectMapper, messageObj, serverResponse, out);
+                            break;
+                        case CONVERSATION_SEARCH:
+                            conversationAction = new ConversationAction();
+                            conversationAction.conversationSearchIfExists(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }

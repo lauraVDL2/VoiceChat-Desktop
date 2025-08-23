@@ -34,4 +34,20 @@
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-family: "Helvetica";
+    -fx-cursor: hand;
+}
+
+.searchLabel:hover {
+    -fx-background-color: "#b6d1ff";
+}
+
+.topConversationBox {
+    -fx-border-color: transparent transparent #006abc transparent; /* top, right, bottom, left */
+    -fx-border-width: 0 0 1px 0;
+}
+
+.topConversationLabels {
+    -fx-font-size: 16px;
+    -fx-font-family: "Helvetica";
+    -fx-text-fill: black;
 }
