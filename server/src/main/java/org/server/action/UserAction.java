@@ -3,6 +3,7 @@ package org.server.action;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.dao.UserDao;
 import org.shared.Message;
@@ -13,6 +14,7 @@ import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -88,6 +90,19 @@ public class UserAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
             serverResponse.setMessage("No user found !");
             out.println(objectMapper.writeValueAsString(serverResponse));
+        }
+    }
+
+    public void searchTargetUser(ObjectMapper objectMapper, Message messageObj,
+                                 DataOutputStream dataOutputStream) throws IOException {
+        User targetUser = objectMapper.readValue(messageObj.getPayload(), User.class);
+        if (targetUser != null) {
+            if (StringUtils.isNotBlank(targetUser.getAvatar())) {
+                byte[] avatarBytes = getAvatarBytes(targetUser.getAvatar());
+                dataOutputStream.writeInt(avatarBytes.length);
+                dataOutputStream.write(avatarBytes);
+                dataOutputStream.flush();
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.voicechat.client.mainpage.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import org.shared.JsonMapper;
@@ -38,5 +39,14 @@ public class MainPageService {
         String serverInline = Listener.getServerIn().readLine();
         System.out.println(serverInline);
         return objectMapper.readValue(serverInline, ServerResponse.class);
+    }
+
+    public void sendAvatarInfo(User targetUser) throws JsonProcessingException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(targetUser);
+        Message message = new Message(MessageType.READ_TARGET_AVATAR, json);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
     }
 }

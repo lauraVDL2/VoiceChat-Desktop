@@ -49,10 +49,6 @@ public class ConversationDao {
     public List<Conversation> searchUserConversations(User user) {
         try {
             Session session = this.sessionFactory.openSession();
-            /*String cypher = "MATCH (c:Conversation)-[p:PARTICIPATES_IN]->(u:User) " +
-                    "WITH c, u MATCH (c)-[:CONTAINS]->(msg:Message) " +
-                    "RETURN c, u, msg " +
-                    "LIMIT 20";*/
             String cypher = "MATCH (u:User {emailAddress: $emailAddress}) " +
                     "MATCH (conv:Conversation)-[:PARTICIPATES_IN]->(u) " +
                     "RETURN conv LIMIT 20 ";

@@ -2566,3 +2566,693 @@ One of the relationship types in your query is not available in the database, ma
 2025-08-24 14:46:11 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
 2025-08-24 14:46:11 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@72847bc2 
 2025-08-24 14:46:11 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:36:22 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"5e818558-4ff8-4163-b806-9a1629a59ed4\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6c346219 
+2025-08-24 15:36:43 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"8d8ead6c-5b64-4d61-af4a-03b9ada0dba9\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@28324b9 
+2025-08-24 15:36:44 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"fb0d617b-04d1-4692-b3cc-ba36fa96a295\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@69e3fae4 
+2025-08-24 15:38:06 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"aad8402f-e80c-47f1-9b4d-8412164ca6b0\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1387787a 
+2025-08-24 15:38:07 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"bd54d121-b5ef-465e-9006-244d363279cf\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1f6db1e9 
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"8ffab7b6-84eb-49a9-9b36-fae56a47f55d\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@77aae9cb 
+2025-08-24 15:40:20 [pool-1-thread-2] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"6054e048-30e9-45bd-8734-44dd5ba9dc48\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:43:05 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6e4ac9bf 
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"fb6cbe98-f36f-4613-8ab1-7a0a7b96e2e3\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@20f58ff0 
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:43:06 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"04fd60a4-6586-427d-8d2f-771f3e99dd5c\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:47:05 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"83ac50ce-9af0-480d-8b29-291dcd65baec\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto;toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:47:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:47:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:47:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:47:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:47:05 [pool-1-thread-4] ERROR org.server.action.UserAction - Connection failed !
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"0f49c45d-f0b9-4d6d-9bda-eb3fd9340c49\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4325975e 
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"2b4bcf18-b694-46b9-ba7c-f400a0c238ec\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@13a6fd0d 
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:47:11 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"c1f7ff39-7378-4be5-8515-a3c65cfafc2d\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"c37fa841-796f-4821-8f43-4cd13e9d4586\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:48:04 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7ca1ec4c 
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"611f2045-804d-49de-be96-11b6212ba7e3\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@49878a36 
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:48:05 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"2624ede3-ce1d-4860-a0a8-edae7397548a\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"f803739b-dc6c-4ab8-8dee-8960dc73e5a2\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:48:34 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4151f841 
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"1cddfad1-aee8-481c-a01d-582e04275176\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@13e28c2a 
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:48:35 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"86906046-b404-4198-83a0-6e56a603f057\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"ef86ad7f-2906-426e-b805-07f5cecb57c3\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6d38f8ec 
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"ed4a6ac4-d5eb-4497-aaff-ba373a6f98d7\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3adfc38f 
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:53:56 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"ca67e3c5-9d20-40b8-9a35-252cc04f60bd\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"4f20cf47-dd2f-4e58-8818-a2f27aad78ff\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@44b568e9 
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"2ff871da-8b6a-4250-acbe-153cce421dd0\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:54:49 [pool-1-thread-5] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5cc0cd4e 
+2025-08-24 15:54:50 [pool-1-thread-5] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:54:50 [pool-1-thread-5] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a0765251-567c-430d-a0ef-79871a88d284\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:56:23 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"4a3c23e9-3e1c-4ddc-91ca-0d64357a2cf6\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:56:23 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:56:23 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:56:23 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:56:23 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3bc9a2c8 
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"9c3eecf8-6362-4561-b901-d15cc66ba76a\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@22648c6f 
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:56:24 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"8c09ed27-f419-4a30-a610-5aa6972c9127\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"2adbf2d4-6a82-47ab-90fd-eec34fd58ebd\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5589da29 
+2025-08-24 15:57:12 [pool-1-thread-6] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"511195db-92b4-40a5-bc80-e87bdd96838d\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1b9b743c 
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:57:13 [pool-1-thread-6] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"c6c44147-f0f3-4d75-9063-2c7d5fe3dd94\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"ba7d5a37-f82c-4588-bde6-e016f824b257\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:59:44 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5ca4e950 
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"da6627b5-99db-42f4-8be2-f50aac0137ef\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@349c449c 
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 15:59:45 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a1501d5a-419e-4c14-9e98-58b32ffd17e4\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:08 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"1adb5a8e-f5b0-4dc2-9f72-563bc137dd74\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:08 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:01:08 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:01:08 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:01:08 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@15f9957b 
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"f53b60e6-7fe9-4174-a640-153628c2721a\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@f0a8872 
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:01:09 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"ec046759-7822-4142-a76a-edfffb36ba53\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"aa183831-d702-4c71-8472-468e03ff4540\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4229462b 
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"37291942-bfae-4be3-bd19-df8e7227046b\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@39f05e01 
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:01:28 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"9a410f3f-2829-4914-99f6-1d19474a3ce6\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"3a84c175-24a5-4927-b7cd-ef9f1e7581f2\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4daa83c3 
+2025-08-24 16:02:14 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"0fad3608-0382-4bfe-bd04-985b7d112497\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@19a4bd3f 
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:02:15 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"20a4c0d3-b799-4bf6-a62c-716b68d7b04f\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"0ec15d0d-231f-45a9-8234-18f905f8ff95\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2f94fbb3 
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"8ebab61c-1b0a-4c3f-82bc-11a21e4356dc\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1c8dd250 
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:02:55 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"d4f87740-489c-419c-bea8-599876bd9ac0\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"37731d0d-af47-48bb-b279-aae3e0e4d904\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:03:19 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@29d215f1 
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"cdc6877d-ff7b-4713-87e1-c8c385721e2d\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7f0493c3 
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:03:20 [pool-1-thread-7] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"05b9ea1b-1020-489d-a8ea-5f710d56a0d3\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"af2a0d89-a439-42a8-9784-aaf71d74edf7\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1c5eeac 
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"7d524a9b-8631-4243-8d40-5fa17ef9dd24\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:05:19 [pool-1-thread-8] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@436577c 
+2025-08-24 16:05:20 [pool-1-thread-8] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:05:20 [pool-1-thread-8] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"5467c122-422f-4b3e-a9bd-f2b2834e8623\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"3ac7539a-e921-4593-bd97-7f2c1412bc62\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@432613be 
+2025-08-24 16:07:09 [pool-1-thread-9] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"f060e26e-0829-4641-90dc-621848d3f4ad\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@650b3bb7 
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:07:10 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"fdac013d-465d-400d-9f65-7f63445de3f4\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"2c9c028d-c756-4c04-b57e-dcabb99d5783\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:08:11 [pool-1-thread-9] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@396064bc 
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"3a697d52-2970-43cb-bb2d-7056c00b39fc\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4a8cb1f4 
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:08:12 [pool-1-thread-9] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"0886026c-f12d-464b-9d88-79600a3a3be7\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"e3299a48-06fd-46ef-9b55-b8ee12edbbe1\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6cbd9469 
+2025-08-24 16:09:37 [pool-1-thread-10] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"7612faf8-3587-480f-92c7-06d7a19578a0\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@57851a06 
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:09:38 [pool-1-thread-10] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"b83ed69b-b24e-42f2-82f9-1b5eec4444e7\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"487629ac-131e-4e7a-9709-34c510c853fe\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:10:54 [pool-1-thread-11] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5becc07c 
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"7472a7fe-c30c-4e7c-874e-e635d3033457\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@74ec057e 
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:10:55 [pool-1-thread-11] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"44ca6f81-930b-446b-bf08-732ddc49210a\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"b720bdb0-5375-4615-a01f-e97fbbcb9c71\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4ebd7acd 
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"2a584be3-646c-4242-826c-91e67d7043bc\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:12:21 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@50c82817 
+2025-08-24 16:12:22 [pool-1-thread-12] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:12:22 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"20332ac2-e7b2-498e-8655-3546bc63ae08\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_SEARCH","payload":"{\"@json_id\":\"ed422dc8-c8d3-40f5-bdbf-84e84a59929b\",\"id\":null,\"userName\":null,\"displayName\":\"t\",\"password\":null,\"emailAddress\":null,\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:13:53 [pool-1-thread-12] INFO  org.server.action.UserAction - Users found !
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"ccd71eb5-7036-41c2-80e5-55c395ecc568\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@f3760ac 
+2025-08-24 16:15:24 [pool-1-thread-12] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"5110dce4-602a-4daa-b676-bb98623bf2d1\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@570699e0 
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:15:25 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"496f3527-9d23-4ffb-95db-e7797ae19594\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"a35d4055-f6f4-459d-b5ea-0eb8a4a7b955\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7f9909f6 
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"9d06233d-4859-4842-b3e8-9739a87e2a75\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7380191c 
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:16:46 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"c3e7df6c-c3b8-4195-9729-7a4a24e5d6ec\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:03 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"4f8a7bc6-aa2a-4e3e-b99b-017f3b04f0e1\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:03 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:17:03 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:17:03 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:17:03 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@37c60c8 
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"9a4335ed-d797-48ae-90dd-4678df6e6490\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@623c9c7d 
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:17:04 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"65567ae9-83cd-43d5-b97c-a2b7edc1a67e\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"0b68158e-3248-4fb7-b2f8-8d6bd765a9b7\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@41564854 
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"88799f46-8d56-48f7-a515-5ce654793006\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:17:19 [pool-1-thread-12] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@28cad186 
+2025-08-24 16:17:20 [pool-1-thread-12] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:17:20 [pool-1-thread-12] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"f7651394-b1ee-4690-8913-46a55abf447a\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"6704562c-53ed-4b6a-82bd-4ee5c7a275e6\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@45522029 
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"756110a4-3e90-4eeb-a29b-55e35a7af0d6\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@70be6ea8 
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:20:11 [pool-1-thread-13] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"d673b8d1-959f-4feb-bc6c-c2c7b1231133\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"eeea930a-1618-493a-8b58-1a62ff99927f\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2b1da467 
+2025-08-24 16:21:38 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"3df0ee35-338a-4191-83a3-5a6dab7e919d\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2c6a6fbe 
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:21:39 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"18104273-bc74-4805-b160-d4868d02b678\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"e406ad35-f0e1-4aef-8587-053e9449f04e\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4864cb7c 
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"5f4865c1-ada6-4b50-9048-25a617e9f588\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2e37ca68 
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:22:13 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"daee5976-21db-48da-99d2-c859685356c7\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"d3eab737-128c-466f-a3c4-9b677b135bfb\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5f5401cb 
+2025-08-24 16:22:39 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"d05b6170-df4f-4326-8b65-e8b6b3638b85\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3ac78860 
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:22:40 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"c6361e8a-0f83-4dfc-ad71-e6b5ed0e998f\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"fc84539e-e516-425d-be4f-2f63a3c3621d\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@43e945d1 
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"b4eeb3d3-98f5-44c9-b59c-0c295eaaada7\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@61351048 
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:23:42 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"cd05e9f0-a484-4079-bb63-7b5fbcd17105\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:24:34 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"b459b359-47d2-4514-8596-c68eb709d217\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:24:34 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:24:34 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:24:34 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:24:34 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@58f70930 
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"97e23eec-0db3-41e5-a299-da3b9c636fa8\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3622ae7d 
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:24:35 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"d9b1f7cd-b1a7-4d76-b11a-b7110c4fe0c8\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"044508e7-fa62-463f-9dfd-c7df6a81fc77\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5218c2ff 
+2025-08-24 16:25:32 [pool-1-thread-14] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"37ee8044-d543-4c0d-82f7-f9d7c11f9672\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@583f7d60 
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:25:33 [pool-1-thread-14] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a45a2654-539e-4393-af1a-c3a70180cdf1\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"b8f5db4f-7bbc-4566-9b72-c4e6cdaa7194\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@537c1fb6 
+2025-08-24 16:27:19 [pool-1-thread-15] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"2ee62e21-f781-42f2-bc14-586498659eb3\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1b73c3f5 
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:27:20 [pool-1-thread-15] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"d8a09f4b-e131-4330-8096-5cbda57fda52\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:29:25 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"5e3f11be-5823-4e2d-96aa-ac9d1a5ccb97\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto;toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:29:25 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:29:25 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:29:25 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:29:25 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:29:25 [pool-1-thread-16] ERROR org.server.action.UserAction - Connection failed !
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"884d77b0-ced6-4b9a-a478-e29cdd7a0541\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5e9fb018 
+2025-08-24 16:29:29 [pool-1-thread-16] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"831a34ce-6398-429a-aab5-9a7fdfc90345\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@34ef801b 
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:29:30 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"4a4855b5-9363-45c7-ad6a-8b2a8f9b83ab\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"04401d46-5114-4a7d-a738-b2a9c3409a97\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4dda3ffe 
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"a858470a-2305-4580-a67d-4e101113567c\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:30:00 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:30:01 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@54adcc0a 
+2025-08-24 16:30:01 [pool-1-thread-16] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"3dfb438b-2d61-4267-b6f5-c24f8f4f6c1d\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1738d642 
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"c14aa8a6-cd9b-42d0-aa1d-0b940786d35e\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4c9fb71 
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:30:22 [pool-1-thread-16] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"c7c19ce5-e048-49ec-8477-b8b144c3a378\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"f0336803-5a4a-42dd-9d63-f982e896f9b9\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7167573d 
+2025-08-24 16:32:29 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"8f8333a7-af7f-449a-b5d8-5f137514ae5b\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4d8901c1 
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:32:30 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"dfad14d0-2c61-4146-84f8-ffbac66420fd\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"9f27fa4c-4c82-43ce-bb4d-77796d0b447b\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@659bb025 
+2025-08-24 16:32:56 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"de740cfa-af44-44cf-b60f-56f3f6bb716b\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@75c56a7 
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:32:57 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"eb9611f6-15ca-471e-a029-68901e31ee94\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"76196893-5ac1-4add-a2df-7e58dbb6689a\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@70080747 
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"2616d65f-e014-401b-818a-acb37ad8f42d\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:33:53 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@347b13c4 
+2025-08-24 16:33:54 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:33:54 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"43ebd8ca-e1ce-4554-84b7-197d32e519ba\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"534ddeae-82b2-4913-a50c-67dcf9f3d655\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5fca21b3 
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"3ede9d92-7fec-406b-b7cf-d30cf33f45ba\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4a8c19ff 
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:37:14 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"19987a06-67ee-4466-b409-53285187f27a\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"2a331d2d-f348-42fd-8b10-71cd8b61f018\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:37:54 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@655ab4b 
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"01914664-f73d-4ac8-849a-602771e55c35\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@84f89d8 
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:37:55 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"085bf670-c29a-446b-93d9-3f6df6c39ad6\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"18b0ae11-d33d-4c86-83fb-401fdd15562d\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:38:33 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6b71cb25 
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.server.action.UserAction - User connected !
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"b95398e1-b4af-40d0-ba61-3077cef1120a\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@42bd54be 
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 16:38:34 [pool-1-thread-17] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a8a2034d-9b70-4e34-ac3a-1ca722963a1b\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"002e302b-780a-40f7-9ac5-ea6da428f18d\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@73bf1ba4 
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"214070cf-b893-4edd-8d4f-64e9ec429a38\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@29f09fdd 
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a76688e8-ca5b-46dd-b3c8-61cb78dcdef1\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}

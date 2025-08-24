@@ -1,13 +1,17 @@
 .leftPane {
-    -fx-background-color: "#b6d1ff";
+    -fx-background-color: "#006abc";
 }
 
 .topPane {
     -fx-background-color: "#006abc";
+    -fx-border-color: transparent transparent #b6d1ff transparent; /* top, right, bottom, left */
+    -fx-border-width: 0 0 3 0;
 }
 
 .infoLeftPane {
     -fx-background-color: "#006abc";
+    -fx-border-color: transparent #b6d1ff transparent transparent; /* top, right, bottom, left */
+    -fx-border-width: 0 3 0 0;
 }
 
 .searchField {
@@ -34,6 +38,11 @@
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-family: "Helvetica";
+    -fx-cursor: hand;
+}
+
+.discussionBox {
+    -fx-background-color: rgba(182, 209, 255, 0.5);
     -fx-cursor: hand;
 }
 

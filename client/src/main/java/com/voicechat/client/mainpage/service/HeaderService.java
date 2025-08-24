@@ -24,8 +24,6 @@ public class HeaderService {
 
         serverOut.println(mapper.writeValueAsString(message));
 
-
-
         String serverInLine = Listener.getServerIn().readLine();
         return mapper.readValue(serverInLine, ServerResponse.class);
     }

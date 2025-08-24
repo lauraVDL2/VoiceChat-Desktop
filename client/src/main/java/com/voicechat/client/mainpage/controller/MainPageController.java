@@ -3,16 +3,20 @@ package com.voicechat.client.mainpage.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.MainPageService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +29,8 @@ import org.shared.entity.Message;
 import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 
-import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -112,6 +117,29 @@ public class MainPageController {
             });
         }
     }
+
+    public VBox readTargetAvatar(VBox vBox) {
+        try {
+            DataInputStream dataInputStream = Listener.getDataInputStream();
+            int size = dataInputStream.readInt();
+            if (size > 0) {
+                byte[] imageBytes = new byte[size];
+                dataInputStream.readFully(imageBytes);
+                javafx.scene.image.Image image = new Image(new ByteArrayInputStream(imageBytes));
+                ImageView avatar = new ImageView();
+                avatar.setFitHeight(40);
+                avatar.setFitWidth(40);
+                Platform.runLater(() -> {
+                            avatar.setImage(image);
+                            vBox.getChildren().add(avatar);
+                        }
+                );
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vBox;
+    }
     
     public void sendMessage() {
         Platform.runLater(() -> {
@@ -182,19 +210,30 @@ public class MainPageController {
             User currentUser = UserSession.INSTANCE.getUser();
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {
+                HBox hBox = new HBox();
                 VBox vBox = new VBox();
+                VBox vbox2 = new VBox();
                 VBox displayNames = new VBox();
                 Label conversationName = new Label();
                 List<String> displayNamesList = new ArrayList<>();
+                int i = 0;
                 for (User participant : conversation.getParticipants()) {
                     if (!StringUtils.equals(participant.getEmailAddress(), currentUser.getEmailAddress())) {
+                        if (i == 0) {
+                            try {
+                                mainPageService.sendAvatarInfo(participant);
+                                vbox2 = readTargetAvatar(vbox2);
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         displayNamesList.add(participant.getDisplayName());
+                        i++;
                     }
                 }
                 conversationName.setText(String.join(",", displayNamesList));
                 displayNames.getChildren().add(conversationName);
                 vBox.getChildren().add(displayNames);
-                System.out.println(conversationName.getText());
 
                 Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
                 VBox content = new VBox();
@@ -203,7 +242,14 @@ public class MainPageController {
                 content.getChildren().add(contentLabel);
                 vBox.getChildren().add(content);
 
-                leftPane.getChildren().add(vBox);
+                vbox2.setAlignment(Pos.CENTER);
+                vBox.setAlignment(Pos.CENTER);
+
+                hBox.getStyleClass().add("discussionBox");
+
+                hBox.getChildren().add(vbox2);
+                hBox.getChildren().add(vBox);
+                leftPane.getChildren().add(hBox);
             }
         });
     }

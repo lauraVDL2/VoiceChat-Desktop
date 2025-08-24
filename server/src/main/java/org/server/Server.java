@@ -83,6 +83,10 @@ public class Server {
                             conversationAction = new ConversationAction();
                             conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out);
                             break;
+                        case READ_TARGET_AVATAR:
+                            userAction = new UserAction();
+                            userAction.searchTargetUser(objectMapper, messageObj, dataOutputStream);
+                            break;
                     }
                 }
             } catch (IOException e) {
