@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.neo4j.bolt.connection.GqlStatusError;
 import org.server.dao.ConversationDao;
 import org.shared.Message;
 import org.shared.ServerResponse;
@@ -21,6 +22,30 @@ import java.util.Set;
 public class ConversationAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationAction.class);
+
+    public void searchUserConversations(ObjectMapper objectMapper, Message messageObj,
+                                        ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+        User user = objectMapper.readValue(messageObj.getPayload(), User.class);
+        if (user != null) {
+            ConversationDao conversationDao = new ConversationDao();
+            List<Conversation> conversations = conversationDao.searchUserConversations(user);
+            System.out.println("SIZE = " +conversations.size());
+            if (!CollectionUtils.isEmpty(conversations)) {
+                logger.info("Conversations found !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_DISPLAYED);
+                serverResponse.setPayload(objectMapper.writeValueAsString(conversations));
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+            else {
+                logger.info("No conversation found !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.INFO);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_DISPLAYED);
+                serverResponse.setMessage("No conversations yet, start a new one !");
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+        }
+    }
 
     public void createConversation(ObjectMapper objectMapper, Message messageObj,
                                    ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {

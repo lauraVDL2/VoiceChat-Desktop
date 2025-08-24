@@ -1,11 +1,11 @@
 package com.voicechat.client.mainpage.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.MainPageService;
-import com.voicechat.client.utils.JsonMapper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.apache.commons.lang3.StringUtils;
+import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -27,6 +28,7 @@ import org.shared.entity.User;
 import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -71,6 +73,33 @@ public class MainPageController {
             }
             leftPane.setMinWidth(200);
             gridPaneFocus();
+            getUserConversations();
+        });
+    }
+
+    public void getUserConversations() {
+        Platform.runLater(() -> {
+            User user = UserSession.INSTANCE.getUser();
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    return mainPageService.displayUserConversations(user);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }, executor).thenAcceptAsync((serverResponse) -> {
+                if (serverResponse != null) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
+                            System.out.println("Conversation displayed !" + serverResponse.getPayload());
+                                setConversationList(serverResponse);
+                        }
+                    }
+                    else {
+                        System.out.println("ERROR");
+                    }
+                }
+            }, executor);
         });
     }
 
@@ -127,7 +156,7 @@ public class MainPageController {
                                 try {
                                     setConversationComponents(serverResponse);
                                 } catch (JsonProcessingException e) {
-                                    e.printStackTrace();
+                                    throw new RuntimeException(e);
                                 }
                             }
                         }
@@ -140,9 +169,49 @@ public class MainPageController {
         });
     }
 
+    public void setConversationList(ServerResponse serverResponse) {
+        Platform.runLater(() -> {
+            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+            List<Conversation> conversations = null;
+            try {
+                conversations = objectMapper.readValue(serverResponse.getPayload(),
+                        new TypeReference<List<Conversation>>() {});
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            User currentUser = UserSession.INSTANCE.getUser();
+            currentUser.setConversation(conversations);
+            for (Conversation conversation : conversations) {
+                VBox vBox = new VBox();
+                VBox displayNames = new VBox();
+                Label conversationName = new Label();
+                List<String> displayNamesList = new ArrayList<>();
+                for (User participant : conversation.getParticipants()) {
+                    if (!StringUtils.equals(participant.getEmailAddress(), currentUser.getEmailAddress())) {
+                        displayNamesList.add(participant.getDisplayName());
+                    }
+                }
+                conversationName.setText(String.join(",", displayNamesList));
+                displayNames.getChildren().add(conversationName);
+                vBox.getChildren().add(displayNames);
+                System.out.println(conversationName.getText());
+
+                Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
+                VBox content = new VBox();
+                Label contentLabel = new Label();
+                contentLabel.setText(lastMessage.getContent());
+                content.getChildren().add(contentLabel);
+                vBox.getChildren().add(content);
+
+                leftPane.getChildren().add(vBox);
+            }
+        });
+    }
+
     public void setConversationComponents(ServerResponse serverResponse) throws JsonProcessingException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         Conversation conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+        UserSession.INSTANCE.getUser().getConversation().add(conversation);
         HBox hBox = new HBox();
         for (User user : conversation.getParticipants()) {
             if (StringUtils.equals(user.getEmailAddress(), UserSession.INSTANCE.getUser().getEmailAddress())) {

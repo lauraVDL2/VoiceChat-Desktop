@@ -30,9 +30,7 @@
     <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="splitPane">
         <!-- Left Panel -->
         <VBox styleClass="leftPane" fx:id="leftPane" prefWidth="350" minWidth="350" maxWidth="350">
-            <Button text="Item 1"/>
-            <Button text="Item 2"/>
-            <Button text="Item 3"/>
+
         </VBox>
 
         <!-- Main Content -->

@@ -1,5 +1,6 @@
 package org.server.dao;
 
+import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.transaction.Transaction;
@@ -11,7 +12,9 @@ import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConversationDao {
     private static final Logger log = LoggerFactory.getLogger(ConversationDao.class);
@@ -33,6 +36,9 @@ public class ConversationDao {
                     RETURN c
                     """, Map.of("currentUserEmailAddress", currentUser.getEmailAddress(),
                     "targetUserEmailAddress", targetUser.getEmailAddress()));
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
             return conversation;
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,54 +46,93 @@ public class ConversationDao {
         return null;
     }
 
-    public Conversation createConversation(Set<User> users, Message message) {
+    public List<Conversation> searchUserConversations(User user) {
         try {
             Session session = this.sessionFactory.openSession();
-
-            Conversation conversation = new Conversation();
-            String mergeUsersCypher =
-                    "UNWIND $users AS user\n" +
-                            "MATCH (u:User {emailAddress: user.emailAddress})\n" +
-                            "SET u.displayName = user.displayName";
-            try (Transaction tx = session.beginTransaction()) {
-
-                session.query(mergeUsersCypher, Map.of("users", users));
-
-                String createMessageCypher =
-                        "CREATE (m:Message {content: $content, timestamp: datetime()})";
-                session.query(createMessageCypher, Map.of("content", message.getContent()));
-
-                String createConversationCypher =
-                        "MERGE (conv:Conversation)";
-                session.query(createConversationCypher, Map.of());
-
-                String linkUsersToConvCypher =
-                        "UNWIND $users AS user\n" +
-                                "MATCH (u:User {emailAddress: user.emailAddress})\n" +
-                                "MERGE (u)-[:PARTICIPATES_IN]->(conv)";
-                session.query(linkUsersToConvCypher, Map.of("users", users));
-
-                String linkConvToMessageCypher =
-                        "MATCH (conv:Conversation), (m:Message)\n" +
-                                "WHERE NOT exists((conv)-[:CONTAINS]->(m))\n" +
-                                "CREATE (conv)-[:CONTAINS]->(m)";
-                session.query(linkConvToMessageCypher, Map.of());
-
-                tx.commit();
-
-                if (sessionFactory != null) {
-                    sessionFactory.close();
+            /*String cypher = "MATCH (c:Conversation)-[p:PARTICIPATES_IN]->(u:User) " +
+                    "WITH c, u MATCH (c)-[:CONTAINS]->(msg:Message) " +
+                    "RETURN c, u, msg " +
+                    "LIMIT 20";*/
+            String cypher = "MATCH (u:User {emailAddress: $emailAddress}) " +
+                    "MATCH (conv:Conversation)-[:PARTICIPATES_IN]->(u) " +
+                    "RETURN conv LIMIT 20 ";
+            Result records = session.query(cypher,
+                    Map.of("emailAddress", user.getEmailAddress()));
+            List<Conversation> conversations = new ArrayList<>();
+            for (var record : records) {
+                Conversation conversation = (Conversation) record.get("conv");
+                String cypher2 = "MATCH (c:Conversation)-[:PARTICIPATES_IN]->(u:User) WHERE id(c) = $conversationId\n" +
+                        "RETURN u";
+                Result recordsUser = session.query(cypher2, Map.of("conversationId", conversation.getId()));
+                List<User> participants = new ArrayList<>();
+                for (var recordUser : recordsUser) {
+                    User participant = (User) recordUser.get("u");
+                    participants.add(participant);
                 }
-
-                return conversation;
+                String cypher3 = "MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $conversationId\n" +
+                        "RETURN msg\n" +
+                        "ORDER BY msg.time DESC\n" +
+                        "LIMIT 20";
+                Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId()));
+                List<Message> messages = new ArrayList<>();
+                for (var recordMessage : recordMessages) {
+                    Message message = (Message) recordMessage.get("msg");
+                    messages.add(message);
+                }
+                conversation.setParticipants(new HashSet<>(participants));
+                conversation.setMessages(messages);
+                conversations.add(conversation);
             }
-        } catch (Exception e) {
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+            return conversations;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             if (sessionFactory != null) {
                 sessionFactory.close();
             }
         }
-        return null;
+        return new ArrayList<>();
+    }
+
+    public Conversation createConversation(Set<User> users, Message message) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            // Start a transaction
+            try (Transaction tx = session.beginTransaction()) {
+                // Create message node
+                String createMessageCypher =
+                        "CREATE (m:Message {content: $content, time: $time}) RETURN m";
+                Message createdMessage = session.queryForObject(Message.class, createMessageCypher,
+                        Map.of("content", message.getContent(), "time", message.getTime()));
+
+                List<String> userEmailAddresses = users.stream().map(User::getEmailAddress).toList();
+
+                String linkUsersCypher =
+                        "CREATE (conv:Conversation)\n" +
+                                "WITH conv\n" +
+                                "UNWIND $usersEmailAddresses AS email\n" +
+                                "MATCH (u:User {emailAddress: email})\n" +
+                                "MERGE (conv)-[:PARTICIPATES_IN]->(u)\n" +
+                                "WITH conv\n" +
+                                "MATCH (m:Message)\n" +
+                                "WHERE id(m) = $messageId\n" +
+                                "MERGE (conv)-[:CONTAINS]->(m)\n" +
+                                "RETURN conv";
+                Conversation fullConversation = session.queryForObject(Conversation.class, linkUsersCypher, Map.of("usersEmailAddresses", userEmailAddresses,"messageId",
+                        createdMessage.getId()));
+
+                tx.commit();
+
+                return fullConversation;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorMessage = e.getMessage();
+            return null;
+        }
     }
 
 }

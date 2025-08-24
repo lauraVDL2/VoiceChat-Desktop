@@ -1,10 +1,8 @@
 package com.voicechat.client.mainpage.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.voicechat.client.Listener;
-import com.voicechat.client.utils.JsonMapper;
+import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
@@ -19,7 +17,6 @@ public class MainPageService {
 
     public ServerResponse createConversation(Conversation conversation) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        objectMapper.registerModule(new JavaTimeModule());
         String json = objectMapper.writeValueAsString(conversation);
         Message message = new Message(MessageType.CONVERSATION_CREATE, json);
         PrintWriter serverOut = Listener.getServerOut();
@@ -28,5 +25,18 @@ public class MainPageService {
 
         String serverInLine = Listener.getServerIn().readLine();
         return objectMapper.readValue(serverInLine, ServerResponse.class);
+    }
+
+    public ServerResponse displayUserConversations(User user) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(user);
+        Message message = new Message(MessageType.CONVERSATION_DISPLAY, json);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
+
+        String serverInline = Listener.getServerIn().readLine();
+        System.out.println(serverInline);
+        return objectMapper.readValue(serverInline, ServerResponse.class);
     }
 }

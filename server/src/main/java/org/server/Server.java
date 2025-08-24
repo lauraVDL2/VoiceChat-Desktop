@@ -79,6 +79,10 @@ public class Server {
                             conversationAction = new ConversationAction();
                             conversationAction.createConversation(objectMapper, messageObj, serverResponse, out);
                             break;
+                        case CONVERSATION_DISPLAY:
+                            conversationAction = new ConversationAction();
+                            conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out);
+                            break;
                     }
                 }
             } catch (IOException e) {
