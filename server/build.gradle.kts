@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.14")
+    implementation("shared-lib:voicechat-common:1.0.30")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.apache.commons:commons-collections4:4.4")
     implementation("org.neo4j:neo4j-ogm-core:4.0.19")
@@ -31,6 +31,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
 }
 
 tasks.jar {

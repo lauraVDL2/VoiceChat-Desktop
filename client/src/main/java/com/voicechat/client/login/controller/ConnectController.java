@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
+import com.voicechat.client.utils.JsonMapper;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ public class ConnectController {
                     // Deserialize payload if needed
                     if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_LOGGED_IN) {
                         String payload = serverResponse.getPayload();
-                        ObjectMapper mapper = new ObjectMapper();
+                        ObjectMapper mapper = JsonMapper.getJsonMapper();
                         User loggedUser = mapper.readValue(payload, User.class);
                         UserSession.INSTANCE.setUser(loggedUser);
                     }

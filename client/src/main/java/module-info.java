@@ -15,6 +15,8 @@ module com.voicechat.client {
     requires com.fasterxml.jackson.core;
     requires org.apache.commons.collections4;
     requires org.apache.commons.lang3;
+    requires java.desktop;
+    requires com.fasterxml.jackson.datatype.jsr310;
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;

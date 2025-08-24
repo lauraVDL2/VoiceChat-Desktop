@@ -46,7 +46,8 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.14")
+    implementation("shared-lib:voicechat-common:1.0.30")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("io.github.resilience4j:resilience4j-all:1.7.0")
     implementation("org.apache.commons:commons-collections4:4.4")

@@ -1,7 +1,11 @@
 package org.server;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.action.ConversationAction;
@@ -42,7 +46,7 @@ public class Server {
                 String message;
                 while ((message = in.readLine()) != null) {
                     logger.info(message);
-                    ObjectMapper objectMapper = new ObjectMapper();
+                    ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -70,6 +74,10 @@ public class Server {
                         case CONVERSATION_SEARCH:
                             conversationAction = new ConversationAction();
                             conversationAction.conversationSearchIfExists(objectMapper, messageObj, serverResponse, out);
+                            break;
+                        case CONVERSATION_CREATE:
+                            conversationAction = new ConversationAction();
+                            conversationAction.createConversation(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }

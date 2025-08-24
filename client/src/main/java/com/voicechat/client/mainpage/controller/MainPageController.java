@@ -1,27 +1,34 @@
 package com.voicechat.client.mainpage.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.MainPageService;
+import com.voicechat.client.utils.JsonMapper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
+import org.shared.entity.Conversation;
+import org.shared.entity.Message;
+import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 
+import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,8 +57,10 @@ public class MainPageController {
                 FXMLLoader loader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/header.fxml"));
                 Parent childNode = loader.load();
                 headerController = loader.getController();
+                headerController.setParentController(this);
 
                 gridMainPane.getChildren().add(childNode);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -74,4 +83,90 @@ public class MainPageController {
             });
         }
     }
+    
+    public void sendMessage() {
+        Platform.runLater(() -> {
+            ImageView btn = (ImageView) mainPane.lookup("#sendButton");
+            btn.setOnMouseClicked((event) -> {
+                TextField sendMessage = (TextField) mainPane.lookup("#sendMessage");
+                Conversation conversation = new Conversation();
+                User currentUser = UserSession.INSTANCE.getUser();
+                User targetUser = new User();
+                targetUser.setDisplayName(((Label) mainPane.lookup("#displayNameLabelConv")).getText());
+                Label emailAddressField = (Label) mainPane.lookup("#emailAddressLabelConv");
+                String targetUserEmailAddress = emailAddressField.getText().replace("(", "").replace(")", "");
+                targetUser.setEmailAddress(targetUserEmailAddress);
+                conversation.setParticipants(Set.of(currentUser, targetUser));
+                Message message = new Message();
+                message.setContent(sendMessage.getText());
+                message.setTime(LocalDateTime.now());
+
+                ReadStatus readStatus = new ReadStatus(false, message, targetUser);
+                ReadStatus currentUserReadStatus = new ReadStatus(true, message, currentUser);
+                message.setReadStatuses(List.of(currentUserReadStatus, readStatus));
+
+                List<Message> currentUserMessages = currentUser.getMessages();
+                currentUserMessages.add(message);
+                System.out.println(message);
+                currentUser.setMessages(currentUserMessages);
+
+                conversation.setMessages(List.of(message));
+
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return mainPageService.createConversation(conversation);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executor).thenAcceptAsync((serverResponse) -> {
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_CREATED) {
+                                System.out.println("conversation exists !");
+                                try {
+                                    setConversationComponents(serverResponse);
+                                } catch (JsonProcessingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR");
+                        }
+                    }
+                }, executor);
+            });
+        });
+    }
+
+    public void setConversationComponents(ServerResponse serverResponse) throws JsonProcessingException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        Conversation conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+        HBox hBox = new HBox();
+        for (User user : conversation.getParticipants()) {
+            if (StringUtils.equals(user.getEmailAddress(), UserSession.INSTANCE.getUser().getEmailAddress())) {
+                VBox vBox1 = new VBox();
+                Label labelName = new Label();
+                labelName.setText(user.getDisplayName());
+                Label labelTime = new Label();
+                Message conversationMessage = conversation.getMessages().stream().findFirst().orElse(null);
+                Message message = user.getMessages().stream()
+                        .filter(userMessage -> userMessage.getId() == conversationMessage.getId())
+                        .findFirst().orElse(null);
+                labelTime.setText(" - " + message.getTime());
+                vBox1.getChildren().add(labelName);
+                vBox1.getChildren().add(labelTime);
+                hBox.getChildren().add(vBox1);
+
+                VBox vBox2 = new VBox();
+                Label messageContent = new Label();
+                messageContent.setText(message.getContent());
+                vBox2.getChildren().add(messageContent);
+                hBox.getChildren().add(vBox2);
+            }
+        }
+        mainPane.setCenter(hBox);
+    }
+    
 }

@@ -3,6 +3,7 @@ package com.voicechat.client.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.utils.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
@@ -31,7 +32,7 @@ public class RegisterService {
     }
 
     public ServerResponse register(User user) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_CREATE, json);
         PrintWriter serverOut = Listener.getServerOut();

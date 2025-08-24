@@ -2,6 +2,7 @@ package com.voicechat.client.login.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.utils.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
@@ -13,7 +14,7 @@ import java.io.PrintWriter;
 public class LoginService {
 
     public ServerResponse login(User user) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_LOG_IN, json);
         PrintWriter serverOut = Listener.getServerOut();
@@ -21,6 +22,7 @@ public class LoginService {
         serverOut.println(mapper.writeValueAsString(message));
 
         String serverInLine = Listener.getServerIn().readLine();
+        System.out.println(serverInLine);
         return  mapper.readValue(serverInLine, ServerResponse.class);
     }
 }

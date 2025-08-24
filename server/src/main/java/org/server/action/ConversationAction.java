@@ -16,10 +16,35 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 public class ConversationAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationAction.class);
+
+    public void createConversation(ObjectMapper objectMapper, Message messageObj,
+                                   ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+        Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
+        if (conversation != null) {
+            Set<User> participants = conversation.getParticipants();
+            org.shared.entity.Message message = conversation.getMessages().get(0);
+            ConversationDao conversationDao = new ConversationDao();
+            Conversation newConversation = conversationDao.createConversation(participants, message);
+            if (newConversation != null) {
+                logger.info("Conversation created !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
+                serverResponse.setPayload(objectMapper.writeValueAsString(newConversation));
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+            else {
+                logger.info("Conversation could not be created !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+        }
+    }
 
     public void conversationSearchIfExists(ObjectMapper objectMapper, Message messageObj,
                            ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {

@@ -18,7 +18,7 @@ public class UserDao {
         this.sessionFactory = Neo4jConfig.getSessionFactory();
     }
 
-    public void createConstraints() {
+    /*public void createConstraints() {
         try {
             Session session = this.sessionFactory.openSession();
             session.query("CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.emailAddress IS UNIQUE", Collections.emptyMap());
@@ -29,7 +29,7 @@ public class UserDao {
                 this.sessionFactory.close();
             }
         }
-    }
+    }*/
 
     public User login(User user) {
         try {
@@ -54,7 +54,7 @@ public class UserDao {
 
     public boolean saveUser(User user) {
         try {
-            this.createConstraints();
+            //this.createConstraints();
             Session session = this.sessionFactory.openSession();
             session.save(user);
             this.sessionFactory.close();
@@ -66,6 +66,21 @@ public class UserDao {
                 this.sessionFactory.close();
             }
             return false;
+        }
+    }
+
+    public User findUserByEmailAddress(String emailAddress) {
+        try {
+            Session session = sessionFactory.openSession();
+            return session.queryForObject(User.class, "MATCH (u:User {emailAddress: $emailAddress}) RETURN u",
+                    Map.of("emailAddress", emailAddress));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                this.sessionFactory.close();
+            }
+            return null;
         }
     }
 
