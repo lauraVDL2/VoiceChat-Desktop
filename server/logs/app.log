@@ -3256,3 +3256,232 @@ One of the relationship types in your query is not available in the database, ma
 2025-08-24 18:11:30 [pool-1-thread-18] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@29f09fdd 
 2025-08-24 18:11:30 [pool-1-thread-18] INFO  o.server.action.ConversationAction - Conversations found !
 2025-08-24 18:11:30 [pool-1-thread-18] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"a76688e8-ca5b-46dd-b3c8-61cb78dcdef1\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:31:26 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-24 18:31:47 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"36997601-7571-49f0-826b-1a850d3975f2\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:31:47 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:31:47 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:31:47 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:31:47 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6c346219 
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"5cdb9fa3-ebca-40e0-b031-9a27b0c5e3d4\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:31:48 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (u:User {emailAddress: $emailAddress}) MATCH (conv:Conversation)-[:HAS]->(u) RETURN conv LIMIT 20 
+	                                                                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:48 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (u:User {emailAddress: $emailAddress}) MATCH (conv:Conversation)-[:HAS]->(u) RETURN conv LIMIT 20 
+	                                                                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@28324b9 
+2025-08-24 18:31:48 [pool-1-thread-1] INFO  o.server.action.ConversationAction - No conversation found !
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_SEARCH","payload":"{\"@json_id\":\"3d013c63-5445-48d7-8731-7ed7647ab2d8\",\"id\":null,\"userName\":null,\"displayName\":\"t\",\"password\":null,\"emailAddress\":null,\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:31:52 [pool-1-thread-1] INFO  org.server.action.UserAction - Users found !
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_SEARCH","payload":"[{\"@json_id\":\"9342491b-7755-4415-a195-03b7de3e1eef\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]},{\"@json_id\":\"08cb3f2f-4dd0-45b7-9e80-bd11e5fa46c5\",\"id\":null,\"userName\":null,\"displayName\":\"toto\",\"password\":null,\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}]"}
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:31:54 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                         ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:54 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                                                ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:54 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                         ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:54 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                                                ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:31:54 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4271b3b5 
+2025-08-24 18:31:55 [pool-1-thread-1] INFO  o.server.action.ConversationAction - No conversation found !
+2025-08-24 18:32:01 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_CREATE","payload":"{\"@json_id\":\"5d7a324e-93c2-49c5-91b5-23afa7802933\",\"id\":null,\"messages\":[{\"@json_id\":\"8749cdef-1ac2-4e63-a1a0-d47e538dfcdf\",\"id\":null,\"time\":[2025,8,24,18,32,1,961613918],\"content\":\"test\",\"readStatuses\":[{\"@json_id\":\"e7449751-af4e-4b3d-9375-31f3d2831bfb\",\"id\":null,\"message\":\"8749cdef-1ac2-4e63-a1a0-d47e538dfcdf\",\"user\":{\"@json_id\":\"f38d4bd4-7de9-4053-991b-9cf3f280291b\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[\"8749cdef-1ac2-4e63-a1a0-d47e538dfcdf\"],\"conversation\":[]},\"read\":true},{\"@json_id\":\"894aae2d-aec7-4f5b-b001-fd93463b3b47\",\"id\":null,\"message\":\"8749cdef-1ac2-4e63-a1a0-d47e538dfcdf\",\"user\":{\"@json_id\":\"baa4a74f-f8dc-41e7-a0c3-6c6c471041f9\",\"id\":null,\"userName\":null,\"displayName\":\"toto\",\"password\":null,\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]},\"read\":false}],\"sender\":\"f38d4bd4-7de9-4053-991b-9cf3f280291b\"}],\"participants\":[\"f38d4bd4-7de9-4053-991b-9cf3f280291b\",\"baa4a74f-f8dc-41e7-a0c3-6c6c471041f9\"]}"}
+2025-08-24 18:32:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:32:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:32:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:32:01 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:32:02 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversation could not be created !
+2025-08-24 18:34:12 [main] INFO  org.server.Server - Server started, waiting for clients...
+2025-08-24 18:34:30 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"040dccc1-9aa4-4f77-a616-4922eb426332\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:34:30 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:34:30 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:34:30 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:34:30 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@6c346219 
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"6dc31c5a-fc1d-4a3d-b89e-10d510e78401\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:34:31 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (u:User {emailAddress: $emailAddress}) MATCH (conv:Conversation)-[:HAS]->(u) RETURN conv LIMIT 20 
+	                                                                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:31 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (u:User {emailAddress: $emailAddress}) MATCH (conv:Conversation)-[:HAS]->(u) RETURN conv LIMIT 20 
+	                                                                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@28324b9 
+2025-08-24 18:34:31 [pool-1-thread-1] INFO  o.server.action.ConversationAction - No conversation found !
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_SEARCH","payload":"{\"@json_id\":\"0f2e8826-85d5-4bce-b03c-a48075de890e\",\"id\":null,\"userName\":null,\"displayName\":\"t\",\"password\":null,\"emailAddress\":null,\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:34:34 [pool-1-thread-1] INFO  org.server.action.UserAction - Users found !
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_SEARCH","payload":"[{\"@json_id\":\"5854cf68-8bb4-4665-ac35-d9beb5d69c18\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]},{\"@json_id\":\"05cacf30-3993-429c-93b9-b1b9dc76b2a4\",\"id\":null,\"userName\":null,\"displayName\":\"toto\",\"password\":null,\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}]"}
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:34:35 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                         ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:35 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                                                ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:35 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                         ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:35 [pool-1-thread-1] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
+	                                                ^
+	WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
+	WITH c, COUNT(DISTINCT u2) AS participantCount
+	WHERE participantCount = 2
+	RETURN c
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3e457b6a 
+2025-08-24 18:34:35 [pool-1-thread-1] INFO  o.server.action.ConversationAction - No conversation found !
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_CREATE","payload":"{\"@json_id\":\"5d256808-a6c6-400e-bab7-3b48ac488e7a\",\"id\":null,\"messages\":[{\"@json_id\":\"0dfb5947-ef99-4753-b332-43624390dbb3\",\"id\":null,\"time\":[2025,8,24,18,34,42,319695466],\"content\":\"test\",\"readStatuses\":[{\"@json_id\":\"c97139c2-89be-40a9-9df1-5f507d2b9b2b\",\"id\":null,\"message\":\"0dfb5947-ef99-4753-b332-43624390dbb3\",\"user\":{\"@json_id\":\"544ad22a-3ea2-45e1-a502-19075021015e\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[\"0dfb5947-ef99-4753-b332-43624390dbb3\"],\"conversation\":[]},\"read\":true},{\"@json_id\":\"90c1e9e6-f5a3-4d9e-a386-d562cf252d88\",\"id\":null,\"message\":\"0dfb5947-ef99-4753-b332-43624390dbb3\",\"user\":{\"@json_id\":\"ea9bd556-c75c-47b8-bda0-621b01de3dbc\",\"id\":null,\"userName\":null,\"displayName\":\"toto\",\"password\":null,\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]},\"read\":false}],\"sender\":\"544ad22a-3ea2-45e1-a502-19075021015e\"}],\"participants\":[\"ea9bd556-c75c-47b8-bda0-621b01de3dbc\",\"544ad22a-3ea2-45e1-a502-19075021015e\"]}"}
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:34:42 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversation created !
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"90a9289c-02b8-4bfe-a4f9-1899ffdb5cc2\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@371b8b35 
+2025-08-24 18:35:07 [pool-1-thread-1] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"948c8a4a-fda7-4d91-bfcf-ffa8f68911b9\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@418ada14 
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:35:08 [pool-1-thread-1] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"2c28fddc-ada4-4fb3-a310-26cb055ee93c\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"b17f2c34-2904-43b9-99f0-d85195d80019\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4b899931 
+2025-08-24 18:40:25 [pool-1-thread-2] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"593d93a7-33dc-4cd6-85cd-ea766d0fd906\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5a65f2d3 
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:40:26 [pool-1-thread-2] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"386e587b-346f-41dd-9c16-5954043e2a30\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"d7a72bd1-9616-4cda-b661-0887a5173370\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@46811cd7 
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"ba701596-5bf6-4805-92de-12cb4129a828\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@31b0b899 
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:43:28 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"cb8f8662-0d23-4756-9789-64316dc322d6\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"USER_SEARCH","payload":"{\"@json_id\":\"e464bfa0-3f25-49a2-a09c-69c046f6504f\",\"id\":null,\"userName\":null,\"displayName\":\"t\",\"password\":null,\"emailAddress\":null,\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:43:36 [pool-1-thread-3] INFO  org.server.action.UserAction - Users found !
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"c624535b-755e-4d83-884e-0f371ceba67c\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@631539a8 
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"22701e81-2e21-4f32-934d-9b7f9fe3cf60\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:44:34 [pool-1-thread-3] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2a36c126 
+2025-08-24 18:44:35 [pool-1-thread-3] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:44:35 [pool-1-thread-3] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"0b381ec4-9972-4530-949a-e745c505f143\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"USER_LOG_IN","payload":"{\"@json_id\":\"f23794ac-8469-42d1-b851-dbc6488de88a\",\"id\":null,\"userName\":null,\"displayName\":null,\"password\":\"toto\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":null,\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:48:06 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@527fc335 
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.server.action.UserAction - User connected !
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"CONVERSATION_DISPLAY","payload":"{\"@json_id\":\"08ae6b87-ce80-4e87-ae57-48e73456bc3c\",\"id\":3,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$QET0aBXPOZ.Qpfzbcyj22OtxUpPZRpQICEyTE4aVwUGzyK8rGVTjq\",\"emailAddress\":\"toto.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@13d50a4c 
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  o.server.action.ConversationAction - Conversations found !
+2025-08-24 18:48:07 [pool-1-thread-4] INFO  org.server.Server - {"messageType":"READ_TARGET_AVATAR","payload":"{\"@json_id\":\"b619cc1f-eab5-484c-83fd-ad006f83b4c5\",\"id\":0,\"userName\":null,\"displayName\":\"toto\",\"password\":\"$2a$10$U9qpjYgWdBnqsGjux934kuky3CVGEC.VBsxWybAezoy.nBOcbc7Im\",\"emailAddress\":\"toto1.toto@yahoo.fr\",\"avatar\":\"/images/avatar/avatar_default.png\",\"messages\":[],\"conversation\":[]}"}

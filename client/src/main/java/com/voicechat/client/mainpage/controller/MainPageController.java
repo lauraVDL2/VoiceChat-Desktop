@@ -97,7 +97,7 @@ public class MainPageController {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
                             System.out.println("Conversation displayed !" + serverResponse.getPayload());
-                                setConversationList(serverResponse);
+                            setConversationList(serverResponse);
                         }
                     }
                     else {
@@ -161,6 +161,7 @@ public class MainPageController {
                 ReadStatus readStatus = new ReadStatus(false, message, targetUser);
                 ReadStatus currentUserReadStatus = new ReadStatus(true, message, currentUser);
                 message.setReadStatuses(List.of(currentUserReadStatus, readStatus));
+                message.setSender(currentUser);
 
                 List<Message> currentUserMessages = currentUser.getMessages();
                 currentUserMessages.add(message);
@@ -250,8 +251,15 @@ public class MainPageController {
                 hBox.getChildren().add(vbox2);
                 hBox.getChildren().add(vBox);
                 leftPane.getChildren().add(hBox);
+                goToConversation(hBox);
             }
         });
+    }
+
+    public void goToConversation(HBox hBox) {
+        hBox.setOnMouseClicked((event -> {
+            System.out.println("Go to conversation !");
+        }));
     }
 
     public void setConversationComponents(ServerResponse serverResponse) throws JsonProcessingException {

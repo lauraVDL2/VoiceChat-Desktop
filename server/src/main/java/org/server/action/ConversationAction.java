@@ -54,7 +54,7 @@ public class ConversationAction {
             Set<User> participants = conversation.getParticipants();
             org.shared.entity.Message message = conversation.getMessages().get(0);
             ConversationDao conversationDao = new ConversationDao();
-            Conversation newConversation = conversationDao.createConversation(participants, message);
+            Conversation newConversation = conversationDao.createConversation(participants, message, message.getSender());
             if (newConversation != null) {
                 logger.info("Conversation created !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);

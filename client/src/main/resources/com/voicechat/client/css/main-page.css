@@ -46,6 +46,10 @@
     -fx-cursor: hand;
 }
 
+.discussionBox:hover {
+    -fx-background-color: rgba(182, 209, 255, 0.4);
+}
+
 .searchLabel:hover {
     -fx-background-color: "#b6d1ff";
 }

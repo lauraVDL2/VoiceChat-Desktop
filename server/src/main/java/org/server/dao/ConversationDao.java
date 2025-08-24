@@ -29,7 +29,7 @@ public class ConversationDao {
         try {
             Session session = this.sessionFactory.openSession();
             Conversation conversation = session.queryForObject(Conversation.class, """
-                    MATCH (c:Conversation)-[:PARTICIPATES_IN]->(u1:User), (c)-[:PARTICIPATES_IN]->(u2:User)
+                    MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
                     WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
                     WITH c, COUNT(DISTINCT u2) AS participantCount
                     WHERE participantCount = 2
@@ -50,14 +50,14 @@ public class ConversationDao {
         try {
             Session session = this.sessionFactory.openSession();
             String cypher = "MATCH (u:User {emailAddress: $emailAddress}) " +
-                    "MATCH (conv:Conversation)-[:PARTICIPATES_IN]->(u) " +
+                    "MATCH (conv:Conversation)-[:HAS]->(u) " +
                     "RETURN conv LIMIT 20 ";
             Result records = session.query(cypher,
                     Map.of("emailAddress", user.getEmailAddress()));
             List<Conversation> conversations = new ArrayList<>();
             for (var record : records) {
                 Conversation conversation = (Conversation) record.get("conv");
-                String cypher2 = "MATCH (c:Conversation)-[:PARTICIPATES_IN]->(u:User) WHERE id(c) = $conversationId\n" +
+                String cypher2 = "MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $conversationId\n" +
                         "RETURN u";
                 Result recordsUser = session.query(cypher2, Map.of("conversationId", conversation.getId()));
                 List<User> participants = new ArrayList<>();
@@ -93,16 +93,21 @@ public class ConversationDao {
         return new ArrayList<>();
     }
 
-    public Conversation createConversation(Set<User> users, Message message) {
+    public Conversation createConversation(Set<User> users, Message message, User sender) {
         try {
             Session session = this.sessionFactory.openSession();
             // Start a transaction
             try (Transaction tx = session.beginTransaction()) {
                 // Create message node
                 String createMessageCypher =
-                        "CREATE (m:Message {content: $content, time: $time}) RETURN m";
+                        "CREATE (m:Message {content: $content, time: $time}) " +
+                                "WITH m " +
+                                "MATCH (u:User {emailAddress: $emailAddress}) " +
+                                "MERGE (m)<-[:SENT_BY]-(u) " +
+                                " RETURN m";
                 Message createdMessage = session.queryForObject(Message.class, createMessageCypher,
-                        Map.of("content", message.getContent(), "time", message.getTime()));
+                        Map.of("content", message.getContent(), "time", message.getTime(), "emailAddress",
+                                sender.getEmailAddress()));
 
                 List<String> userEmailAddresses = users.stream().map(User::getEmailAddress).toList();
 
@@ -111,7 +116,7 @@ public class ConversationDao {
                                 "WITH conv\n" +
                                 "UNWIND $usersEmailAddresses AS email\n" +
                                 "MATCH (u:User {emailAddress: email})\n" +
-                                "MERGE (conv)-[:PARTICIPATES_IN]->(u)\n" +
+                                "MERGE (conv)-[:HAS]->(u)\n" +
                                 "WITH conv\n" +
                                 "MATCH (m:Message)\n" +
                                 "WHERE id(m) = $messageId\n" +
