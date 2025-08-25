@@ -1,19 +1,15 @@
 package com.voicechat.client.login.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.utils.JsonMapper;
+import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
 import org.shared.entity.User;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;

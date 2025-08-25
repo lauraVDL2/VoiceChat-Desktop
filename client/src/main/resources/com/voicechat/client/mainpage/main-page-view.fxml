@@ -13,7 +13,7 @@
     <columnConstraints>
         <ColumnConstraints prefWidth="100"/>
         <ColumnConstraints hgrow="ALWAYS"/>
-        <ColumnConstraints prefWidth="200"/>
+        <ColumnConstraints prefWidth="250"/>
         <!--<ColumnConstraints hgrow="ALWAYS"/>-->
     </columnConstraints>
     <rowConstraints>

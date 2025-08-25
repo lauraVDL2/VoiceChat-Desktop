@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
+import org.server.Server;
 import org.server.dao.UserDao;
-import org.shared.Message;
-import org.shared.ServerResponse;
-import org.shared.ServerResponseMessage;
-import org.shared.ServerResponseStatus;
+import org.shared.*;
 import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +91,16 @@ public class UserAction {
         }
     }
 
+    public void getOnlineUsers(ObjectMapper objectMapper,
+                               ServerResponse serverResponse, PrintWriter out) throws IOException {
+        serverResponse.setServerResponseMessage(ServerResponseMessage.ONLINE_USERS_FETCHED);
+        serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+        ServerInformation serverInformation = new ServerInformation();
+        serverInformation.setOnlineUsers(Server.onlineUsers);
+        serverResponse.setServerInformation(serverInformation);
+        out.println(objectMapper.writeValueAsString(serverResponse));
+    }
+
     public void searchTargetUser(ObjectMapper objectMapper, Message messageObj,
                                  DataOutputStream dataOutputStream) throws IOException {
         User targetUser = objectMapper.readValue(messageObj.getPayload(), User.class);
@@ -111,7 +119,7 @@ public class UserAction {
             if (is == null) {
                 logger.error("Resource not found: " + resourcePath);
             }
-            return is.readAllBytes(); // Java 9+; for earlier versions, use a buffer loop
+            return is.readAllBytes();
         }
     }
 }

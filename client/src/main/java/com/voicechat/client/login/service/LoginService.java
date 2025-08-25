@@ -2,7 +2,7 @@ package com.voicechat.client.login.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.utils.JsonMapper;
+import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;

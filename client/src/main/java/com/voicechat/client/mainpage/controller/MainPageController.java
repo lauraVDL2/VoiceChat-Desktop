@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
+import com.voicechat.client.mainpage.scheduler.MainPageScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
@@ -36,7 +37,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +63,8 @@ public class MainPageController {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    private final MainPageScheduler mainPageScheduler = new MainPageScheduler();
+
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
@@ -77,14 +79,17 @@ public class MainPageController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            double totalWidth = splitPane.getWidth();
-            if (totalWidth > 0) {
-                double dividerPos = 350 / totalWidth;
-                splitPane.setDividerPositions(dividerPos);
-            }
-            leftPane.setMinWidth(200);
+            Platform.runLater(() -> {
+                double totalWidth = splitPane.getWidth();
+                if (totalWidth > 0) {
+                    double dividerPos = 350 / totalWidth;
+                    splitPane.setDividerPositions(dividerPos);
+                }
+                leftPane.setMinWidth(200);
+            });
             gridPaneFocus();
             getUserConversations();
+            mainPageScheduler.schedule(gridMainPane);
         });
     }
 
@@ -119,7 +124,7 @@ public class MainPageController {
         for (var child : children) {
             child.setOnMouseClicked(mouseEvent -> {
                 child.requestFocus();
-                headerController.getSearchField().clear();
+                headerController.clearSearchField();
             });
         }
     }
@@ -146,6 +151,28 @@ public class MainPageController {
         }
         return vBox;
     }
+
+    public ImageView readTargetAvatar() {
+        ImageView avatar = new ImageView();
+        try {
+            DataInputStream dataInputStream = Listener.getDataInputStream();
+            int size = dataInputStream.readInt();
+            if (size > 0) {
+                byte[] imageBytes = new byte[size];
+                dataInputStream.readFully(imageBytes);
+                javafx.scene.image.Image image = new Image(new ByteArrayInputStream(imageBytes));
+                avatar.setFitHeight(40);
+                avatar.setFitWidth(40);
+                Platform.runLater(() -> {
+                            avatar.setImage(image);
+                        }
+                );
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return avatar;
+    }
     
     public void sendMessage() {
         Platform.runLater(() -> {
@@ -157,7 +184,7 @@ public class MainPageController {
                 User targetUser = new User();
                 targetUser.setDisplayName(((Label) mainPane.lookup("#displayNameLabelConv")).getText());
                 Label emailAddressField = (Label) mainPane.lookup("#emailAddressLabelConv");
-                String targetUserEmailAddress = emailAddressField.getText().replace("(", "").replace(")", "");
+                String targetUserEmailAddress = emailAddressField.getText();
                 targetUser.setEmailAddress(targetUserEmailAddress);
                 conversation.setParticipants(Set.of(currentUser, targetUser));
                 Message message = new Message();
@@ -232,7 +259,11 @@ public class MainPageController {
                         if (i == 0) {
                             try {
                                 mainPageService.sendAvatarInfo(participant);
-                                vbox2 = readTargetAvatar(vbox2);
+                                vbox2 = new VBox();
+                                StackPane stackAvatar = new StackPane();
+                                ImageView imageView = readTargetAvatar();
+                                stackAvatar.getChildren().add(imageView);
+                                vbox2.getChildren().add(stackAvatar);
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }
@@ -333,18 +364,27 @@ public class MainPageController {
             HBox targetUserInfo = new HBox();
             targetUserInfo.getStyleClass().add("topConversationLabels");
 
-            Label introLabel = new Label();
-            introLabel.setText("Your conversation with : #");
-            targetUserInfo.getChildren().add(introLabel);
-
+            int i = 0;
             for (User participant : conversation.getParticipants()) {
                 if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
+                    if (i == 0) {
+                        try {
+                            mainPageService.sendAvatarInfo(participant);
+                            ImageView avatarView = readTargetAvatar();
+                            targetUserInfo.getChildren().add(avatarView);
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    i++;
                     Label displayNameLabel = new Label();
                     displayNameLabel.setText(participant.getDisplayName());
                     targetUserInfo.getChildren().add(displayNameLabel);
                     Label emailAddressLabel = new Label();
-                    emailAddressLabel.setText("(" + participant.getEmailAddress() + ")");
+                    emailAddressLabel.setText(participant.getEmailAddress());
                     emailAddressLabel.setId("e" + participant.getId());
+                    emailAddressLabel.setManaged(false);
+                    emailAddressLabel.setVisible(false);
                     targetUserInfo.setAlignment(Pos.CENTER);
                     targetUserInfo.getChildren().add(emailAddressLabel);
                 }
@@ -439,8 +479,13 @@ public class MainPageController {
 
             // RIGHT
             rightSearchPane.getChildren().clear();
+            Region region = new Region();
+            region.setMinHeight(20);
             TextField searchMessages = new TextField();
-            rightSearchPane.getChildren().add(searchMessages);
+            searchMessages.setPromptText("Search for messages...");
+            searchMessages.getStyleClass().add("searchMessages");
+            rightSearchPane.setAlignment(Pos.TOP_CENTER);
+            rightSearchPane.getChildren().addAll(region, searchMessages);
         });
     }
 

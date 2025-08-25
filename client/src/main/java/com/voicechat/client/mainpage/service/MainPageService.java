@@ -3,16 +3,25 @@ package com.voicechat.client.mainpage.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import org.shared.JsonMapper;
-import org.shared.Message;
-import org.shared.MessageType;
-import org.shared.ServerResponse;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import org.apache.commons.lang3.StringUtils;
+import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainPageService {
 

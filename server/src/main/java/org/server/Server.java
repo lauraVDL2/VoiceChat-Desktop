@@ -20,6 +20,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +28,7 @@ public class Server {
     public final static int SERVER_PORT = 8080;
     private final static ExecutorService executor = Executors.newCachedThreadPool();
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
+    public static ConcurrentHashMap<String, String> onlineUsers = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
@@ -46,7 +48,7 @@ public class Server {
                 String message;
                 while ((message = in.readLine()) != null) {
                     logger.info(message);
-                    ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+                    ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -66,10 +68,15 @@ public class Server {
                             if (userLogged != null) {
                                 readMyAvatar(dataOutputStream, userAction, userLogged);
                             }
+                            onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> "ONLINE");
                             break;
                         case USER_SEARCH:
                             userAction = new UserAction();
                             userAction.userSearch(objectMapper, messageObj, serverResponse, out);
+                            break;
+                        case ONLINE_USERS_FETCH:
+                            userAction = new UserAction();
+                            userAction.getOnlineUsers(objectMapper, serverResponse, out);
                             break;
                         case CONVERSATION_SEARCH:
                             conversationAction = new ConversationAction();

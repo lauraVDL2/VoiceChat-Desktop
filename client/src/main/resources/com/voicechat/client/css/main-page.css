@@ -141,6 +141,13 @@
     -fx-margin: 10 10 10 10;
 }
 
+.searchMessages {
+    -fx-background-color: "#b6d1ff";
+    -fx-min-width: 220px;
+    -fx-max-width: 220px;
+    -fx-pref-width: 220px;
+}
+
 .conversationMessageLabel {
     -fx-font-size: 16px;
 }

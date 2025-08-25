@@ -7,7 +7,6 @@ import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.HeaderService;
-import com.voicechat.client.utils.JsonMapper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -20,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.apache.commons.lang3.StringUtils;
+import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -221,16 +221,15 @@ public class HeaderController {
             HBox targetUserInfo = new HBox();
             targetUserInfo.getStyleClass().add("topConversationLabels");
 
-            Label introLabel = new Label();
-            introLabel.setText("Your conversation with : #");
             Label displayNameLabel = new Label();
             displayNameLabel.setId("displayNameLabelConv");
-            targetUserInfo.getChildren().add(introLabel);
             displayNameLabel.setText(targetUser.getDisplayName());
             targetUserInfo.getChildren().add(displayNameLabel);
             Label emailAddressLabel = new Label();
-            emailAddressLabel.setText("(" + targetUser.getEmailAddress() + ")");
+            emailAddressLabel.setText(targetUser.getEmailAddress());
             emailAddressLabel.setId("emailAddressLabelConv");
+            emailAddressLabel.setVisible(false);
+            emailAddressLabel.setManaged(false);
             targetUserInfo.setAlignment(Pos.CENTER);
             targetUserInfo.getChildren().add(emailAddressLabel);
             HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
@@ -261,6 +260,10 @@ public class HeaderController {
 
             this.parentController.sendMessage();
         });
+    }
+
+    public void clearSearchField() {
+        searchPane.getChildren().clear();
     }
 
     public TextField getSearchField() {
