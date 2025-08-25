@@ -87,6 +87,10 @@ public class Server {
                             userAction = new UserAction();
                             userAction.searchTargetUser(objectMapper, messageObj, dataOutputStream);
                             break;
+                        case CONVERSATION_GET:
+                            conversationAction = new ConversationAction();
+                            conversationAction.getConversation(objectMapper, messageObj, serverResponse, out);
+                            break;
                     }
                 }
             } catch (IOException e) {

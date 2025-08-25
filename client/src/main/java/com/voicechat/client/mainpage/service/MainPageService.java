@@ -37,7 +37,6 @@ public class MainPageService {
         serverOut.println(objectMapper.writeValueAsString(message));
 
         String serverInline = Listener.getServerIn().readLine();
-        System.out.println(serverInline);
         return objectMapper.readValue(serverInline, ServerResponse.class);
     }
 
@@ -48,5 +47,17 @@ public class MainPageService {
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
+    }
+
+    public ServerResponse getConversation(Conversation conversation) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(conversation);
+        Message message = new Message(MessageType.CONVERSATION_GET, json);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
+
+        String serverInLine = Listener.getServerIn().readLine();
+        return objectMapper.readValue(serverInLine, ServerResponse.class);
     }
 }

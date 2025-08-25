@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
-import org.neo4j.bolt.connection.GqlStatusError;
 import org.server.dao.ConversationDao;
 import org.shared.Message;
 import org.shared.ServerResponse;
@@ -23,13 +22,35 @@ public class ConversationAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationAction.class);
 
+    public void getConversation(ObjectMapper objectMapper, Message messageObj,
+    ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+        Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
+        if (conversation != null) {
+            ConversationDao conversationDao = new ConversationDao();
+            Conversation fullConversation = conversationDao.getConversation(conversation);
+            if (fullConversation != null) {
+                logger.info("Conversation found !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
+                serverResponse.setPayload(objectMapper.writeValueAsString(fullConversation));
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+            else {
+                logger.error("Conversation not found !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
+                serverResponse.setMessage("Conversation not found !");
+                out.println(objectMapper.writeValueAsString(serverResponse));
+            }
+        }
+    }
+
     public void searchUserConversations(ObjectMapper objectMapper, Message messageObj,
                                         ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         if (user != null) {
             ConversationDao conversationDao = new ConversationDao();
             List<Conversation> conversations = conversationDao.searchUserConversations(user);
-            System.out.println("SIZE = " +conversations.size());
             if (!CollectionUtils.isEmpty(conversations)) {
                 logger.info("Conversations found !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);

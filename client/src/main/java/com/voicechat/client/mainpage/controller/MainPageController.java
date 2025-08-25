@@ -8,10 +8,12 @@ import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.MainPageService;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -33,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -165,7 +168,7 @@ public class MainPageController {
 
                 List<Message> currentUserMessages = currentUser.getMessages();
                 currentUserMessages.add(message);
-                System.out.println(message);
+
                 currentUser.setMessages(currentUserMessages);
 
                 conversation.setMessages(List.of(message));
@@ -212,11 +215,13 @@ public class MainPageController {
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {
                 HBox hBox = new HBox();
+                hBox.setId("c" + conversation.getId());
                 VBox vBox = new VBox();
                 VBox vbox2 = new VBox();
                 VBox displayNames = new VBox();
                 Label conversationName = new Label();
                 List<String> displayNamesList = new ArrayList<>();
+                List<String> emailAddressList = new ArrayList<>();
                 int i = 0;
                 for (User participant : conversation.getParticipants()) {
                     if (!StringUtils.equals(participant.getEmailAddress(), currentUser.getEmailAddress())) {
@@ -228,10 +233,12 @@ public class MainPageController {
                                 e.printStackTrace();
                             }
                         }
+                        emailAddressList.add(participant.getEmailAddress());
                         displayNamesList.add(participant.getDisplayName());
                         i++;
                     }
                 }
+                displayNames.setId(String.join(",", emailAddressList));
                 conversationName.setText(String.join(",", displayNamesList));
                 displayNames.getChildren().add(conversationName);
                 vBox.getChildren().add(displayNames);
@@ -257,9 +264,116 @@ public class MainPageController {
     }
 
     public void goToConversation(HBox hBox) {
-        hBox.setOnMouseClicked((event -> {
+        hBox.setOnMouseClicked(event -> {
             System.out.println("Go to conversation !");
-        }));
+            // Cast the event source to HBox
+            Node source = (Node) event.getSource();
+            if (source instanceof HBox) {
+                HBox clickedHBox = (HBox) source;
+                Conversation conversation = new Conversation();
+                conversation.setId(Long.parseLong(clickedHBox.getId().replace("c", "")));
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return mainPageService.getConversation(conversation);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executor).thenAcceptAsync((serverResponse) -> {
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_GET) {
+                                System.out.println("conversation found !");
+                                try {
+                                    setMessagesComponents(serverResponse);
+                                } catch (JsonProcessingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR");
+                        }
+                    }
+                }, executor);
+            }
+        });
+    }
+
+    public void setMessagesComponents(ServerResponse response) throws JsonProcessingException {
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
+        Conversation conversation = mapper.readValue(response.getPayload(), Conversation.class);
+        Platform.runLater(() -> {
+            User currentUser = UserSession.INSTANCE.getUser();
+            HBox hBox = new HBox();
+            hBox.getStyleClass().add("topConversationBox");
+            hBox.setPrefHeight(40.);
+            hBox.setMaxHeight(40.);
+            hBox.setMinHeight(40.);
+            hBox.setAlignment(Pos.CENTER);
+            HBox targetUserInfo = new HBox();
+            targetUserInfo.getStyleClass().add("topConversationLabels");
+
+            Label introLabel = new Label();
+            introLabel.setText("Your conversation with : #");
+            targetUserInfo.getChildren().add(introLabel);
+
+            for (User participant : conversation.getParticipants()) {
+                if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
+                    Label displayNameLabel = new Label();
+                    displayNameLabel.setText(participant.getDisplayName());
+                    targetUserInfo.getChildren().add(displayNameLabel);
+                    Label emailAddressLabel = new Label();
+                    emailAddressLabel.setText("(" + participant.getEmailAddress() + ")");
+                    emailAddressLabel.setId("e" + participant.getId());
+                    targetUserInfo.setAlignment(Pos.CENTER);
+                    targetUserInfo.getChildren().add(emailAddressLabel);
+                }
+            }
+
+            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
+            hBox.getChildren().add(targetUserInfo);
+
+            HBox optionsBox = new HBox();
+            HBox.setHgrow(optionsBox, Priority.ALWAYS);
+            optionsBox.setAlignment(Pos.CENTER_RIGHT);
+            TextField searchMessage = new TextField();
+            optionsBox.getChildren().add(searchMessage);
+            hBox.getChildren().add(optionsBox);
+            mainPane.setTop(hBox);
+
+            //MIDDLE (messages)
+            for (Message message : conversation.getMessages()) {
+                HBox hBoxMessage = new HBox();
+                VBox vBoxSender = new VBox();
+                Label labelSender = new Label();
+                LocalDateTime date = message.getTime();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = date.format(formatter);
+                labelSender.setText("by " + message.getSender().getDisplayName() + " at " + formattedDate);
+                vBoxSender.getChildren().add(labelSender);
+                Label conversationMessage = new Label();
+                conversationMessage.setText(message.getContent());
+                vBoxSender.getChildren().add(conversationMessage);
+                hBoxMessage.getChildren().add(vBoxSender);
+                mainPane.setCenter(hBoxMessage);
+            }
+
+            //Bottom
+            HBox hBox1 = new HBox();
+            hBox1.setId("sendBox");
+            TextField messageField = new TextField();
+            messageField.setId("sendMessage");
+            ImageView imageView = new ImageView();
+            imageView.setFitHeight(40);
+            imageView.setFitHeight(40);
+            Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
+            imageView.setId("sendButton");
+            imageView.setImage(image);
+            hBox1.getChildren().add(messageField);
+            hBox1.getChildren().add(imageView);
+            mainPane.setBottom(hBox1);
+        });
     }
 
     public void setConversationComponents(ServerResponse serverResponse) throws JsonProcessingException {
