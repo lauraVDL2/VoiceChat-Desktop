@@ -7,6 +7,7 @@ import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.service.MainPageService;
+import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -53,6 +54,8 @@ public class MainPageController {
     private GridPane gridMainPane;
     @FXML
     private BorderPane mainPane;
+    @FXML
+    private VBox rightSearchPane;
 
     private HeaderController headerController;
 
@@ -214,8 +217,9 @@ public class MainPageController {
             User currentUser = UserSession.INSTANCE.getUser();
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {
+                VBox mainVbox = new VBox();
                 HBox hBox = new HBox();
-                hBox.setId("c" + conversation.getId());
+                mainVbox.setId("c" + conversation.getId());
                 VBox vBox = new VBox();
                 VBox vbox2 = new VBox();
                 VBox displayNames = new VBox();
@@ -238,40 +242,55 @@ public class MainPageController {
                         i++;
                     }
                 }
+                Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
                 displayNames.setId(String.join(",", emailAddressList));
                 conversationName.setText(String.join(",", displayNamesList));
+                conversationName.getStyleClass().add("conversationNameLabel");
                 displayNames.getChildren().add(conversationName);
-                vBox.getChildren().add(displayNames);
+                vBox.getChildren().addAll(displayNames);
 
-                Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
                 VBox content = new VBox();
                 Label contentLabel = new Label();
                 contentLabel.setText(lastMessage.getContent());
+                contentLabel.getStyleClass().add("conversationLastMessageLabel");
                 content.getChildren().add(contentLabel);
                 vBox.getChildren().add(content);
 
                 vbox2.setAlignment(Pos.CENTER);
                 vBox.setAlignment(Pos.CENTER);
 
-                hBox.getStyleClass().add("discussionBox");
+                mainVbox.getStyleClass().add("discussionBox");
 
                 hBox.getChildren().add(vbox2);
                 hBox.getChildren().add(vBox);
-                leftPane.getChildren().add(hBox);
-                goToConversation(hBox);
+
+                HBox hBoxTime = new HBox();
+                VBox vboxTime = new VBox();
+                Label timeLabel = new Label();
+                timeLabel.setText(DateHandler.transformDate(lastMessage.getTime()));
+                timeLabel.getStyleClass().add("dateDiscussionLabel");
+                hBoxTime.setAlignment(Pos.CENTER);
+                hBoxTime.getStyleClass().add("dateDiscussion");
+                vboxTime.getChildren().add(timeLabel);
+                hBoxTime.getChildren().add(vboxTime);
+
+                mainVbox.getChildren().addAll(hBoxTime, hBox);
+
+                leftPane.getChildren().add(mainVbox);
+                goToConversation(mainVbox);
             }
         });
     }
 
-    public void goToConversation(HBox hBox) {
-        hBox.setOnMouseClicked(event -> {
-            System.out.println("Go to conversation !");
+    public void goToConversation(VBox mainVbox) {
+        mainVbox.setOnMouseClicked(event -> {
             // Cast the event source to HBox
             Node source = (Node) event.getSource();
-            if (source instanceof HBox) {
-                HBox clickedHBox = (HBox) source;
+            if (source instanceof VBox) {
+                VBox clickedVBox = (VBox) source;
+                source.getStyleClass().add("conversationClicked");
                 Conversation conversation = new Conversation();
-                conversation.setId(Long.parseLong(clickedHBox.getId().replace("c", "")));
+                conversation.setId(Long.parseLong(clickedVBox.getId().replace("c", "")));
                 CompletableFuture.supplyAsync(() -> {
                     try {
                         return mainPageService.getConversation(conversation);
@@ -337,42 +356,91 @@ public class MainPageController {
             HBox optionsBox = new HBox();
             HBox.setHgrow(optionsBox, Priority.ALWAYS);
             optionsBox.setAlignment(Pos.CENTER_RIGHT);
-            TextField searchMessage = new TextField();
-            optionsBox.getChildren().add(searchMessage);
             hBox.getChildren().add(optionsBox);
             mainPane.setTop(hBox);
 
             //MIDDLE (messages)
+            VBox messageContentBox = new VBox();
+            messageContentBox.setPadding(new Insets(10, 10, 10, 10));
             for (Message message : conversation.getMessages()) {
                 HBox hBoxMessage = new HBox();
+                hBoxMessage.getStyleClass().add("boxMessage");
+                HBox hBoxAvatar = new HBox();
+                VBox avatarBox = new VBox();
+                try {
+                    mainPageService.sendAvatarInfo(message.getSender());
+                    avatarBox = readTargetAvatar(avatarBox);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+                avatarBox.setAlignment(Pos.CENTER);
+                hBoxAvatar.getChildren().add(avatarBox);
                 VBox vBoxSender = new VBox();
+                vBoxSender.setAlignment(Pos.CENTER_LEFT);
+                HBox hBoxSender = new HBox();
                 Label labelSender = new Label();
                 LocalDateTime date = message.getTime();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String formattedDate = date.format(formatter);
-                labelSender.setText("by " + message.getSender().getDisplayName() + " at " + formattedDate);
-                vBoxSender.getChildren().add(labelSender);
+                if (StringUtils.equals(message.getSender().getEmailAddress(), currentUser.getEmailAddress())) {
+                    labelSender.setText("You");
+                    vBoxSender.getStyleClass().add("myMessageBox");
+                }
+                else {
+                    labelSender.setText(message.getSender().getDisplayName());
+                    vBoxSender.getStyleClass().add("senderMessageBox");
+                }
+                labelSender.getStyleClass().add("labelSender");
+                hBoxSender.getChildren().add(labelSender);
+                Label space = new Label();
+                space.setText(" ");
+                hBoxSender.getChildren().add(space);
+                Label labelTime = new Label();
+                labelTime.setText(DateHandler.transformDate(date));
+                labelTime.getStyleClass().add("labelText");
+                hBoxSender.getChildren().add(labelTime);
+
+                vBoxSender.getChildren().add(hBoxSender);
                 Label conversationMessage = new Label();
+                conversationMessage.getStyleClass().add("conversationMessageLabel");
                 conversationMessage.setText(message.getContent());
                 vBoxSender.getChildren().add(conversationMessage);
-                hBoxMessage.getChildren().add(vBoxSender);
-                mainPane.setCenter(hBoxMessage);
+                if (StringUtils.equals(message.getSender().getEmailAddress(), currentUser.getEmailAddress())) {
+                    hBoxMessage.getChildren().addAll(hBoxAvatar, vBoxSender);
+                }
+                else {
+                    hBoxMessage.getChildren().addAll(vBoxSender, hBoxAvatar);
+                    hBoxMessage.setAlignment(Pos.BASELINE_RIGHT);
+                }
+                messageContentBox.getChildren().add(hBoxMessage);
             }
+            mainPane.setCenter(messageContentBox);
 
             //Bottom
             HBox hBox1 = new HBox();
             hBox1.setId("sendBox");
+            hBox1.setAlignment(Pos.CENTER);
+
             TextField messageField = new TextField();
             messageField.setId("sendMessage");
+            messageField.getStyleClass().add("sendMessageField");
+
             ImageView imageView = new ImageView();
             imageView.setFitHeight(40);
-            imageView.setFitHeight(40);
+            imageView.setFitWidth(40);
             Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
             imageView.setId("sendButton");
             imageView.setImage(image);
-            hBox1.getChildren().add(messageField);
-            hBox1.getChildren().add(imageView);
+
+            Region spacer = new Region();
+            spacer.setPrefWidth(10); // small space
+            hBox1.getChildren().addAll(messageField, spacer, imageView);
             mainPane.setBottom(hBox1);
+
+            mainPane.setPadding(new Insets(0, 0, 10, 0));
+
+            // RIGHT
+            rightSearchPane.getChildren().clear();
+            TextField searchMessages = new TextField();
+            rightSearchPane.getChildren().add(searchMessages);
         });
     }
 

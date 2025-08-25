@@ -1,17 +1,26 @@
 .leftPane {
-    -fx-background-color: "#006abc";
+    -fx-background-color: "#3581bc";
+}
+
+.mainPane {
+    -fx-background-color: "#f7f7f7";
 }
 
 .topPane {
     -fx-background-color: "#006abc";
     -fx-border-color: transparent transparent #b6d1ff transparent; /* top, right, bottom, left */
-    -fx-border-width: 0 0 3 0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.searchRightPane {
+    -fx-border-color: transparent transparent transparent #b6d1ff;
+    -fx-border-width: 0 0 0 1;
 }
 
 .infoLeftPane {
     -fx-background-color: "#006abc";
     -fx-border-color: transparent #b6d1ff transparent transparent; /* top, right, bottom, left */
-    -fx-border-width: 0 3 0 0;
+    -fx-border-width: 0 1 0 0;
 }
 
 .searchField {
@@ -42,12 +51,28 @@
 }
 
 .discussionBox {
-    -fx-background-color: rgba(182, 209, 255, 0.5);
     -fx-cursor: hand;
 }
 
-.discussionBox:hover {
-    -fx-background-color: rgba(182, 209, 255, 0.4);
+.conversationNameLabel {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.conversationLastMessageLabel {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+}
+
+.conversationClicked {
+    -fx-background-color: rgba(182, 209, 255, 0.5);
+}
+
+.conversationClicked Label {
+    -fx-text-fill: black;
+}
+
+.conversationClicked .dateDiscussionLabel {
+    -fx-text-fill: black;
 }
 
 .searchLabel:hover {
@@ -63,4 +88,59 @@
     -fx-font-size: 16px;
     -fx-font-family: "Helvetica";
     -fx-text-fill: black;
+}
+
+.labelSender, .labelText {
+    -fx-font-size: 16px;
+    -fx-font-family: "Helvetica";
+    -fx-text-fill: black;
+}
+
+.labelSender {
+    -fx-font-weight: bold;
+}
+
+.dateDiscussion {
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.6) transparent;
+    -fx-border-width: 2px;
+    -fx-border-style: dotted;
+}
+
+.dateDiscussionLabel {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+}
+
+.senderMessageBox {
+    -fx-background-color: #006abc;
+}
+
+.senderMessageBox Label {
+    -fx-text-fill: white;
+}
+
+.myMessageBox, .senderMessageBox {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 5 10 5 10;
+}
+
+.myMessageBox {
+    -fx-background-color: #d8d8d8;
+}
+
+.myMessageBox Label {
+    -fx-text-fill: black;
+}
+
+.sendMessageField {
+    -fx-background-color: "#b6d1ff";
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 600px;
+    -fx-min-width: 300px;
+    -fx-margin: 10 10 10 10;
+}
+
+.conversationMessageLabel {
+    -fx-font-size: 16px;
 }

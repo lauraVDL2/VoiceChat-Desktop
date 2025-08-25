@@ -13,6 +13,7 @@
     <columnConstraints>
         <ColumnConstraints prefWidth="100"/>
         <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints prefWidth="200"/>
         <!--<ColumnConstraints hgrow="ALWAYS"/>-->
     </columnConstraints>
     <rowConstraints>
@@ -34,8 +35,11 @@
         </VBox>
 
         <!-- Main Content -->
-        <BorderPane style="-fx-background-color: #d8d8d8;" fx:id="mainPane">
+        <BorderPane fx:id="mainPane" styleClass="mainPane">
 
         </BorderPane>
     </SplitPane>
+    <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="rightSearchPane" styleClass="searchRightPane">
+
+    </VBox>
 </GridPane>
