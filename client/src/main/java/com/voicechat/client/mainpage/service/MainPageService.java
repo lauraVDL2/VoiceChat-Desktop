@@ -69,4 +69,16 @@ public class MainPageService {
         String serverInLine = Listener.getServerIn().readLine();
         return objectMapper.readValue(serverInLine, ServerResponse.class);
     }
+
+    public ServerResponse sendMessage(Conversation conversation) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(conversation);
+        Message message = new Message(MessageType.MESSAGE_SEND, json);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
+
+        String serverInLine = Listener.getServerIn().readLine();
+        return objectMapper.readValue(serverInLine, ServerResponse.class);
+    }
 }

@@ -9,7 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.action.ConversationAction;
+import org.server.action.MessageAction;
 import org.server.action.UserAction;
+import org.server.dao.MessageDao;
 import org.server.dao.UserDao;
 import org.shared.entity.User;
 import org.shared.*;
@@ -54,6 +56,7 @@ public class Server {
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     UserAction userAction = null;
                     ConversationAction conversationAction = null;
+                    MessageAction messageAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -105,6 +108,10 @@ public class Server {
                         case CONVERSATION_GET:
                             conversationAction = new ConversationAction();
                             conversationAction.getConversation(objectMapper, messageObj, serverResponse, out);
+                            break;
+                        case MESSAGE_SEND:
+                            messageAction = new MessageAction();
+                            messageAction.sendMessage(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }

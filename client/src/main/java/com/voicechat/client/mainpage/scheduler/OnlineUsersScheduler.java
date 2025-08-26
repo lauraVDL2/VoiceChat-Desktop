@@ -44,8 +44,8 @@ public class OnlineUsersScheduler {
 
         if (StringUtils.isNotBlank(serverInLine)) {
             ServerResponse serverResponse = objectMapper.readValue(serverInLine, ServerResponse.class);
-            if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {
+            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                     modifyUsersOnlineUi(gridPane, serverResponse);
                 }
             }

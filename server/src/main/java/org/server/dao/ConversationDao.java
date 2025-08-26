@@ -67,7 +67,7 @@ public class ConversationDao {
                 }
                 String cypher3 = "MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $conversationId\n" +
                         "RETURN msg\n" +
-                        "ORDER BY msg.time DESC\n" +
+                        "ORDER BY msg.time ASC\n" +
                         "LIMIT 20";
                 Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId()));
                 List<Message> messages = new ArrayList<>();
@@ -99,6 +99,7 @@ public class ConversationDao {
             String cypher = """
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
+                    ORDER BY msg.time ASC
                     RETURN msg, u
                     """;
             Result records = session.query(cypher, Map.of("id", conversation.getId()));
@@ -109,6 +110,7 @@ public class ConversationDao {
                 message.setSender(sender);
                 messages.add(message);
             }
+
             conversation.setMessages(messages);
             String cypher2 = """
                     MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
