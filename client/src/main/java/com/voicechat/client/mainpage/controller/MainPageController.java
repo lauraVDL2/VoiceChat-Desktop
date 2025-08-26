@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
-import com.voicechat.client.mainpage.scheduler.MainPageScheduler;
+import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -63,7 +62,7 @@ public class MainPageController {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final MainPageScheduler mainPageScheduler = new MainPageScheduler();
+    private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
 
     @FXML
     public void initialize() {
@@ -89,7 +88,7 @@ public class MainPageController {
             });
             gridPaneFocus();
             getUserConversations();
-            mainPageScheduler.schedule(gridMainPane);
+            onlineUsersScheduler.schedule(gridMainPane);
         });
     }
 
@@ -261,6 +260,7 @@ public class MainPageController {
                                 mainPageService.sendAvatarInfo(participant);
                                 vbox2 = new VBox();
                                 StackPane stackAvatar = new StackPane();
+                                stackAvatar.getStyleClass().add("stackAvatarConversationList");
                                 ImageView imageView = readTargetAvatar();
                                 stackAvatar.getChildren().add(imageView);
                                 vbox2.getChildren().add(stackAvatar);
@@ -277,6 +277,7 @@ public class MainPageController {
                 displayNames.setId(String.join(",", emailAddressList));
                 conversationName.setText(String.join(",", displayNamesList));
                 conversationName.getStyleClass().add("conversationNameLabel");
+                displayNames.getStyleClass().add("displayNamesLabel");
                 displayNames.getChildren().add(conversationName);
                 vBox.getChildren().addAll(displayNames);
 

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserAction {
 
@@ -92,11 +93,12 @@ public class UserAction {
     }
 
     public void getOnlineUsers(ObjectMapper objectMapper,
-                               ServerResponse serverResponse, PrintWriter out) throws IOException {
+                               ServerResponse serverResponse, PrintWriter out,
+                               ConcurrentHashMap<String, UserSessionStatus> onlineUsers) throws IOException {
         serverResponse.setServerResponseMessage(ServerResponseMessage.ONLINE_USERS_FETCHED);
         serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
         ServerInformation serverInformation = new ServerInformation();
-        serverInformation.setOnlineUsers(Server.onlineUsers);
+        serverInformation.setOnlineUsers(onlineUsers);
         serverResponse.setServerInformation(serverInformation);
         out.println(objectMapper.writeValueAsString(serverResponse));
     }

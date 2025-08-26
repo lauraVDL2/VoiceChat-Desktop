@@ -28,7 +28,7 @@ public class Server {
     public final static int SERVER_PORT = 8080;
     private final static ExecutorService executor = Executors.newCachedThreadPool();
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
-    public static ConcurrentHashMap<String, String> onlineUsers = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, UserSessionStatus> onlineUsers = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
@@ -68,7 +68,12 @@ public class Server {
                             if (userLogged != null) {
                                 readMyAvatar(dataOutputStream, userAction, userLogged);
                             }
-                            onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> "ONLINE");
+                            onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> UserSessionStatus.ONLINE);
+                            break;
+                        case USER_EXIT:
+                            User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);
+                            String emailAddress = userExit.getEmailAddress();
+                            onlineUsers.remove(emailAddress);
                             break;
                         case USER_SEARCH:
                             userAction = new UserAction();
@@ -76,7 +81,10 @@ public class Server {
                             break;
                         case ONLINE_USERS_FETCH:
                             userAction = new UserAction();
-                            userAction.getOnlineUsers(objectMapper, serverResponse, out);
+                            userAction.getOnlineUsers(objectMapper, serverResponse, out, onlineUsers);
+                            for (var onlineUser : onlineUsers.entrySet()) {
+                                System.out.println(onlineUser.getKey());
+                            }
                             break;
                         case CONVERSATION_SEARCH:
                             conversationAction = new ConversationAction();

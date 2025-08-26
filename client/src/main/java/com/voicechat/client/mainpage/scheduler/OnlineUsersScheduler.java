@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -16,11 +15,12 @@ import org.shared.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MainPageScheduler {
+public class OnlineUsersScheduler {
 
     public void schedule(GridPane gridPane) {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -52,39 +52,53 @@ public class MainPageScheduler {
         }
     }
 
+    public void onlineCircle(StackPane stackPane, Color color) {
+        if (stackPane != null) {
+            Platform.runLater(() -> {
+                boolean exists = false;
+                for (var child : stackPane.getChildren()) {
+                    // We do not add the same circle twice. If exists, we only change the color
+                    if (child instanceof Circle) {
+                        ((Circle) child).setFill(color);
+                        exists = true;
+                    }
+                }
+                if (!exists) {
+                    Circle onlineIndicator = new Circle(5);
+                    onlineIndicator.setFill(color);
+                    StackPane.setAlignment(onlineIndicator, Pos.BOTTOM_LEFT);
+                    StackPane.setMargin(onlineIndicator, new Insets(0, 0, 5, 5));
+
+                    stackPane.getChildren().add(onlineIndicator);
+                }
+            });
+        }
+    }
+
+
     public void modifyUsersOnlineUi(GridPane gridPane, ServerResponse serverResponse) {
         Platform.runLater(() -> {
             VBox leftPane = (VBox) gridPane.lookup("#leftPane");
             if (leftPane != null) {
-                var children = leftPane.getChildren();
-                for (var child : children) {
-                    if (child instanceof VBox) {
-                        VBox mainvBox = (VBox) child;
-                        var vBoxChildren = mainvBox.getChildren();
-                        HBox hBox = (HBox) vBoxChildren.get(1);
-                        var hBoxChildren = hBox.getChildren();
-                        VBox vBox2 = (VBox) hBoxChildren.get(0);
-                        VBox vBox = (VBox) hBoxChildren.get(1);
-                        var vBoxChildren2 = vBox.getChildren();
-                        VBox displayNames = (VBox) vBoxChildren2.get(0);
-                        String emailAddresses = displayNames.getId();
-                        // We only display the online status in the conversations if it's not a group
-                        if (emailAddresses.split(",").length == 1) {
-                            var vBox2Children = vBox2.getChildren();
-                            StackPane stackPane = (StackPane) vBox2Children.get(0);
-                            var onlineUsers = serverResponse.getServerInformation().getOnlineUsers();
-                            for (var onlineUser : onlineUsers.entrySet()) {
-                                if (StringUtils.equals(onlineUser.getKey(), emailAddresses)) {
-                                    if (StringUtils.equals(onlineUser.getValue(), "ONLINE")) {
-                                        Circle onlineIndicator = new Circle(5);
-                                        onlineIndicator.setFill(Color.GREEN);
-                                        onlineIndicator.setStroke(Color.BLACK);
-                                        StackPane.setAlignment(onlineIndicator, Pos.BOTTOM_LEFT);
-                                        StackPane.setMargin(onlineIndicator, new Insets(0, 0, 5, 5));
-                                        stackPane.getChildren().add(onlineIndicator);
-                                    }
+                var nodes = new ArrayList<>(leftPane.lookupAll(".displayNamesLabel"));
+                for (int i = 0; i < nodes.size(); i++) {
+                    String emailAddresses = nodes.get(i).getId();
+                    System.out.println(emailAddresses);
+                    // We only display the online status in the conversations if it's not a group
+                    if (emailAddresses.split(",").length == 1) {
+                        StackPane stackPane = (StackPane) new ArrayList<>(
+                                leftPane.lookupAll(".stackAvatarConversationList")).get(i);
+                        var onlineUsers = serverResponse.getServerInformation().getOnlineUsers();
+                        onlineCircle(stackPane, Color.GREY);
+                        for (var onlineUser : onlineUsers.entrySet()) {
+                            if (StringUtils.equals(onlineUser.getKey(), emailAddresses)) {
+                                if (onlineUser.getValue() == UserSessionStatus.ONLINE) {
+                                    onlineCircle(stackPane, Color.GREEN);
                                 }
                             }
+                            /*else {
+
+                            }*/
                         }
                     }
                 }

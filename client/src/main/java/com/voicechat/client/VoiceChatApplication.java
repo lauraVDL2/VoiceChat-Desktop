@@ -1,5 +1,8 @@
 package com.voicechat.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.login.UserSession;
 import com.voicechat.client.login.controller.ConnectController;
 import com.voicechat.client.login.controller.LoginController;
 import javafx.application.Application;
@@ -9,14 +12,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.shared.JsonMapper;
+import org.shared.Message;
+import org.shared.MessageType;
+import org.shared.entity.User;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class VoiceChatApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        exit(stage);
 
         Image icon = new Image(getClass().getResourceAsStream("/com/voicechat/client/images/voiceCallIcon.png"));
 
@@ -38,12 +45,32 @@ public class VoiceChatApplication extends Application {
         stage.show();
         Listener.connect(loginController, connectController, stage, loginRoot);
 
+        exit(stage);
     }
 
     public void exit(Stage stage) {
         stage.setOnCloseRequest(windowEvent -> {
+            try {
+                closeSession();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             Platform.exit();
             System.exit(0);
         });
+    }
+
+    public void closeSession() throws JsonProcessingException {
+        User user = UserSession.INSTANCE.getUser();
+        if (user != null) {
+            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+            String json = objectMapper.writeValueAsString(user);
+            Message message = new Message(MessageType.USER_EXIT, json);
+            PrintWriter serverOut = Listener.getServerOut();
+
+            serverOut.println(objectMapper.writeValueAsString(message));
+
+            UserSession.INSTANCE.clear();
+        }
     }
 }
