@@ -1,32 +1,24 @@
 package com.voicechat.client.mainpage.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
+import com.voicechat.client.mainpage.component.ConversationListComponent;
+import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
-import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.apache.commons.lang3.StringUtils;
-import org.shared.JsonMapper;
-import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
@@ -70,6 +62,8 @@ public class MainPageController {
 
     private final AvatarComponent avatarComponent = new AvatarComponent();
 
+    private final ConversationListComponent conversationListComponent = new ConversationListComponent();
+
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
@@ -94,7 +88,9 @@ public class MainPageController {
             });
             gridPaneFocus();
             getUserConversations();
-            onlineUsersScheduler.schedule(gridMainPane);
+            Platform.runLater(() -> {
+                onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
+            });
         });
     }
 
@@ -112,7 +108,7 @@ public class MainPageController {
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
-                            conversationComponent.setConversationList(this, leftPane, serverResponse);
+                            conversationListComponent.setConversationList(this, leftPane, serverResponse);
                         }
                     }
                     else {
@@ -212,7 +208,7 @@ public class MainPageController {
                             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_GET) {
                                 System.out.println("conversation found !");
                                 try {
-                                    conversationComponent.setMessagesComponents(this, rightSearchPane, mainPane, serverResponse);
+                                    conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane, serverResponse);
                                 } catch (JsonProcessingException e) {
                                     e.printStackTrace();
                                 }
@@ -263,7 +259,18 @@ public class MainPageController {
                 }
             }, executor);
         }));
+    }
 
+    public BorderPane getMainPane() {
+        return mainPane;
+    }
+
+    public GridPane getGridMainPane() {
+        return gridMainPane;
+    }
+
+    public VBox getRightSearchPane() {
+        return rightSearchPane;
     }
     
 }

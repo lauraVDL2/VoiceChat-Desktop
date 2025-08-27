@@ -1,0 +1,116 @@
+package com.voicechat.client.mainpage.component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.login.UserSession;
+import com.voicechat.client.mainpage.controller.MainPageController;
+import com.voicechat.client.mainpage.service.MainPageService;
+import com.voicechat.client.utils.DateHandler;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
+import org.shared.JsonMapper;
+import org.shared.ServerResponse;
+import org.shared.entity.Conversation;
+import org.shared.entity.Message;
+import org.shared.entity.User;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConversationListComponent {
+
+    private final MainPageService mainPageService = new MainPageService();
+
+    private final AvatarComponent avatarComponent = new AvatarComponent();
+
+    public void setConversationList(MainPageController mainPageController, VBox leftPane, ServerResponse serverResponse) {
+        Platform.runLater(() -> {
+            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+            List<Conversation> conversations = null;
+            try {
+                conversations = objectMapper.readValue(serverResponse.getPayload(),
+                        new TypeReference<List<Conversation>>() {});
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            User currentUser = UserSession.INSTANCE.getUser();
+            currentUser.setConversation(conversations);
+            for (Conversation conversation : conversations) {
+                VBox mainVbox = new VBox();
+                HBox hBox = new HBox();
+                mainVbox.setId("c" + conversation.getId());
+                VBox vBox = new VBox();
+                VBox vbox2 = new VBox();
+                VBox displayNames = new VBox();
+                Label conversationName = new Label();
+                List<String> displayNamesList = new ArrayList<>();
+                List<String> emailAddressList = new ArrayList<>();
+                int i = 0;
+                for (User participant : conversation.getParticipants()) {
+                    if (!StringUtils.equals(participant.getEmailAddress(), currentUser.getEmailAddress())) {
+                        if (i == 0) {
+                            try {
+                                mainPageService.sendAvatarInfo(participant);
+                                vbox2 = new VBox();
+                                StackPane stackAvatar = new StackPane();
+                                stackAvatar.getStyleClass().add("stackAvatarConversationList");
+                                ImageView imageView = avatarComponent.readTargetAvatar();
+                                stackAvatar.getChildren().add(imageView);
+                                vbox2.getChildren().add(stackAvatar);
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        emailAddressList.add(participant.getEmailAddress());
+                        displayNamesList.add(participant.getDisplayName());
+                        i++;
+                    }
+                }
+                Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
+                displayNames.setId(String.join(",", emailAddressList));
+                conversationName.setText(String.join(",", displayNamesList));
+                conversationName.getStyleClass().add("conversationNameLabel");
+                displayNames.getStyleClass().add("displayNamesLabel");
+                displayNames.getChildren().add(conversationName);
+                vBox.getChildren().addAll(displayNames);
+
+                VBox content = new VBox();
+                Label contentLabel = new Label();
+                contentLabel.setText(lastMessage.getContent());
+                contentLabel.getStyleClass().add("conversationLastMessageLabel");
+                content.getChildren().add(contentLabel);
+                vBox.getChildren().add(content);
+
+                vbox2.setAlignment(Pos.CENTER);
+                vBox.setAlignment(Pos.CENTER);
+
+                mainVbox.getStyleClass().add("discussionBox");
+
+                hBox.getChildren().add(vbox2);
+                hBox.getChildren().add(vBox);
+
+                HBox hBoxTime = new HBox();
+                VBox vboxTime = new VBox();
+                Label timeLabel = new Label();
+                timeLabel.setText(DateHandler.transformDate(lastMessage.getTime()));
+                timeLabel.getStyleClass().add("dateDiscussionLabel");
+                hBoxTime.setAlignment(Pos.CENTER);
+                hBoxTime.getStyleClass().add("dateDiscussion");
+                vboxTime.getChildren().add(timeLabel);
+                hBoxTime.getChildren().add(vboxTime);
+
+                mainVbox.getChildren().addAll(hBoxTime, hBox);
+
+                leftPane.getChildren().add(mainVbox);
+                mainPageController.goToConversation(mainVbox);
+            }
+        });
+    }
+}

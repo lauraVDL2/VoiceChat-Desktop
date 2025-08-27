@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
+import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -53,6 +54,8 @@ public class HeaderController {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private MainPageController parentController;
+
+    private ConversationComponent conversationComponent = new ConversationComponent();
 
     @FXML
     public void initialize() {
@@ -186,6 +189,12 @@ public class HeaderController {
                         if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SEARCHED) {
                                 System.out.println("conversation exists !");
+                                try {
+                                    conversationComponent.setMessagesComponents(parentController, parentController.getGridMainPane(),
+                                            parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse);
+                                } catch (JsonProcessingException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         else if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {

@@ -7,14 +7,11 @@ import org.neo4j.ogm.transaction.Transaction;
 import org.server.config.Neo4jConfig;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
-import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConversationDao {
     private static final Logger log = LoggerFactory.getLogger(ConversationDao.class);
@@ -28,20 +25,45 @@ public class ConversationDao {
     public Conversation searchConversationIfExists(User currentUser, User targetUser) {
         try {
             Session session = this.sessionFactory.openSession();
-            Conversation conversation = session.queryForObject(Conversation.class, """
-                    MATCH (c:Conversation)-[:HAS]->(u1:User), (c)-[:HAS]->(u2:User)
-                    WHERE u1.emailAddress = $currentUserEmailAddress AND u2.emailAddress = $targetUserEmailAddress
-                    WITH c, COUNT(DISTINCT u2) AS participantCount
-                    WHERE participantCount = 2
-                    RETURN c
-                    """, Map.of("currentUserEmailAddress", currentUser.getEmailAddress(),
-                    "targetUserEmailAddress", targetUser.getEmailAddress()));
+            try (var tx = session.beginTransaction()) {
+                // Get conversation
+                Conversation conversation = session.queryForObject(Conversation.class, """
+                        MATCH (u1:User {emailAddress: $currentUserEmailAddress})
+                        MATCH (u2:User {emailAddress: $targetUserEmailAddress})
+                        MATCH (c:Conversation)-[:HAS]->(u:User)
+                        WHERE (c)-[:HAS]->(u1) AND (c)-[:HAS]->(u2)
+                        WITH c, collect(DISTINCT u) AS users
+                        WHERE size(users) = 2
+                        RETURN c
+                        """, Map.of("currentUserEmailAddress", currentUser.getEmailAddress(),
+                        "targetUserEmailAddress", targetUser.getEmailAddress()));
+                // Get messages of the conversation
+                String cypher = """
+                        MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+                        WHERE id(c) = $conversationId
+                        WITH msg
+                        MATCH (msg:Message)<-[:SENT_BY]-(u:User)
+                        ORDER BY msg.time ASC
+                        RETURN msg, u LIMIT 20
+                        """;
+                Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
+                List<Message> messages = new ArrayList<>();
+                for (var record : records) {
+                    Message message = (Message) record.get("msg");
+                    User sender = (User) record.get("u");
+                    message.setSender(sender);
+                    messages.add(message);
+                }
+                conversation.setMessages(messages);
+                // Commit transaction
+                tx.commit();
+                return conversation;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             if (sessionFactory != null) {
                 sessionFactory.close();
             }
-            return conversation;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }

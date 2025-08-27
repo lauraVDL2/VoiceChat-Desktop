@@ -19,6 +19,7 @@ public class LoginService {
         Message message = new Message(MessageType.USER_LOG_IN, json);
         PrintWriter serverOut = Listener.getServerOut();
 
+        System.out.println(mapper.writeValueAsString(message));
         serverOut.println(mapper.writeValueAsString(message));
 
         String serverInLine = Listener.getServerIn().readLine();

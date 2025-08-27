@@ -85,9 +85,6 @@ public class Server {
                         case ONLINE_USERS_FETCH:
                             userAction = new UserAction();
                             userAction.getOnlineUsers(objectMapper, serverResponse, out, onlineUsers);
-                            for (var onlineUser : onlineUsers.entrySet()) {
-                                System.out.println(onlineUser.getKey());
-                            }
                             break;
                         case CONVERSATION_SEARCH:
                             conversationAction = new ConversationAction();
