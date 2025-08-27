@@ -1,7 +1,6 @@
 package com.voicechat.client.mainpage.component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
@@ -26,8 +25,6 @@ import org.shared.entity.Message;
 import org.shared.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -265,10 +262,64 @@ public class ConversationComponent {
             searchMessages.getStyleClass().add("searchMessages");
             rightSearchPane.setAlignment(Pos.TOP_CENTER);
             rightSearchPane.getChildren().addAll(region, searchMessages);
-            System.out.println("GO HERE");
         });
     }
 
+    public void newConversationComponents(User targetUser, MainPageController parentController,
+                                          GridPane gridPane, Pane searchPane) {
+        Platform.runLater(() -> {
+            BorderPane borderPane = (BorderPane) gridPane.lookup("#mainPane");
+            searchPane.getChildren().clear();
 
+            HBox hBox = new HBox();
+            hBox.getStyleClass().add("topConversationBox");
+            hBox.setPrefHeight(40.);
+            hBox.setMaxHeight(40.);
+            hBox.setMinHeight(40.);
+            hBox.setAlignment(Pos.CENTER);
+
+            HBox targetUserInfo = new HBox();
+            targetUserInfo.getStyleClass().add("topConversationLabels");
+
+            Label displayNameLabel = new Label();
+            displayNameLabel.setId("displayNameLabelConv");
+            displayNameLabel.setText(targetUser.getDisplayName());
+            targetUserInfo.getChildren().add(displayNameLabel);
+            Label emailAddressLabel = new Label();
+            emailAddressLabel.setText(targetUser.getEmailAddress());
+            emailAddressLabel.setId("emailAddressLabelConv");
+            emailAddressLabel.setVisible(false);
+            emailAddressLabel.setManaged(false);
+            targetUserInfo.setAlignment(Pos.CENTER);
+            targetUserInfo.getChildren().add(emailAddressLabel);
+            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
+            hBox.getChildren().add(targetUserInfo);
+
+            HBox optionsBox = new HBox();
+            HBox.setHgrow(optionsBox, Priority.ALWAYS);
+            optionsBox.setAlignment(Pos.CENTER_RIGHT);
+            TextField searchMessage = new TextField();
+            optionsBox.getChildren().add(searchMessage);
+            hBox.getChildren().add(optionsBox);
+            borderPane.setTop(hBox);
+
+            //Bottom
+            HBox hBox1 = new HBox();
+            hBox1.setId("sendBox");
+            TextField messageField = new TextField();
+            messageField.setId("sendMessage");
+            ImageView imageView = new ImageView();
+            imageView.setFitHeight(40);
+            imageView.setFitHeight(40);
+            Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
+            imageView.setId("sendButton");
+            imageView.setImage(image);
+            hBox1.getChildren().add(messageField);
+            hBox1.getChildren().add(imageView);
+            borderPane.setBottom(hBox1);
+
+            parentController.sendMessage();
+        });
+    }
 
 }

@@ -71,6 +71,10 @@
     -fx-text-fill: black;
 }
 
+.numberUnreadLabel {
+    -fx-text-fill: white;
+}
+
 .conversationClicked .dateDiscussionLabel {
     -fx-text-fill: black;
 }

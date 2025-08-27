@@ -186,12 +186,13 @@ public class MainPageController {
         });
     }
 
-    public void goToConversation(VBox mainVbox) {
-        mainVbox.setOnMouseClicked(event -> {
+    public void goToConversation(StackPane contentStackPane) {
+        contentStackPane.setOnMouseClicked(event -> {
             // Cast the event source to HBox
             Node source = (Node) event.getSource();
-            if (source instanceof VBox) {
-                VBox clickedVBox = (VBox) source;
+            if (source instanceof StackPane) {
+                StackPane clickedStackPane = (StackPane) source;
+                VBox clickedVBox = (VBox) clickedStackPane.getChildren().getFirst();
                 source.getStyleClass().add("conversationClicked");
                 Conversation conversation = new Conversation();
                 conversation.setId(Long.parseLong(clickedVBox.getId().replace("c", "")));
@@ -271,6 +272,10 @@ public class MainPageController {
 
     public VBox getRightSearchPane() {
         return rightSearchPane;
+    }
+
+    public VBox getLeftPane() {
+        return leftPane;
     }
     
 }

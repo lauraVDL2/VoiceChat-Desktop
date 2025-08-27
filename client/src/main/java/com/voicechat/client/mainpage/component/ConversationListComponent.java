@@ -8,17 +8,21 @@ import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
+import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 
 import java.util.ArrayList;
@@ -29,6 +33,29 @@ public class ConversationListComponent {
     private final MainPageService mainPageService = new MainPageService();
 
     private final AvatarComponent avatarComponent = new AvatarComponent();
+
+    public void setConversationClicked(VBox leftPane, ServerResponse serverResponse) {
+        Platform.runLater(() -> {
+            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+            Conversation conversation = null;
+            var nodes = leftPane.lookupAll(".discussionBox");
+            try {
+                conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            if (conversation != null) {
+                for (var node : nodes) {
+                    StackPane stackPane = (StackPane) node;
+                    VBox mainVbox = (VBox) stackPane.getChildren().getFirst();
+                    String vBoxId = mainVbox.getId().replace("c", "");
+                    if (conversation.getId() == Long.parseLong(vBoxId)) {
+                        mainVbox.getStyleClass().add("conversationClicked");
+                    }
+                }
+            }
+        });
+    }
 
     public void setConversationList(MainPageController mainPageController, VBox leftPane, ServerResponse serverResponse) {
         Platform.runLater(() -> {
@@ -82,6 +109,8 @@ public class ConversationListComponent {
                 vBox.getChildren().addAll(displayNames);
 
                 VBox content = new VBox();
+                content.setFillWidth(true);
+                content.setMaxWidth(Double.MAX_VALUE);
                 Label contentLabel = new Label();
                 contentLabel.setText(lastMessage.getContent());
                 contentLabel.getStyleClass().add("conversationLastMessageLabel");
@@ -91,7 +120,7 @@ public class ConversationListComponent {
                 vbox2.setAlignment(Pos.CENTER);
                 vBox.setAlignment(Pos.CENTER);
 
-                mainVbox.getStyleClass().add("discussionBox");
+                //mainVbox.getStyleClass().add("discussionBox");
 
                 hBox.getChildren().add(vbox2);
                 hBox.getChildren().add(vBox);
@@ -108,9 +137,48 @@ public class ConversationListComponent {
 
                 mainVbox.getChildren().addAll(hBoxTime, hBox);
 
-                leftPane.getChildren().add(mainVbox);
-                mainPageController.goToConversation(mainVbox);
+                // Unread messages
+                List<ReadStatus> readStatuses = conversation.getMessages().stream().flatMap(
+                        message -> message.getReadStatuses().stream())
+                        .toList();
+                List<ReadStatus> unread = readStatuses.stream().filter(r ->
+                                StringUtils.equals(r.getUser().getEmailAddress(), currentUser.getEmailAddress()))
+                        .filter(r -> !r.isRead())
+                        .toList();
+                Integer unreadMessages = unread.size();
+
+
+                StackPane contentStackPane = new StackPane();
+                contentStackPane.getChildren().add(mainVbox);
+                contentStackPane.getStyleClass().add("discussionBox");
+
+                circleUnread(unreadMessages, contentStackPane);
+
+                leftPane.getChildren().add(contentStackPane);
+                mainPageController.goToConversation(contentStackPane);
             }
         });
+    }
+
+    public void circleUnread(Integer size, StackPane stackPane) {
+        StackPane stackPaneCircle = new StackPane();
+        Circle circle = new Circle(10);
+        circle.setFill(Color.BLUE);
+        HBox hBox = new HBox(10);
+        hBox.setPadding(new Insets(25, 10, 10, 10));
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        if (size > 0) {
+            Label numberLabel = new Label();
+            numberLabel.getStyleClass().add("numberUnreadLabel");
+            if (size > 9) {
+                numberLabel.setText("9+");
+            } else {
+                numberLabel.setText(size.toString());
+            }
+            stackPaneCircle.getChildren().addAll(circle, numberLabel);
+            hBox.getChildren().add(stackPaneCircle);
+            stackPane.getChildren().add(hBox);
+        }
     }
 }

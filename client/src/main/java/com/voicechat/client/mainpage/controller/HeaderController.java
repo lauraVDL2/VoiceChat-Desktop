@@ -7,6 +7,7 @@ import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.component.ConversationComponent;
+import com.voicechat.client.mainpage.component.ConversationListComponent;
 import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -55,7 +56,9 @@ public class HeaderController {
 
     private MainPageController parentController;
 
-    private ConversationComponent conversationComponent = new ConversationComponent();
+    private final ConversationComponent conversationComponent = new ConversationComponent();
+
+    private final ConversationListComponent conversationListComponent = new ConversationListComponent();
 
     @FXML
     public void initialize() {
@@ -192,13 +195,14 @@ public class HeaderController {
                                 try {
                                     conversationComponent.setMessagesComponents(parentController, parentController.getGridMainPane(),
                                             parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse);
+                                    conversationListComponent.setConversationClicked(parentController.getLeftPane(), serverResponse);
                                 } catch (JsonProcessingException e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
                         else if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {
-                            newConversationComponents(targetUser);
+                            conversationComponent.newConversationComponents(targetUser, parentController, parentController.getGridMainPane(), searchPane);
                         }
                         else {
                             System.out.println("ERROR");
@@ -209,67 +213,7 @@ public class HeaderController {
         }));
     }
 
-    public void newConversationComponents(User targetUser) {
-        Platform.runLater(() -> {
-            GridPane gridPane = (GridPane) topPane.getParent();
-            SplitPane splitPane = (SplitPane) gridPane.getChildren().stream()
-                    .filter(child -> child instanceof SplitPane && StringUtils.equals(child.getId(), "splitPane"))
-                    .findFirst().orElse(null);
-            BorderPane borderPane = (BorderPane) splitPane.getItems().stream()
-                    .filter(child -> child instanceof BorderPane && StringUtils.equals(child.getId(), "mainPane"))
-                    .findFirst().orElse(null);
-            searchPane.getChildren().clear();
 
-            HBox hBox = new HBox();
-            hBox.getStyleClass().add("topConversationBox");
-            hBox.setPrefHeight(40.);
-            hBox.setMaxHeight(40.);
-            hBox.setMinHeight(40.);
-            hBox.setAlignment(Pos.CENTER);
-
-            HBox targetUserInfo = new HBox();
-            targetUserInfo.getStyleClass().add("topConversationLabels");
-
-            Label displayNameLabel = new Label();
-            displayNameLabel.setId("displayNameLabelConv");
-            displayNameLabel.setText(targetUser.getDisplayName());
-            targetUserInfo.getChildren().add(displayNameLabel);
-            Label emailAddressLabel = new Label();
-            emailAddressLabel.setText(targetUser.getEmailAddress());
-            emailAddressLabel.setId("emailAddressLabelConv");
-            emailAddressLabel.setVisible(false);
-            emailAddressLabel.setManaged(false);
-            targetUserInfo.setAlignment(Pos.CENTER);
-            targetUserInfo.getChildren().add(emailAddressLabel);
-            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
-            hBox.getChildren().add(targetUserInfo);
-
-            HBox optionsBox = new HBox();
-            HBox.setHgrow(optionsBox, Priority.ALWAYS);
-            optionsBox.setAlignment(Pos.CENTER_RIGHT);
-            TextField searchMessage = new TextField();
-            optionsBox.getChildren().add(searchMessage);
-            hBox.getChildren().add(optionsBox);
-            borderPane.setTop(hBox);
-
-            //Bottom
-            HBox hBox1 = new HBox();
-            hBox1.setId("sendBox");
-            TextField messageField = new TextField();
-            messageField.setId("sendMessage");
-            ImageView imageView = new ImageView();
-            imageView.setFitHeight(40);
-            imageView.setFitHeight(40);
-            Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
-            imageView.setId("sendButton");
-            imageView.setImage(image);
-            hBox1.getChildren().add(messageField);
-            hBox1.getChildren().add(imageView);
-            borderPane.setBottom(hBox1);
-
-            this.parentController.sendMessage();
-        });
-    }
 
     public void clearSearchField() {
         searchPane.getChildren().clear();

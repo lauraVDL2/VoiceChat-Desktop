@@ -7,6 +7,7 @@ import org.neo4j.ogm.transaction.Transaction;
 import org.server.config.Neo4jConfig;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
+import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +88,31 @@ public class ConversationDao {
                     User participant = (User) recordUser.get("u");
                     participants.add(participant);
                 }
-                String cypher3 = "MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $conversationId\n" +
+                /*String cypher3 = "MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $conversationId\n" +
                         "RETURN msg\n" +
                         "ORDER BY msg.time ASC\n" +
-                        "LIMIT 20";
-                Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId()));
+                        "LIMIT 20";*/
+                String cypher3 = """
+                        MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+                        WHERE id(c) = $conversationId
+                        WITH msg
+                        ORDER BY msg.time ASC
+                        LIMIT 20
+                        OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+                        RETURN msg, r.isRead AS isRead
+                        """;
+                Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId(),
+                        "emailAddress", user.getEmailAddress()));
                 List<Message> messages = new ArrayList<>();
                 for (var recordMessage : recordMessages) {
                     Message message = (Message) recordMessage.get("msg");
+                    Boolean isRead = (Boolean) recordMessage.get("isRead");
+                    if (isRead != null) {
+                        ReadStatus readStatus = new ReadStatus();
+                        readStatus.setUser(user);
+                        readStatus.setMessage(message);
+                        message.setReadStatuses(List.of(readStatus));
+                    }
                     messages.add(message);
                 }
                 conversation.setParticipants(new HashSet<>(participants));
