@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -133,7 +134,7 @@ public class MainPageController {
         Platform.runLater(() -> {
             ImageView btn = (ImageView) mainPane.lookup("#sendButton");
             btn.setOnMouseClicked((event) -> {
-                TextField sendMessage = (TextField) mainPane.lookup("#sendMessage");
+                TextArea sendMessage = (TextArea) mainPane.lookup("#sendMessage");
                 Conversation conversation = new Conversation();
                 User currentUser = UserSession.INSTANCE.getUser();
                 User targetUser = new User();
@@ -231,7 +232,7 @@ public class MainPageController {
                     Conversation conversation1 = new Conversation();
                     conversation1.setId(conversation.getId());
                     Message message = new Message();
-                    String content = ((TextField) mainPane.lookup("#sendMessage")).getText();
+                    String content = ((TextArea) mainPane.lookup("#sendMessage")).getText();
                     User sender = UserSession.INSTANCE.getUser();
                     message.setContent(content);
                     message.setSender(sender);

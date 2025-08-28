@@ -13,10 +13,15 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
@@ -91,12 +96,14 @@ public class ConversationComponent {
 
                 VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
                 VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                mainPane.setCenter(vbox);
+                ScrollPane scrollPane = addMessagesScrollPane(vbox);
+                mainPane.setCenter(scrollPane);
             });
         });
     }
 
     public VBox addMessageBox(HBox hBoxAvatar, VBox messageContentBox, Message message, User currentUser) {
+        hBoxAvatar.setMaxHeight(50.);
         HBox hBoxMessage = new HBox();
         hBoxMessage.getStyleClass().add("boxMessage");
         Platform.runLater(() -> {
@@ -132,15 +139,21 @@ public class ConversationComponent {
 
             vBoxSender.getChildren().add(hBoxSender);
 
-            Label conversationMessage = new Label();
-            conversationMessage.getStyleClass().add("conversationMessageLabel");
-            conversationMessage.setText(message.getContent());
-            vBoxSender.getChildren().add(conversationMessage);
+            Text messageText = new Text(message.getContent());
+            messageText.getStyleClass().add("conversationMessageText");
+            messageText.setWrappingWidth(400);
+            TextFlow messageTextFlow = new TextFlow(messageText);
+            messageTextFlow.setMaxWidth(400);
+            messageTextFlow.setPrefWidth(Region.USE_COMPUTED_SIZE);
+            messageTextFlow.setLineSpacing(2); // optional, for better readability
+
+            vBoxSender.getChildren().add(messageText);
 
             StackPane avatarStackPane = new StackPane();
             avatarStackPane.getStyleClass().add("stackPaneMessage");
 
             if (!StringUtils.equals(message.getSender().getEmailAddress(), currentUser.getEmailAddress())) {
+                messageText.setFill(Color.WHITE);
                 hBoxMessage.getChildren().addAll(avatarStackPane, vBoxSender);
             } else {
                 hBoxMessage.getChildren().addAll(vBoxSender, avatarStackPane);
@@ -225,15 +238,18 @@ public class ConversationComponent {
                     }
                 });
             }
+            ScrollPane scrollPane = addMessagesScrollPane(messageContentBox);
+
             onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
-            mainPane.setCenter(messageContentBox);
+            mainPane.setCenter(scrollPane);
 
             // Bottom send box
             HBox hBox1 = new HBox();
             hBox1.setId("sendBox");
             hBox1.setAlignment(Pos.CENTER);
 
-            TextField messageField = new TextField();
+            TextArea messageField = new TextArea();
+            messageField.setWrapText(true);
             messageField.setId("sendMessage");
             messageField.getStyleClass().add("sendMessageField");
 
@@ -263,6 +279,16 @@ public class ConversationComponent {
             rightSearchPane.setAlignment(Pos.TOP_CENTER);
             rightSearchPane.getChildren().addAll(region, searchMessages);
         });
+    }
+
+    public ScrollPane addMessagesScrollPane(VBox vBox) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(vBox);
+        scrollPane.fitToHeightProperty().set(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("scrollBar");
+        return scrollPane;
     }
 
     public void newConversationComponents(User targetUser, MainPageController parentController,

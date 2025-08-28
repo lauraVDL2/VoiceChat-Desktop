@@ -83,8 +83,8 @@ public class AvatarComponent {
                 if (!exists) {
                     Circle onlineIndicator = new Circle(5);
                     onlineIndicator.setFill(color);
-                    StackPane.setAlignment(onlineIndicator, Pos.BOTTOM_LEFT);
-                    StackPane.setMargin(onlineIndicator, new Insets(0, 0, 5, 5));
+                    StackPane.setAlignment(onlineIndicator, Pos.CENTER_LEFT);
+                    StackPane.setMargin(onlineIndicator, new Insets(20, 0, 0, 2));
 
                     stackPane.getChildren().add(onlineIndicator);
                 }

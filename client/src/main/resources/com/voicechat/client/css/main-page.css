@@ -138,6 +138,7 @@
 
 .sendMessageField {
     -fx-background-color: "#b6d1ff";
+    -fx-control-inner-background: "#b6d1ff";
     -fx-min-height: 40px;
     -fx-pref-height: 40px;
     -fx-pref-width: 600px;
@@ -152,6 +153,18 @@
     -fx-pref-width: 220px;
 }
 
-.conversationMessageLabel {
+.conversationMessageText {
     -fx-font-size: 16px;
+}
+
+.scrollBar {
+    -fx-background-color: transparent; /* remove default background */
+    -fx-padding: 0;
+}
+
+.scrollBar .thumb {
+    -fx-background-color: "#006abc";
+    -fx-background-insets: 2;
+    -fx-pref-width: 1;
+    -fx-background-radius: 5;
 }

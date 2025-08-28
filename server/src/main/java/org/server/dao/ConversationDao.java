@@ -109,6 +109,7 @@ public class ConversationDao {
                     Boolean isRead = (Boolean) recordMessage.get("isRead");
                     if (isRead != null) {
                         ReadStatus readStatus = new ReadStatus();
+                        readStatus.setRead(isRead);
                         readStatus.setUser(user);
                         readStatus.setMessage(message);
                         message.setReadStatuses(List.of(readStatus));
