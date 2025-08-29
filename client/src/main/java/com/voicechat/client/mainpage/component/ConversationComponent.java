@@ -30,6 +30,8 @@ import org.shared.entity.Message;
 import org.shared.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -166,106 +168,126 @@ public class ConversationComponent {
         });
         return messageContentBox;
     }
+    
+    public HBox addConversationTopBox(Set<User> participants, User currentUser) {
+        HBox hBox = new HBox();
+        hBox.getStyleClass().add("topConversationBox");
+        hBox.setPrefHeight(40.);
+        hBox.setMaxHeight(40.);
+        hBox.setMinHeight(40.);
+        hBox.setAlignment(Pos.CENTER);
+
+        HBox targetUserInfo = new HBox();
+        targetUserInfo.getStyleClass().add("topConversationLabels");
+
+        int i = 0;
+        for (User participant : participants) {
+            if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
+                if (i == 0) {
+                    try {
+                        mainPageService.sendAvatarInfo(participant);
+                        ImageView avatarView = avatarComponent.readTargetAvatar();
+                        targetUserInfo.getChildren().add(avatarView);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                }
+                i++;
+                Label displayNameLabel = new Label();
+                displayNameLabel.setText(participant.getDisplayName());
+                targetUserInfo.getChildren().add(displayNameLabel);
+
+                Label emailAddressLabel = new Label();
+                emailAddressLabel.setText(participant.getEmailAddress());
+                emailAddressLabel.setId("e" + participant.getId());
+                emailAddressLabel.setManaged(false);
+                emailAddressLabel.setVisible(false);
+                targetUserInfo.setAlignment(Pos.CENTER);
+                targetUserInfo.getChildren().add(emailAddressLabel);
+            }
+        }
+
+        HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
+        hBox.getChildren().add(targetUserInfo);
+
+        HBox optionsBox = new HBox();
+        HBox.setHgrow(optionsBox, Priority.ALWAYS);
+        optionsBox.setAlignment(Pos.CENTER_RIGHT);
+        hBox.getChildren().add(optionsBox);
+        
+        return hBox;
+    }
+    
+    public ScrollPane addConversationMessagesScrollPane(Conversation conversation, GridPane gridMainPane,
+                                                        User currentUser) {
+        VBox messageContentBox = new VBox();
+        messageContentBox.setId("messageContentBox");
+        messageContentBox.setPadding(new Insets(10, 10, 10, 10));
+        for (Message message : conversation.getMessages()) {
+            // Asynchronous avatar loading
+            Platform.runLater(() -> {
+                try {
+                    HBox hBoxAvatar = new HBox();
+                    mainPageService.sendAvatarInfo(message.getSender());
+                    VBox avatarBox = avatarComponent.readTargetAvatar(new VBox());
+                    avatarBox.setAlignment(Pos.CENTER);
+                    hBoxAvatar.getChildren().add(avatarBox);
+                    addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        ScrollPane scrollPane = addMessagesScrollPane(messageContentBox);
+        
+        onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
+        
+        return scrollPane;
+    }
+    
+    public HBox addConversationSendMessageBox(MainPageController mainPageController, Conversation conversation,
+                                              ConversationAction conversationAction) {
+        HBox hBox1 = new HBox();
+        hBox1.setId("sendBox");
+        hBox1.setAlignment(Pos.CENTER);
+
+        TextArea messageField = new TextArea();
+        messageField.setWrapText(true);
+        messageField.setId("sendMessage");
+        messageField.getStyleClass().add("sendMessageField");
+
+        ImageView imageView = new ImageView();
+        imageView.setFitHeight(40);
+        imageView.setFitWidth(40);
+        Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
+        imageView.setId("sendButton");
+        imageView.setImage(image);
+
+        if (conversationAction == ConversationAction.CONTINUE) {
+            mainPageController.sendMessageToExistingConversation(imageView, conversation);
+        }
+
+        Region spacer = new Region();
+        spacer.setPrefWidth(10);
+        hBox1.getChildren().addAll(messageField, spacer, imageView);
+        
+        return hBox1;
+    }
 
     public void setMessagesComponents(MainPageController mainPageController, GridPane gridMainPane, VBox rightSearchPane, BorderPane mainPane, ServerResponse response) throws JsonProcessingException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         Conversation conversation = mapper.readValue(response.getPayload(), Conversation.class);
         Platform.runLater(() -> {
             User currentUser = UserSession.INSTANCE.getUser();
-
-            HBox hBox = new HBox();
-            hBox.getStyleClass().add("topConversationBox");
-            hBox.setPrefHeight(40.);
-            hBox.setMaxHeight(40.);
-            hBox.setMinHeight(40.);
-            hBox.setAlignment(Pos.CENTER);
-
-            HBox targetUserInfo = new HBox();
-            targetUserInfo.getStyleClass().add("topConversationLabels");
-
-            int i = 0;
-            for (User participant : conversation.getParticipants()) {
-                if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
-                    if (i == 0) {
-                        try {
-                            mainPageService.sendAvatarInfo(participant);
-                            ImageView avatarView = avatarComponent.readTargetAvatar();
-                            targetUserInfo.getChildren().add(avatarView);
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    i++;
-                    Label displayNameLabel = new Label();
-                    displayNameLabel.setText(participant.getDisplayName());
-                    targetUserInfo.getChildren().add(displayNameLabel);
-
-                    Label emailAddressLabel = new Label();
-                    emailAddressLabel.setText(participant.getEmailAddress());
-                    emailAddressLabel.setId("e" + participant.getId());
-                    emailAddressLabel.setManaged(false);
-                    emailAddressLabel.setVisible(false);
-                    targetUserInfo.setAlignment(Pos.CENTER);
-                    targetUserInfo.getChildren().add(emailAddressLabel);
-                }
-            }
-
-            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
-            hBox.getChildren().add(targetUserInfo);
-
-            HBox optionsBox = new HBox();
-            HBox.setHgrow(optionsBox, Priority.ALWAYS);
-            optionsBox.setAlignment(Pos.CENTER_RIGHT);
-            hBox.getChildren().add(optionsBox);
-            mainPane.setTop(hBox);
+            
+            // TOP (Conversation info box)
+            mainPane.setTop(addConversationTopBox(conversation.getParticipants(), currentUser));
 
             // MIDDLE (messages)
-            VBox messageContentBox = new VBox();
-            messageContentBox.setId("messageContentBox");
-            messageContentBox.setPadding(new Insets(10, 10, 10, 10));
-            for (Message message : conversation.getMessages()) {
-                // Asynchronous avatar loading
-                Platform.runLater(() -> {
-                    try {
-                        HBox hBoxAvatar = new HBox();
-                        mainPageService.sendAvatarInfo(message.getSender());
-                        VBox avatarBox = avatarComponent.readTargetAvatar(new VBox());
-                        avatarBox.setAlignment(Pos.CENTER);
-                        hBoxAvatar.getChildren().add(avatarBox);
-                        addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-            ScrollPane scrollPane = addMessagesScrollPane(messageContentBox);
-
-            onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
-            mainPane.setCenter(scrollPane);
+            mainPane.setCenter(addConversationMessagesScrollPane(conversation, gridMainPane, currentUser));
 
             // Bottom send box
-            HBox hBox1 = new HBox();
-            hBox1.setId("sendBox");
-            hBox1.setAlignment(Pos.CENTER);
-
-            TextArea messageField = new TextArea();
-            messageField.setWrapText(true);
-            messageField.setId("sendMessage");
-            messageField.getStyleClass().add("sendMessageField");
-
-            ImageView imageView = new ImageView();
-            imageView.setFitHeight(40);
-            imageView.setFitWidth(40);
-            Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
-            imageView.setId("sendButton");
-            imageView.setImage(image);
-
-            mainPageController.sendMessageToExistingConversation(imageView, conversation);
-
-            Region spacer = new Region();
-            spacer.setPrefWidth(10);
-            hBox1.getChildren().addAll(messageField, spacer, imageView);
-            mainPane.setBottom(hBox1);
+            mainPane.setBottom(addConversationSendMessageBox(mainPageController, conversation, ConversationAction.CONTINUE));
 
             mainPane.setPadding(new Insets(0, 0, 10, 0));
 
@@ -294,55 +316,18 @@ public class ConversationComponent {
     public void newConversationComponents(User targetUser, MainPageController parentController,
                                           GridPane gridPane, Pane searchPane) {
         Platform.runLater(() -> {
-            BorderPane borderPane = (BorderPane) gridPane.lookup("#mainPane");
+            BorderPane mainPane = (BorderPane) gridPane.lookup("#mainPane");
             searchPane.getChildren().clear();
+            User currentUser = UserSession.INSTANCE.getUser();
 
-            HBox hBox = new HBox();
-            hBox.getStyleClass().add("topConversationBox");
-            hBox.setPrefHeight(40.);
-            hBox.setMaxHeight(40.);
-            hBox.setMinHeight(40.);
-            hBox.setAlignment(Pos.CENTER);
+            // TOP (Conversation info box)
+            mainPane.setTop(addConversationTopBox(Set.of(currentUser, targetUser), currentUser));
 
-            HBox targetUserInfo = new HBox();
-            targetUserInfo.getStyleClass().add("topConversationLabels");
+            // MIDDLE (messages)
+            mainPane.setCenter(addConversationMessagesScrollPane(new Conversation(), gridPane, currentUser));
 
-            Label displayNameLabel = new Label();
-            displayNameLabel.setId("displayNameLabelConv");
-            displayNameLabel.setText(targetUser.getDisplayName());
-            targetUserInfo.getChildren().add(displayNameLabel);
-            Label emailAddressLabel = new Label();
-            emailAddressLabel.setText(targetUser.getEmailAddress());
-            emailAddressLabel.setId("emailAddressLabelConv");
-            emailAddressLabel.setVisible(false);
-            emailAddressLabel.setManaged(false);
-            targetUserInfo.setAlignment(Pos.CENTER);
-            targetUserInfo.getChildren().add(emailAddressLabel);
-            HBox.setMargin(targetUserInfo, new Insets(0, 0, 0, 30));
-            hBox.getChildren().add(targetUserInfo);
-
-            HBox optionsBox = new HBox();
-            HBox.setHgrow(optionsBox, Priority.ALWAYS);
-            optionsBox.setAlignment(Pos.CENTER_RIGHT);
-            TextField searchMessage = new TextField();
-            optionsBox.getChildren().add(searchMessage);
-            hBox.getChildren().add(optionsBox);
-            borderPane.setTop(hBox);
-
-            //Bottom
-            HBox hBox1 = new HBox();
-            hBox1.setId("sendBox");
-            TextField messageField = new TextField();
-            messageField.setId("sendMessage");
-            ImageView imageView = new ImageView();
-            imageView.setFitHeight(40);
-            imageView.setFitHeight(40);
-            Image image = new Image(VoiceChatApplication.class.getResourceAsStream("images/send-button.png"));
-            imageView.setId("sendButton");
-            imageView.setImage(image);
-            hBox1.getChildren().add(messageField);
-            hBox1.getChildren().add(imageView);
-            borderPane.setBottom(hBox1);
+            // Bottom send box
+            mainPane.setBottom(addConversationSendMessageBox(parentController, null, ConversationAction.START));
 
             parentController.sendMessage();
         });
