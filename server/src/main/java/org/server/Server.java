@@ -11,8 +11,10 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.server.action.ConversationAction;
 import org.server.action.MessageAction;
 import org.server.action.UserAction;
+import org.server.action.UserNotificationAction;
 import org.server.dao.MessageDao;
 import org.server.dao.UserDao;
+import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.shared.*;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +34,7 @@ public class Server {
     private final static ExecutorService executor = Executors.newCachedThreadPool();
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
     private final static ConcurrentHashMap<String, UserSessionStatus> onlineUsers = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, Socket> userSockets = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
@@ -57,6 +61,7 @@ public class Server {
                     UserAction userAction = null;
                     ConversationAction conversationAction = null;
                     MessageAction messageAction = null;
+                    UserNotificationAction userNotificationAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -72,11 +77,13 @@ public class Server {
                                 readMyAvatar(dataOutputStream, userAction, userLogged);
                             }
                             onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> UserSessionStatus.ONLINE);
+                            userSockets.computeIfAbsent(userLogged.getEmailAddress(), mySocket -> socket);
                             break;
                         case USER_EXIT:
                             User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);
                             String emailAddress = userExit.getEmailAddress();
                             onlineUsers.remove(emailAddress);
+                            userSockets.remove(emailAddress);
                             break;
                         case USER_SEARCH:
                             userAction = new UserAction();
@@ -107,8 +114,7 @@ public class Server {
                             conversationAction.getConversation(objectMapper, messageObj, serverResponse, out);
                             break;
                         case MESSAGE_SEND:
-                            messageAction = new MessageAction();
-                            messageAction.sendMessage(objectMapper, messageObj, serverResponse, out);
+                            sendMessageToUser(objectMapper, messageObj, serverResponse, out);
                             break;
                     }
                 }
@@ -116,6 +122,41 @@ public class Server {
                 e.printStackTrace();
             }
         }, executor);
+    }
+
+    public static CompletableFuture<Void> sendMessageToUser(ObjectMapper objectMapper, Message messageObj,
+                                                            ServerResponse serverResponse, PrintWriter out) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                MessageAction messageAction = new MessageAction();
+                Conversation messageSentConversation = messageAction.sendMessage(objectMapper, messageObj, serverResponse, out);
+                if (messageSentConversation != null) {
+                    return messageSentConversation;
+                } else {
+                    logger.error("sendMessage returned null.  Message: {}", messageObj);
+                    return null;
+                }
+            } catch (Exception e) {
+                logger.error("Error sending message: ", e);
+                return null;
+            }
+        }, executor).thenAccept(messageSentConversation -> {
+            if (messageSentConversation != null) {
+                logger.info("Message sent successfully.");
+                UserNotificationAction userNotificationAction = new UserNotificationAction();
+                try {
+                    userNotificationAction.sendMessageToUser(userSockets, objectMapper, serverResponse,
+                            messageSentConversation);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                logger.error("Failed to send message");
+            }
+        }).exceptionally(ex -> {
+            logger.error("Unhandled exception during message sending:", ex);
+            return null;
+        });
     }
 
     public static void readMyAvatar(DataOutputStream dataOutputStream, UserAction userAction, User user) throws IOException {

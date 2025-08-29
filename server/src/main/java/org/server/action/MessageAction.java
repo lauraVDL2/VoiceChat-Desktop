@@ -12,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MessageAction {
     private static final Logger logger = LoggerFactory.getLogger(MessageAction.class);
 
-    public Message sendMessage(ObjectMapper objectMapper, org.shared.Message messageObj,
+    public Conversation sendMessage(ObjectMapper objectMapper, org.shared.Message messageObj,
                                ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         MessageDao messageDao = new MessageDao();
@@ -27,7 +29,8 @@ public class MessageAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
             serverResponse.setPayload(objectMapper.writeValueAsString(message));
             out.println(objectMapper.writeValueAsString(serverResponse));
-            return message;
+            conversation.setMessages(List.of(message));
+            return conversation;
         }
         else {
             logger.error("Failed to send message !");

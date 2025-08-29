@@ -45,7 +45,7 @@ public class ConversationDao {
                         WITH msg
                         MATCH (msg:Message)<-[:SENT_BY]-(u:User)
                         ORDER BY msg.time ASC
-                        RETURN msg, u LIMIT 20
+                        RETURN msg, u LIMIT 15
                         """;
                 Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
                 List<Message> messages = new ArrayList<>();
@@ -67,6 +67,25 @@ public class ConversationDao {
             }
         }
         return null;
+    }
+
+    public Set<User> getConversationParticipants(Conversation conversation) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            String cypherParticipants = """
+                    MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+                    """;
+            Result usersRecord = session.query(cypherParticipants, Map.of("id", conversation.getId()));
+            Set<User> participants = new LinkedHashSet<>();
+            for (var userRecord : usersRecord) {
+                User participant = (User) userRecord.get("u");
+                participants.add(participant);
+            }
+            return participants;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new LinkedHashSet<>();
     }
 
     public List<Conversation> searchUserConversations(User user) {
@@ -97,7 +116,7 @@ public class ConversationDao {
                         WHERE id(c) = $conversationId
                         WITH msg
                         ORDER BY msg.time ASC
-                        LIMIT 20
+                        LIMIT 15
                         OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
                         RETURN msg, r.isRead AS isRead
                         """;
@@ -141,7 +160,7 @@ public class ConversationDao {
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
                     ORDER BY msg.time ASC
-                    RETURN msg, u
+                    RETURN msg, u LIMIT 15
                     """;
             Result records = session.query(cypher, Map.of("id", conversation.getId()));
             List<Message> messages = new ArrayList<>();

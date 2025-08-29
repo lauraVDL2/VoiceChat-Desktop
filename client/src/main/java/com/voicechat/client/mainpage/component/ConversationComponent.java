@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.controller.MainPageController;
+import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
 import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
@@ -22,6 +23,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
@@ -30,19 +32,15 @@ import org.shared.entity.Message;
 import org.shared.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ConversationComponent {
 
     private final MainPageService mainPageService = new MainPageService();
 
     private final AvatarComponent avatarComponent = new AvatarComponent();
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
 
@@ -102,6 +100,40 @@ public class ConversationComponent {
                 mainPane.setCenter(scrollPane);
             });
         });
+    }
+
+    public void addMessagesReceivedComponents(ServerResponse serverResponse, BorderPane mainPane, Conversation initialConversation)
+            throws JsonProcessingException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        Conversation conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+        User currentUser = UserSession.INSTANCE.getUser();
+
+        if (Objects.equals(conversation.getId(), initialConversation.getId())) {
+            if (!CollectionUtils.isEmpty(conversation.getMessages())) {
+                Platform.runLater(() -> {
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Message message = conversation.getMessages().get(0);
+                            mainPageService.sendAvatarInfo(message.getSender());
+                            return avatarComponent.readTargetAvatar(new VBox());
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                            return new VBox();
+                        }
+                    }).thenAcceptAsync(avatarBox -> {
+                        // Update UI on JavaFX Application Thread
+                        avatarBox.setAlignment(Pos.CENTER);
+                        HBox hBoxAvatar = new HBox();
+                        hBoxAvatar.getChildren().add(avatarBox);
+
+                        VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
+                        VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, conversation.getMessages().get(0), currentUser);
+                        ScrollPane scrollPane = addMessagesScrollPane(vbox);
+                        mainPane.setCenter(scrollPane);
+                    });
+                });
+            }
+        }
     }
 
     public VBox addMessageBox(HBox hBoxAvatar, VBox messageContentBox, Message message, User currentUser) {
@@ -310,6 +342,20 @@ public class ConversationComponent {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("scrollBar");
+
+        // Delay the scroll to bottom until after layout is complete
+        Platform.runLater(() -> {
+            // Ensure content height is valid
+            if (vBox.getHeight() > 0) {
+                scrollPane.setVvalue(1.0);
+            } else {
+                // In case height isn't set yet, add a listener
+                vBox.heightProperty().addListener((obs, oldVal, newVal) -> {
+                    scrollPane.setVvalue(1.0);
+                });
+            }
+        });
+
         return scrollPane;
     }
 

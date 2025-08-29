@@ -73,12 +73,14 @@ public class MainPageService {
     public ServerResponse sendMessage(Conversation conversation) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(conversation);
+        System.out.println("json = " + json + " conversation = " + conversation.getMessages().size());
         Message message = new Message(MessageType.MESSAGE_SEND, json);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
 
         String serverInLine = Listener.getServerIn().readLine();
+        System.out.println("serverIn line = " + serverInLine);
         return objectMapper.readValue(serverInLine, ServerResponse.class);
     }
 }

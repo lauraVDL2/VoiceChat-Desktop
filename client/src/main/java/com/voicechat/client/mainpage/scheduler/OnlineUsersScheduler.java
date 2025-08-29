@@ -1,23 +1,14 @@
 package com.voicechat.client.mainpage.scheduler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.voicechat.client.Listener;
 import com.voicechat.client.mainpage.component.AvatarComponent;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +36,6 @@ public class OnlineUsersScheduler {
         serverOut.println(objectMapper.writeValueAsString(message));
 
         String serverInLine = Listener.getServerIn().readLine();
-
         if (StringUtils.isNotBlank(serverInLine)) {
             ServerResponse serverResponse = objectMapper.readValue(serverInLine, ServerResponse.class);
             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {

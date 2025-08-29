@@ -1,11 +1,13 @@
 package com.voicechat.client.mainpage.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
+import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
 import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
@@ -20,6 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
@@ -58,6 +61,8 @@ public class MainPageController {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
+
+    private final MessagesNotificationScheduler messagesNotificationScheduler = new MessagesNotificationScheduler();
 
     private final ConversationComponent conversationComponent = new ConversationComponent();
 
@@ -211,7 +216,11 @@ public class MainPageController {
                                 System.out.println("conversation found !");
                                 try {
                                     conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane, serverResponse);
-                                } catch (JsonProcessingException e) {
+                                    ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                                    Conversation conversationResponse = objectMapper
+                                            .readValue(serverResponse.getPayload(), Conversation.class);
+                                    messagesNotificationScheduler.schedule(mainPane, conversationComponent, conversationResponse);
+                                } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -247,12 +256,12 @@ public class MainPageController {
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_SENT) {
-                            System.out.println("Message sent !");
-                            try {
-                                conversationComponent.addMessageComponents(mainPane, serverResponse);
-                            } catch (JsonProcessingException e) {
-                                e.printStackTrace();
-                            }
+                                try {
+                                    System.out.println("Message sent !");
+                                    conversationComponent.addMessageComponents(mainPane, serverResponse);
+                                } catch (JsonProcessingException e) {
+                                    e.printStackTrace();
+                                }
                         }
                     }
                     else {
