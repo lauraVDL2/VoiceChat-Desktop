@@ -11,24 +11,32 @@ import org.shared.entity.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class MessageAction {
     private static final Logger logger = LoggerFactory.getLogger(MessageAction.class);
 
     public Conversation sendMessage(ObjectMapper objectMapper, org.shared.Message messageObj,
-                               ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+                                    ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         MessageDao messageDao = new MessageDao();
         Message message = messageDao.sendMessage(conversation);
+        byte[] bytes = null;
         if (message != null) {
             logger.info("Message sent !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
-            serverResponse.setPayload(objectMapper.writeValueAsString(message));
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(message));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
             conversation.setMessages(List.of(message));
             return conversation;
         }
@@ -36,7 +44,12 @@ public class MessageAction {
             logger.error("Failed to send message !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
             return null;
         }
     }

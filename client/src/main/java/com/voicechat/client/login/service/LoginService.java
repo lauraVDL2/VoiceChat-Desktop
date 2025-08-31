@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 
 public class LoginService {
 
-    public ServerResponse login(User user) throws IOException {
+    public void login(User user) throws IOException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_LOG_IN, json);
@@ -22,8 +22,8 @@ public class LoginService {
         System.out.println(mapper.writeValueAsString(message));
         serverOut.println(mapper.writeValueAsString(message));
 
-        String serverInLine = Listener.getServerIn().readLine();
+        /*String serverInLine = Listener.getServerIn().readLine();
         System.out.println(serverInLine);
-        return  mapper.readValue(serverInLine, ServerResponse.class);
+        return  mapper.readValue(serverInLine, ServerResponse.class);*/
     }
 }

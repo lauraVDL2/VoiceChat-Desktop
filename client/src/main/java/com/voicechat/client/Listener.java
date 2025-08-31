@@ -39,6 +39,10 @@ public class Listener {
 
     private static DataInputStream dataInputStream;
 
+    private static BufferedReader userInput;
+
+    private static ServerReader serverReader;
+
     public Listener() {
 
     }
@@ -63,11 +67,13 @@ public class Listener {
 
         socketFuture.thenAcceptAsync(socket -> {
             try {
-                BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+                userInput = new BufferedReader(new InputStreamReader(System.in));
                 serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 serverOut = new PrintWriter(socket.getOutputStream(), true);
                 dataInputStream = new DataInputStream(socket.getInputStream());
+                serverReader = new ServerReader(dataInputStream);
 
+                serverReader.startReading();
                 displayLogPanel(loginController, stage, loginRoot);
 
                 // Asynchronously read messages from server
@@ -106,6 +112,7 @@ public class Listener {
         // Notify UI that connection is successful
         Platform.runLater(() -> {
             if (loginController != null) {
+                System.out.println("ok");
                 Scene scene = new Scene(loginRoot,  300, 300);
                 scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/login.css").toExternalForm());
                 stage.setScene(scene);
@@ -136,6 +143,14 @@ public class Listener {
 
     public static DataInputStream getDataInputStream() {
         return dataInputStream;
+    }
+
+    public static BufferedReader getUserInput() {
+        return userInput;
+    }
+
+    public static ServerReader getServerReader() {
+        return serverReader;
     }
 
 }

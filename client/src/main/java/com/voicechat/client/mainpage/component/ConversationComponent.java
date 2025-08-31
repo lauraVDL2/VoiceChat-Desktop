@@ -1,12 +1,12 @@
 package com.voicechat.client.mainpage.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.Listener;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
-import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
@@ -31,8 +31,8 @@ import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,9 +44,9 @@ public class ConversationComponent {
 
     private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
 
-    public void setConversationComponents(BorderPane mainPane, ServerResponse serverResponse) throws JsonProcessingException {
+    public void setConversationComponents(BorderPane mainPane, ServerResponse serverResponse) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        Conversation conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+        Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
         UserSession.INSTANCE.getUser().getConversation().add(conversation);
         HBox hBox = new HBox();
         for (User user : conversation.getParticipants()) {
@@ -74,24 +74,26 @@ public class ConversationComponent {
         mainPane.setCenter(hBox);
     }
 
-    public void addMessageComponents(BorderPane mainPane, ServerResponse serverResponse) throws JsonProcessingException {
+    public void addMessageComponents(BorderPane mainPane, ServerResponse serverResponse) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        Message message = objectMapper.readValue(serverResponse.getPayload(), Message.class);
+        Message message = objectMapper.readValue(serverResponse.getBinaryPayload(), Message.class);
         User currentUser = UserSession.INSTANCE.getUser();
 
         Platform.runLater(() -> {
             CompletableFuture.supplyAsync(() -> {
                 try {
                     mainPageService.sendAvatarInfo(message.getSender());
-                    return avatarComponent.readTargetAvatar(new VBox());
-                } catch (JsonProcessingException e) {
+                    return Listener.getServerReader().getAvatar();
+                } catch (Exception e) {
                     e.printStackTrace();
                     return new VBox();
                 }
-            }).thenAcceptAsync(avatarBox -> {
+            }).thenAcceptAsync(imageView -> {
+                VBox avatarBox = new VBox();
                 // Update UI on JavaFX Application Thread
                 avatarBox.setAlignment(Pos.CENTER);
                 HBox hBoxAvatar = new HBox();
+                avatarBox.getChildren().add(imageView);
                 hBoxAvatar.getChildren().add(avatarBox);
 
                 VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
@@ -103,35 +105,42 @@ public class ConversationComponent {
     }
 
     public void addMessagesReceivedComponents(ServerResponse serverResponse, BorderPane mainPane, Conversation initialConversation)
-            throws JsonProcessingException {
+            throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        Conversation conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
+        Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
         User currentUser = UserSession.INSTANCE.getUser();
 
-        if (Objects.equals(conversation.getId(), initialConversation.getId())) {
+        if (conversation.getId() == initialConversation.getId()) {
             if (!CollectionUtils.isEmpty(conversation.getMessages())) {
-                Platform.runLater(() -> {
-                    CompletableFuture.supplyAsync(() -> {
-                        try {
-                            Message message = conversation.getMessages().get(0);
-                            mainPageService.sendAvatarInfo(message.getSender());
-                            return avatarComponent.readTargetAvatar(new VBox());
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                            return new VBox();
-                        }
-                    }).thenAcceptAsync(avatarBox -> {
-                        // Update UI on JavaFX Application Thread
-                        avatarBox.setAlignment(Pos.CENTER);
-                        HBox hBoxAvatar = new HBox();
-                        hBoxAvatar.getChildren().add(avatarBox);
+                Message lastMessage = conversation.getMessages().get(0);
+                if (!StringUtils.equals(lastMessage.getSender().getEmailAddress(), currentUser.getEmailAddress())) {
+                    // Update UI on JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        CompletableFuture.supplyAsync(() -> {
+                            try {
+                                return Listener.getServerReader().getAvatar();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                                return new ImageView();
+                            }
+                        }).thenAcceptAsync(avatarImage -> {
+                            avatarImage.setFitHeight(40.);
+                            avatarImage.setFitWidth(40.);
+                            VBox avatarBox = new VBox();
+                            avatarBox.setAlignment(Pos.CENTER);
+                            avatarBox.getChildren().add(avatarImage);
+                            HBox hBoxAvatar = new HBox();
+                            hBoxAvatar.getChildren().add(avatarBox);
 
-                        VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
-                        VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, conversation.getMessages().get(0), currentUser);
-                        ScrollPane scrollPane = addMessagesScrollPane(vbox);
-                        mainPane.setCenter(scrollPane);
+                            VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
+                            VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, lastMessage, currentUser);
+                            ScrollPane scrollPane = addMessagesScrollPane(vbox);
+                            mainPane.setCenter(scrollPane);
+                            System.out.println("END METHOD");
+                        });
+
                     });
-                });
+                }
             }
         }
     }
@@ -218,9 +227,11 @@ public class ConversationComponent {
                 if (i == 0) {
                     try {
                         mainPageService.sendAvatarInfo(participant);
-                        ImageView avatarView = avatarComponent.readTargetAvatar();
+                        ImageView avatarView = Listener.getServerReader().getAvatar();
+                        avatarView.setFitHeight(40.);
+                        avatarView.setFitWidth(40.);
                         targetUserInfo.getChildren().add(avatarView);
-                    } catch (JsonProcessingException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -261,18 +272,20 @@ public class ConversationComponent {
                 try {
                     HBox hBoxAvatar = new HBox();
                     mainPageService.sendAvatarInfo(message.getSender());
-                    VBox avatarBox = avatarComponent.readTargetAvatar(new VBox());
+                    VBox avatarBox = new VBox();
+                    ImageView imageView = Listener.getServerReader().getAvatar();
+                    imageView.setFitWidth(40.);
+                    imageView.setFitHeight(40.);
+                    avatarBox.getChildren().add(imageView);
                     avatarBox.setAlignment(Pos.CENTER);
                     hBoxAvatar.getChildren().add(avatarBox);
                     addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                } catch (JsonProcessingException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         }
         ScrollPane scrollPane = addMessagesScrollPane(messageContentBox);
-        
-        onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
         
         return scrollPane;
     }
@@ -306,9 +319,12 @@ public class ConversationComponent {
         return hBox1;
     }
 
-    public void setMessagesComponents(MainPageController mainPageController, GridPane gridMainPane, VBox rightSearchPane, BorderPane mainPane, ServerResponse response) throws JsonProcessingException {
+    public void setMessagesComponents(MainPageController mainPageController, GridPane gridMainPane,
+                                      VBox rightSearchPane, BorderPane mainPane, ServerResponse response,
+                                      ConversationListComponent conversationListComponent,
+                                      MessagesNotificationScheduler messagesNotificationScheduler) throws IOException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
-        Conversation conversation = mapper.readValue(response.getPayload(), Conversation.class);
+        Conversation conversation = mapper.readValue(response.getBinaryPayload(), Conversation.class);
         Platform.runLater(() -> {
             User currentUser = UserSession.INSTANCE.getUser();
             
@@ -322,6 +338,13 @@ public class ConversationComponent {
             mainPane.setBottom(addConversationSendMessageBox(mainPageController, conversation, ConversationAction.CONTINUE));
 
             mainPane.setPadding(new Insets(0, 0, 10, 0));
+
+            messagesNotificationScheduler.schedule(mainPane, mainPageController.getLeftPane(), this,
+                    conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
+
+            System.out.println("AFTER SCHEDULE");
+            //onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
+
 
             // RIGHT pane
             rightSearchPane.getChildren().clear();

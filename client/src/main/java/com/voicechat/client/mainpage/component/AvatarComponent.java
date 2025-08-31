@@ -1,7 +1,10 @@
 package com.voicechat.client.mainpage.component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.ServerMessageListener;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,60 +17,22 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
-import org.shared.ServerResponse;
-import org.shared.UserSessionStatus;
+import org.shared.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AvatarComponent {
 
-    public VBox readTargetAvatar(VBox vBox) {
-        try {
-            DataInputStream dataInputStream = Listener.getDataInputStream();
-            int size = dataInputStream.readInt();
-            if (size > 0) {
-                byte[] imageBytes = new byte[size];
-                dataInputStream.readFully(imageBytes);
-                javafx.scene.image.Image image = new Image(new ByteArrayInputStream(imageBytes));
-                ImageView avatar = new ImageView();
-                avatar.setFitHeight(40);
-                avatar.setFitWidth(40);
-                Platform.runLater(() -> {
-                            avatar.setImage(image);
-                            vBox.getChildren().add(avatar);
-                        }
-                );
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vBox;
-    }
 
-    public ImageView readTargetAvatar() {
-        ImageView avatar = new ImageView();
-        try {
-            DataInputStream dataInputStream = Listener.getDataInputStream();
-            int size = dataInputStream.readInt();
-            if (size > 0) {
-                byte[] imageBytes = new byte[size];
-                dataInputStream.readFully(imageBytes);
-                javafx.scene.image.Image image = new Image(new ByteArrayInputStream(imageBytes));
-                avatar.setFitHeight(40);
-                avatar.setFitWidth(40);
-                Platform.runLater(() -> {
-                            avatar.setImage(image);
-                        }
-                );
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return avatar;
-    }
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public void onlineCircle(StackPane stackPane, Color color) {
         if (stackPane != null) {

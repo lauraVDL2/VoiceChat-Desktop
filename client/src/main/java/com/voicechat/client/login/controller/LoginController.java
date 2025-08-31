@@ -1,6 +1,8 @@
 package com.voicechat.client.login.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.Listener;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.login.service.LoginService;
@@ -65,11 +67,13 @@ public class LoginController {
             String password = passwordField.getText();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
+
             // Run login process asynchronously
             CompletableFuture.supplyAsync(() -> {
                 User user = new User(email, password);
                 try {
-                    return loginService.login(user); // potentially blocking call
+                    loginService.login(user);
+                    return Listener.getServerReader().getServerResponse();
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -125,4 +129,5 @@ public class LoginController {
             }
         });
     }
+
 }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConversationDao {
     private static final Logger log = LoggerFactory.getLogger(ConversationDao.class);
@@ -44,8 +45,7 @@ public class ConversationDao {
                         WHERE id(c) = $conversationId
                         WITH msg
                         MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                        ORDER BY msg.time ASC
-                        RETURN msg, u LIMIT 15
+                        RETURN msg, u ORDER BY msg.time DESC LIMIT 15
                         """;
                 Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
                 List<Message> messages = new ArrayList<>();
@@ -55,7 +55,9 @@ public class ConversationDao {
                     message.setSender(sender);
                     messages.add(message);
                 }
-                conversation.setMessages(messages);
+                conversation.setMessages(messages.stream()
+                        .sorted(Comparator.comparing(Message::getTime))
+                        .collect(Collectors.toList()));
                 // Commit transaction
                 tx.commit();
                 return conversation;
@@ -81,9 +83,15 @@ public class ConversationDao {
                 User participant = (User) userRecord.get("u");
                 participants.add(participant);
             }
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
             return participants;
         } catch (Exception e) {
             e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
         }
         return new LinkedHashSet<>();
     }
@@ -115,10 +123,8 @@ public class ConversationDao {
                         MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
                         WHERE id(c) = $conversationId
                         WITH msg
-                        ORDER BY msg.time ASC
-                        LIMIT 15
                         OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
-                        RETURN msg, r.isRead AS isRead
+                        RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 15
                         """;
                 Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId(),
                         "emailAddress", user.getEmailAddress()));
@@ -136,7 +142,9 @@ public class ConversationDao {
                     messages.add(message);
                 }
                 conversation.setParticipants(new HashSet<>(participants));
-                conversation.setMessages(messages);
+                conversation.setMessages(messages.stream()
+                        .sorted(Comparator.comparing(Message::getTime))
+                        .collect(Collectors.toList()));
                 conversations.add(conversation);
             }
             if (sessionFactory != null) {
@@ -159,8 +167,7 @@ public class ConversationDao {
             String cypher = """
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                    ORDER BY msg.time ASC
-                    RETURN msg, u LIMIT 15
+                    RETURN msg, u ORDER BY msg.time DESC LIMIT 15
                     """;
             Result records = session.query(cypher, Map.of("id", conversation.getId()));
             List<Message> messages = new ArrayList<>();
@@ -171,7 +178,9 @@ public class ConversationDao {
                 messages.add(message);
             }
 
-            conversation.setMessages(messages);
+            conversation.setMessages(messages.stream()
+                    .sorted(Comparator.comparing(Message::getTime))
+                    .collect(Collectors.toList()));
             String cypher2 = """
                     MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
                     """;

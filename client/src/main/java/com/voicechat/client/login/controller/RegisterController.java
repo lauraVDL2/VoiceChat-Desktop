@@ -2,6 +2,7 @@ package com.voicechat.client.login.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.login.service.RegisterService;
@@ -58,8 +59,11 @@ public class RegisterController {
 
     private final RegisterService registerService = new RegisterService();
 
+    private final ServerReader serverReader = new ServerReader(Listener.getDataInputStream());
+
     @FXML
     public void initialize() {
+        serverReader.startReading();
         switchLoginView();
         registerUser();
     }
@@ -97,9 +101,10 @@ public class RegisterController {
                 stage.setScene(scene);
 
                 User user = new User(email, displayedName, password);
-                serverResponse = registerService.register(user);
+                registerService.register(user);
+                serverResponse = serverReader.getServerResponse();
                 ConnectController.loadUserScreen(serverResponse, stage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

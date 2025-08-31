@@ -2,6 +2,8 @@ package com.voicechat.client.mainpage.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.ServerMessageListener;
+import com.voicechat.client.ServerReader;
 import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
@@ -14,7 +16,7 @@ import java.util.List;
 
 public class HeaderService {
 
-    public ServerResponse searchUser(String field) throws IOException {
+    public ServerResponse searchUser(String field) throws Exception {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         User user = new User();
         user.setDisplayName(field);
@@ -24,11 +26,13 @@ public class HeaderService {
 
         serverOut.println(mapper.writeValueAsString(message));
 
-        String serverInLine = Listener.getServerIn().readLine();
-        return mapper.readValue(serverInLine, ServerResponse.class);
+        return Listener.getServerReader().getServerResponse();
+
+        /*String serverInLine = Listener.getServerIn().readLine();
+        return mapper.readValue(serverInLine, ServerResponse.class);*/
     }
 
-    public ServerResponse searchConversationIfExists(List<User> users) throws IOException {
+    public ServerResponse searchConversationIfExists(List<User> users) throws Exception {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(users);
         Message message = new Message(MessageType.CONVERSATION_SEARCH, json);
@@ -36,8 +40,10 @@ public class HeaderService {
 
         serverOut.println(mapper.writeValueAsString(message));
 
-        String serverInLine = Listener.getServerIn().readLine();
-        return mapper.readValue(serverInLine, ServerResponse.class);
+        return Listener.getServerReader().getServerResponse();
+
+        /*String serverInLine = Listener.getServerIn().readLine();
+        return mapper.readValue(serverInLine, ServerResponse.class);*/
     }
 
 }

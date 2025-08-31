@@ -12,23 +12,18 @@ import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +78,7 @@ public class HeaderController {
     }
 
     public void initializeAvatar() throws IOException {
-        CompletableFuture.runAsync(() -> {
+        /*CompletableFuture.runAsync(() -> {
             try {
                 DataInputStream dataInputStream = Listener.getDataInputStream();
                 int size = dataInputStream.readInt();
@@ -96,7 +91,7 @@ public class HeaderController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }, executor);
+        }, executor);*/
     }
 
     public void searchUsers() {
@@ -113,7 +108,7 @@ public class HeaderController {
             CompletableFuture.supplyAsync(() -> {
                 try {
                     return headerService.searchUser(searchDisplayName);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
@@ -133,9 +128,9 @@ public class HeaderController {
         });
     }
 
-    public void searchUserComponents(ServerResponse serverResponse) throws JsonProcessingException {
+    public void searchUserComponents(ServerResponse serverResponse) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        List<User> users = objectMapper.readValue(serverResponse.getPayload(),
+        List<User> users = objectMapper.readValue(serverResponse.getBinaryPayload(),
                 new TypeReference<List<User>>() {
                 });
         // Update UI on JavaFX thread
@@ -183,7 +178,7 @@ public class HeaderController {
                 CompletableFuture.supplyAsync(() -> {
                     try {
                         return headerService.searchConversationIfExists(users);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return null;
                     }
@@ -194,9 +189,10 @@ public class HeaderController {
                                 System.out.println("conversation exists !");
                                 try {
                                     conversationComponent.setMessagesComponents(parentController, parentController.getGridMainPane(),
-                                            parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse);
+                                            parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse, conversationListComponent,
+                                            parentController.getMessagesNotificationScheduler());
                                     conversationListComponent.setConversationClicked(parentController.getLeftPane(), serverResponse);
-                                } catch (JsonProcessingException e) {
+                                } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }

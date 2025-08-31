@@ -16,6 +16,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,17 +26,23 @@ public class UserAction {
     private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
     public User userCreate(ObjectMapper objectMapper, Message messageObj,
-                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+                                  ServerResponse serverResponse, Socket socket) throws IOException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         user.setAvatar("/images/avatar/avatar_default.png");
         UserDao userDao = new UserDao();
+        byte[] bytes = null;
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
             return user;
         }
         else {
@@ -42,22 +50,34 @@ public class UserAction {
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             serverResponse.setMessage(UserDao.errorMessage);
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
         }
         return null;
     }
 
     public User userLogIn(ObjectMapper objectMapper, Message messageObj,
-                                 ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+                                 ServerResponse serverResponse, Socket socket) throws IOException {
         User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
         UserDao userDao = new UserDao();
         User resultUser = userDao.login(userLogged);
+        byte[] bytes = null;
         if (resultUser != null) {
             logger.info("User connected !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            serverResponse.setPayload(objectMapper.writeValueAsString(resultUser));
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(resultUser));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
+            System.out.println("AFTER JSON RESPONSE" + new String(bytes, StandardCharsets.UTF_8));
             return resultUser;
         }
         else {
@@ -65,59 +85,86 @@ public class UserAction {
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setMessage(UserDao.errorMessage);
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
         }
         return null;
     }
 
     public void userSearch(ObjectMapper objectMapper, Message messageObj,
-                                  ServerResponse serverResponse, PrintWriter out) throws JsonProcessingException {
+                                  ServerResponse serverResponse, Socket socket) throws IOException {
         User userSearch = objectMapper.readValue(messageObj.getPayload(), User.class);
         String displayNameSearch = userSearch.getDisplayName();
         UserDao userDao = new UserDao();
         List<User> users = userDao.searchUsers(displayNameSearch);
+        byte[] bytes = null;
         if (!CollectionUtils.isEmpty(users)) {
             logger.info("Users found !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
-            serverResponse.setPayload(objectMapper.writeValueAsString(users));
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(users));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
         }
         else {
             logger.info("Users not found !");
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
             serverResponse.setMessage("No user found !");
-            out.println(objectMapper.writeValueAsString(serverResponse));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
         }
     }
 
     public void getOnlineUsers(ObjectMapper objectMapper,
-                               ServerResponse serverResponse, PrintWriter out,
+                               ServerResponse serverResponse, Socket socket,
                                ConcurrentHashMap<String, UserSessionStatus> onlineUsers) throws IOException {
         serverResponse.setServerResponseMessage(ServerResponseMessage.ONLINE_USERS_FETCHED);
         serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
         ServerInformation serverInformation = new ServerInformation();
         serverInformation.setOnlineUsers(onlineUsers);
         serverResponse.setServerInformation(serverInformation);
-        out.println(objectMapper.writeValueAsString(serverResponse));
+        byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
+        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+        outputStream.writeUTF("JSON_RESPONSE");
+        outputStream.writeInt(bytes.length);
+        outputStream.write(bytes);
+        outputStream.flush();
     }
 
     public void searchTargetUser(ObjectMapper objectMapper, Message messageObj,
-                                 DataOutputStream dataOutputStream) throws IOException {
+                                 DataOutputStream dataOutputStream, ServerResponse serverResponse) throws IOException {
         User targetUser = objectMapper.readValue(messageObj.getPayload(), User.class);
         if (targetUser != null) {
             if (StringUtils.isNotBlank(targetUser.getAvatar())) {
                 byte[] avatarBytes = getAvatarBytes(targetUser.getAvatar());
-                dataOutputStream.writeInt(avatarBytes.length);
-                dataOutputStream.write(avatarBytes);
+                serverResponse.setBinaryPayload(avatarBytes);
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);
+
+                byte[] jsonBytes = objectMapper.writeValueAsBytes(serverResponse);
+                dataOutputStream.writeUTF("IMAGE_RESPONSE");
+                dataOutputStream.writeInt(jsonBytes.length);
+                dataOutputStream.write(jsonBytes);
                 dataOutputStream.flush();
             }
         }
     }
 
     public byte[] getAvatarBytes(String resourcePath) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+        try (InputStream is = Server.class.getResourceAsStream(resourcePath)) {
             if (is == null) {
                 logger.error("Resource not found: " + resourcePath);
             }

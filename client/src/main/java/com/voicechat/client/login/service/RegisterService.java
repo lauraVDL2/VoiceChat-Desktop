@@ -27,7 +27,7 @@ public class RegisterService {
         return matcher.matches();
     }
 
-    public ServerResponse register(User user) throws IOException {
+    public void register(User user) throws IOException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_CREATE, json);
@@ -37,8 +37,8 @@ public class RegisterService {
         serverOut.println(mapper.writeValueAsString(message));
 
         // Read response directly
-        String serverInLine = Listener.getServerIn().readLine();
-        return mapper.readValue(serverInLine, ServerResponse.class);
+        /*String serverInLine = Listener.getServerIn().readLine();
+        return mapper.readValue(serverInLine, ServerResponse.class);*/
     }
 
 }

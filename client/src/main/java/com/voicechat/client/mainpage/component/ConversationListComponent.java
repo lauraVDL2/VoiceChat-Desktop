@@ -1,8 +1,8 @@
 package com.voicechat.client.mainpage.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.Listener;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.service.MainPageService;
@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
@@ -25,6 +26,7 @@ import org.shared.entity.Message;
 import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +42,8 @@ public class ConversationListComponent {
             Conversation conversation = null;
             var nodes = leftPane.lookupAll(".discussionBox");
             try {
-                conversation = objectMapper.readValue(serverResponse.getPayload(), Conversation.class);
-            } catch (JsonProcessingException e) {
+                conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             if (conversation != null) {
@@ -57,17 +59,44 @@ public class ConversationListComponent {
         });
     }
 
+    public VBox addLastMessageLabel(Message lastMessage) {
+        VBox content = new VBox();
+        content.setFillWidth(true);
+        content.setMaxWidth(Double.MAX_VALUE);
+        Label contentLabel = new Label();
+        contentLabel.setText(lastMessage.getContent());
+        contentLabel.getStyleClass().add("conversationLastMessageLabel");
+        content.getChildren().add(contentLabel);
+        return content;
+    }
+
+    public void setLastMessageOnSchedule(VBox leftPane, ServerResponse serverResponse) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
+        List<Message> messages = conversation.getMessages();
+        System.out.println("VA ICI");
+        Platform.runLater(() -> {
+            if (!CollectionUtils.isEmpty(messages)) {
+                Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
+                VBox mainVbox = (VBox) leftPane.lookup("#c" + conversation.getId());
+                Label contentLabel = (Label) mainVbox.lookup(".conversationLastMessageLabel");
+                contentLabel.setText(lastMessage.getContent());
+            }
+        });
+    }
+
     public void setConversationList(MainPageController mainPageController, VBox leftPane, ServerResponse serverResponse) {
         Platform.runLater(() -> {
             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
             List<Conversation> conversations = null;
             try {
-                conversations = objectMapper.readValue(serverResponse.getPayload(),
+                conversations = objectMapper.readValue(serverResponse.getBinaryPayload(),
                         new TypeReference<List<Conversation>>() {});
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             User currentUser = UserSession.INSTANCE.getUser();
+            System.out.println("VA ICI AUSSI");
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {
                 VBox mainVbox = new VBox();
@@ -88,10 +117,12 @@ public class ConversationListComponent {
                                 vbox2 = new VBox();
                                 StackPane stackAvatar = new StackPane();
                                 stackAvatar.getStyleClass().add("stackAvatarConversationList");
-                                ImageView imageView = avatarComponent.readTargetAvatar();
+                                ImageView imageView = Listener.getServerReader().getAvatar();
+                                imageView.setFitWidth(40.);
+                                imageView.setFitHeight(40.);
                                 stackAvatar.getChildren().add(imageView);
                                 vbox2.getChildren().add(stackAvatar);
-                            } catch (JsonProcessingException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -108,14 +139,7 @@ public class ConversationListComponent {
                 displayNames.getChildren().add(conversationName);
                 vBox.getChildren().addAll(displayNames);
 
-                VBox content = new VBox();
-                content.setFillWidth(true);
-                content.setMaxWidth(Double.MAX_VALUE);
-                Label contentLabel = new Label();
-                contentLabel.setText(lastMessage.getContent());
-                contentLabel.getStyleClass().add("conversationLastMessageLabel");
-                content.getChildren().add(contentLabel);
-                vBox.getChildren().add(content);
+                vBox.getChildren().add(addLastMessageLabel(lastMessage));
 
                 vbox2.setAlignment(Pos.CENTER);
                 vBox.setAlignment(Pos.CENTER);
@@ -157,6 +181,7 @@ public class ConversationListComponent {
                 leftPane.getChildren().add(contentStackPane);
                 mainPageController.goToConversation(contentStackPane);
             }
+            System.out.println("end method");
         });
     }
 

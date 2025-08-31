@@ -1,14 +1,14 @@
 package com.voicechat.client.mainpage.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.ServerReader;
+import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
-import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import javafx.application.Platform;
@@ -19,10 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
@@ -30,11 +28,8 @@ import org.shared.entity.Message;
 import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -95,7 +90,7 @@ public class MainPageController {
             gridPaneFocus();
             getUserConversations();
             Platform.runLater(() -> {
-                onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
+                //onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
             });
         });
     }
@@ -105,13 +100,15 @@ public class MainPageController {
             User user = UserSession.INSTANCE.getUser();
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    return mainPageService.displayUserConversations(user);
-                } catch (IOException e) {
+                    mainPageService.displayUserConversations(user);
+                    return Listener.getServerReader().getServerResponse();
+                } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             }, executor).thenAcceptAsync((serverResponse) -> {
                 if (serverResponse != null) {
+                    System.out.println("response = " + serverResponse.getServerResponseMessage());
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
                             conversationListComponent.setConversationList(this, leftPane, serverResponse);
@@ -167,7 +164,7 @@ public class MainPageController {
                 CompletableFuture.supplyAsync(() -> {
                     try {
                         return mainPageService.createConversation(conversation);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return null;
                     }
@@ -178,7 +175,7 @@ public class MainPageController {
                                 System.out.println("conversation exists !");
                                 try {
                                     conversationComponent.setConversationComponents(mainPane, serverResponse);
-                                } catch (JsonProcessingException e) {
+                                } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
                             }
@@ -205,7 +202,7 @@ public class MainPageController {
                 CompletableFuture.supplyAsync(() -> {
                     try {
                         return mainPageService.getConversation(conversation);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return null;
                     }
@@ -215,11 +212,12 @@ public class MainPageController {
                             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_GET) {
                                 System.out.println("conversation found !");
                                 try {
-                                    conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane, serverResponse);
-                                    ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                                    conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane,
+                                            serverResponse, conversationListComponent, messagesNotificationScheduler);
+                                    /*ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                                     Conversation conversationResponse = objectMapper
-                                            .readValue(serverResponse.getPayload(), Conversation.class);
-                                    messagesNotificationScheduler.schedule(mainPane, conversationComponent, conversationResponse);
+                                            .readValue(serverResponse.getPayload(), Conversation.class);*/
+
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -248,7 +246,7 @@ public class MainPageController {
                     message.setTime(LocalDateTime.now());
                     conversation1.setMessages(List.of(message));
                     return mainPageService.sendMessage(conversation1);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
@@ -259,7 +257,7 @@ public class MainPageController {
                                 try {
                                     System.out.println("Message sent !");
                                     conversationComponent.addMessageComponents(mainPane, serverResponse);
-                                } catch (JsonProcessingException e) {
+                                } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                         }
@@ -286,6 +284,10 @@ public class MainPageController {
 
     public VBox getLeftPane() {
         return leftPane;
+    }
+
+    public MessagesNotificationScheduler getMessagesNotificationScheduler() {
+        return messagesNotificationScheduler;
     }
     
 }

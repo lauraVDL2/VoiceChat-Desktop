@@ -1,6 +1,7 @@
 package com.voicechat.client.login.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import javafx.application.Platform;
@@ -25,10 +26,12 @@ public class ConnectController {
                 try {
                     // Deserialize payload if needed
                     if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_LOGGED_IN) {
-                        String payload = serverResponse.getPayload();
+                        System.out.println("go here");
+                        byte[] payload = serverResponse.getBinaryPayload();
                         ObjectMapper mapper = JsonMapper.getJsonMapper();
                         User loggedUser = mapper.readValue(payload, User.class);
                         UserSession.INSTANCE.setUser(loggedUser);
+                        //serverReader.stop();
                     }
                     // Load FXML
                     FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
