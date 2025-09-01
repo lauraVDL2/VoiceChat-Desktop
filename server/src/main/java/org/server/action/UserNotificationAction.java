@@ -36,11 +36,15 @@ public class UserNotificationAction {
         ConversationDao conversationDao = new ConversationDao();
         List<String> emailAddresses = conversationDao.getConversationParticipants(conversation)
                 .stream().map(User::getEmailAddress).toList();
+        List<Message> messages = conversation.getMessages();
+        Message lastMessage = messages.get(messages.size() - 1);
+        User sender = new UserDao().findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
         for (var userSocket : userSockets.entrySet()) {
             if (!CollectionUtils.isEmpty(emailAddresses)) {
                 String emailAddress = userSocket.getKey();
                 Socket socket = userSocket.getValue();
-                if (emailAddresses.contains(emailAddress)) {
+                if (emailAddresses.contains(emailAddress)
+                        && !StringUtils.equals(sender.getEmailAddress(), emailAddress)) {
                     serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                     serverResponse.setServerResponseMessage(ServerResponseMessage.NEW_MESSAGE_NOTIFIED);
                     serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversation));
@@ -50,9 +54,7 @@ public class UserNotificationAction {
                     dataOutputStream.writeInt(bytes.length);
                     dataOutputStream.write(bytes);
                     dataOutputStream.flush();
-                    List<Message> messages = conversation.getMessages();
-                    Message lastMessage = messages.get(messages.size() - 1);
-                    User sender = new UserDao().findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
+
                     //searchSentAvatar(objectMapper, sender, socket, serverResponse);
                     searchSentAvatar(objectMapper, sender, socket, serverResponse);
                 }

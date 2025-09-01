@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ServerReader {
     private final BlockingQueue<ImageView> avatarQueue = new LinkedBlockingQueue<>();
-    private final BlockingQueue<ServerResponse> serverResponses = new LinkedBlockingQueue<>();
+    private BlockingQueue<ServerResponse> serverResponses = new LinkedBlockingQueue<>();
     private final DataInputStream dataInputStream;
     private volatile boolean running = true; // Flag to control thread execution
     private Thread readerThread; // Reference to the thread for stopping
@@ -25,6 +25,7 @@ public class ServerReader {
     }
 
     public void startReading() {
+        serverResponses = new LinkedBlockingQueue<>();
         readerThread = new Thread(() -> {
             try {
                 while (running) {
@@ -67,8 +68,12 @@ public class ServerReader {
         return avatarQueue.take(); // Blocks until an avatar is available
     }
 
-    public ServerResponse getServerResponse() throws InterruptedException {
-        return serverResponses.take();
+    public ServerResponse getServerResponse() {
+        try {
+            return serverResponses.take();
+        } catch (InterruptedException e) {
+            return serverResponses.poll();
+        }
     }
 
     public void stop() {

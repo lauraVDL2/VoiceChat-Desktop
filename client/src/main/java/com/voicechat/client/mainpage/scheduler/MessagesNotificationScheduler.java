@@ -10,14 +10,18 @@ import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.*;
 import org.shared.entity.Conversation;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class MessagesNotificationScheduler {
+
+    private ScheduledFuture<?> messageNotificationSchedule = null;
 
     public void schedule(BorderPane borderPane, VBox leftPane, ConversationComponent conversationComponent,
                          ConversationListComponent conversationListComponent, Conversation conversation,
@@ -25,30 +29,37 @@ public class MessagesNotificationScheduler {
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        scheduler.scheduleAtFixedRate(() -> {
+        messageNotificationSchedule = scheduler.scheduleAtFixedRate(() -> {
                 try {
+                    onlineUsersScheduler.waitOnlineScheduleToBeDone();
+                    onlineUsersScheduler.fetchLoggedUsers(gridMainPane, OnlineFetch.MESSAGES);
                     ServerResponse serverResponse = Listener.getServerReader().getServerResponse();
-                    System.out.println(serverResponse.getServerResponseMessage());
-                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.NEW_MESSAGE_NOTIFIED
-                            && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                        Platform.runLater(() -> {
-                            try {
-                                conversationComponent.addMessagesReceivedComponents(serverResponse, borderPane, conversation);
-                                conversationListComponent.setLastMessageOnSchedule(leftPane, serverResponse);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
+                    System.out.println("BEFORE NULL");
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.NEW_MESSAGE_NOTIFIED
+                                && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            Platform.runLater(() -> {
+                                try {
+                                    conversationComponent.addMessagesReceivedComponents(serverResponse, borderPane, conversation);
+                                    conversationListComponent.setLastMessageOnSchedule(leftPane, serverResponse);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            /*try {
-                onlineUsersScheduler.fetchLoggedUsers(gridMainPane, OnlineFetch.MESSAGES);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-        }, 5, 5, TimeUnit.SECONDS);
+        }, 5, 10, TimeUnit.SECONDS);
+    }
+
+    public void waitMessageScheduleToBeDone() {
+        try {
+            messageNotificationSchedule.cancel(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

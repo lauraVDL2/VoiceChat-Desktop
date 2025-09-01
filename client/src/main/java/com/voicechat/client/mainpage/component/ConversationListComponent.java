@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.entity.Conversation;
@@ -74,13 +75,14 @@ public class ConversationListComponent {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
         List<Message> messages = conversation.getMessages();
-        System.out.println("VA ICI");
         Platform.runLater(() -> {
             if (!CollectionUtils.isEmpty(messages)) {
                 Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
                 VBox mainVbox = (VBox) leftPane.lookup("#c" + conversation.getId());
                 Label contentLabel = (Label) mainVbox.lookup(".conversationLastMessageLabel");
+                Label timeLabel = (Label) mainVbox.lookup(".dateDiscussionLabel");
                 contentLabel.setText(lastMessage.getContent());
+                timeLabel.setText(DateHandler.transformDate(lastMessage.getTime()));
             }
         });
     }
@@ -96,7 +98,6 @@ public class ConversationListComponent {
                 throw new RuntimeException(e);
             }
             User currentUser = UserSession.INSTANCE.getUser();
-            System.out.println("VA ICI AUSSI");
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {
                 VBox mainVbox = new VBox();

@@ -70,28 +70,23 @@ public class HeaderController {
 
             try {
                 initializeAvatar();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             topPane.toFront();
         });
     }
 
-    public void initializeAvatar() throws IOException {
-        /*CompletableFuture.runAsync(() -> {
+    public void initializeAvatar() {
+        CompletableFuture.runAsync(() -> {
             try {
-                DataInputStream dataInputStream = Listener.getDataInputStream();
-                int size = dataInputStream.readInt();
-                if (size > 0) {
-                    byte[] imageBytes = new byte[size];
-                    dataInputStream.readFully(imageBytes);
-                    Image image = new Image(new ByteArrayInputStream(imageBytes));
-                    Platform.runLater(() -> myAvatar.setImage(image));
-                }
-            } catch (IOException e) {
+                myAvatar.setImage(Listener.getServerReader().getAvatar().getImage());
+                myAvatar.setFitWidth(40.);
+                myAvatar.setFitHeight(40.);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }, executor);*/
+        }, executor);
     }
 
     public void searchUsers() {

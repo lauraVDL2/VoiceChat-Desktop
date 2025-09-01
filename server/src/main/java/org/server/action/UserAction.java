@@ -77,7 +77,6 @@ public class UserAction {
             outputStream.writeInt(bytes.length);
             outputStream.write(bytes);
             outputStream.flush();
-            System.out.println("AFTER JSON RESPONSE" + new String(bytes, StandardCharsets.UTF_8));
             return resultUser;
         }
         else {
@@ -150,6 +149,24 @@ public class UserAction {
         if (targetUser != null) {
             if (StringUtils.isNotBlank(targetUser.getAvatar())) {
                 byte[] avatarBytes = getAvatarBytes(targetUser.getAvatar());
+                serverResponse.setBinaryPayload(avatarBytes);
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);
+
+                byte[] jsonBytes = objectMapper.writeValueAsBytes(serverResponse);
+                dataOutputStream.writeUTF("IMAGE_RESPONSE");
+                dataOutputStream.writeInt(jsonBytes.length);
+                dataOutputStream.write(jsonBytes);
+                dataOutputStream.flush();
+            }
+        }
+    }
+
+    public void searchUserAvatar(ObjectMapper objectMapper, User user,
+                                 DataOutputStream dataOutputStream, ServerResponse serverResponse) throws IOException {
+        if (user != null) {
+            if (StringUtils.isNotBlank(user.getAvatar())) {
+                byte[] avatarBytes = getAvatarBytes(user.getAvatar());
                 serverResponse.setBinaryPayload(avatarBytes);
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);

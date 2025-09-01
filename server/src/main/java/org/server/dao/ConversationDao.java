@@ -45,7 +45,7 @@ public class ConversationDao {
                         WHERE id(c) = $conversationId
                         WITH msg
                         MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                        RETURN msg, u ORDER BY msg.time DESC LIMIT 15
+                        RETURN msg, u ORDER BY msg.time DESC LIMIT 20
                         """;
                 Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
                 List<Message> messages = new ArrayList<>();
@@ -115,16 +115,12 @@ public class ConversationDao {
                     User participant = (User) recordUser.get("u");
                     participants.add(participant);
                 }
-                /*String cypher3 = "MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $conversationId\n" +
-                        "RETURN msg\n" +
-                        "ORDER BY msg.time ASC\n" +
-                        "LIMIT 20";*/
                 String cypher3 = """
                         MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
                         WHERE id(c) = $conversationId
                         WITH msg
                         OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
-                        RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 15
+                        RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
                         """;
                 Result recordMessages = session.query(cypher3, Map.of("conversationId", conversation.getId(),
                         "emailAddress", user.getEmailAddress()));
@@ -167,7 +163,7 @@ public class ConversationDao {
             String cypher = """
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                    RETURN msg, u ORDER BY msg.time DESC LIMIT 15
+                    RETURN msg, u ORDER BY msg.time DESC LIMIT 20
                     """;
             Result records = session.query(cypher, Map.of("id", conversation.getId()));
             List<Message> messages = new ArrayList<>();

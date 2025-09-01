@@ -1,16 +1,12 @@
 package com.voicechat.client.mainpage.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.ServerMessageListener;
-import com.voicechat.client.ServerReader;
 import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class MainPageService {
 

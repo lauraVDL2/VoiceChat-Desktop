@@ -2,32 +2,35 @@ package com.voicechat.client.mainpage.scheduler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.ServerMessageListener;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import javafx.scene.layout.GridPane;
-import org.apache.commons.lang3.StringUtils;
 import org.shared.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class OnlineUsersScheduler {
 
     private final AvatarComponent avatarComponent = new AvatarComponent();
 
+    private List<ScheduledFuture<?>> onlineSchedules = new ArrayList<>();
+
     public void schedule(GridPane gridPane, OnlineFetch onlineFetch) {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(() -> {
+        onlineSchedules.add(scheduler.scheduleAtFixedRate(() -> {
             try {
                 fetchLoggedUsers(gridPane, onlineFetch);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 5, 10, TimeUnit.SECONDS);
+        }, 3, 60, TimeUnit.SECONDS));
     }
 
     public void fetchLoggedUsers(GridPane gridPane, OnlineFetch onlineFetch) throws IOException, InterruptedException {
@@ -50,6 +53,24 @@ public class OnlineUsersScheduler {
                 }
             }
        }
+    }
+
+    public List<ScheduledFuture<?>> getOnlineSchedules() {
+        return onlineSchedules;
+    }
+
+    public void setOnlineSchedules(List<ScheduledFuture<?>> onlineSchedules) {
+        this.onlineSchedules = onlineSchedules;
+    }
+
+    public void waitOnlineScheduleToBeDone() {
+        this.onlineSchedules.forEach(s -> {
+            try {
+                s.cancel(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

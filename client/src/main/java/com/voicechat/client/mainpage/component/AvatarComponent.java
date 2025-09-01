@@ -1,15 +1,9 @@
 package com.voicechat.client.mainpage.component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voicechat.client.Listener;
-import com.voicechat.client.ServerMessageListener;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -19,13 +13,7 @@ import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

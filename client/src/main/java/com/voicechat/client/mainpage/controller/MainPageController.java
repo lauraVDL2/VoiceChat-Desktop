@@ -9,6 +9,7 @@ import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
+import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import javafx.application.Platform;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 
 public class MainPageController {
 
@@ -90,7 +92,7 @@ public class MainPageController {
             gridPaneFocus();
             getUserConversations();
             Platform.runLater(() -> {
-                //onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
+                onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
             });
         });
     }
@@ -108,7 +110,6 @@ public class MainPageController {
                 }
             }, executor).thenAcceptAsync((serverResponse) -> {
                 if (serverResponse != null) {
-                    System.out.println("response = " + serverResponse.getServerResponseMessage());
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
                             conversationListComponent.setConversationList(this, leftPane, serverResponse);
@@ -214,9 +215,6 @@ public class MainPageController {
                                 try {
                                     conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane,
                                             serverResponse, conversationListComponent, messagesNotificationScheduler);
-                                    /*ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-                                    Conversation conversationResponse = objectMapper
-                                            .readValue(serverResponse.getPayload(), Conversation.class);*/
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -245,12 +243,17 @@ public class MainPageController {
                     message.setSender(sender);
                     message.setTime(LocalDateTime.now());
                     conversation1.setMessages(List.of(message));
+                    onlineUsersScheduler.waitOnlineScheduleToBeDone();
+                    messagesNotificationScheduler.waitMessageScheduleToBeDone();
                     return mainPageService.sendMessage(conversation1);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             }, executor).thenAcceptAsync((serverResponse) -> {
+                messagesNotificationScheduler.schedule(mainPane, leftPane, conversationComponent,
+                        conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
+                onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_SENT) {

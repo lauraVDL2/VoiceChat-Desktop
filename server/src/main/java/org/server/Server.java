@@ -47,132 +47,10 @@ public class Server {
         }
     }
 
-    /*public static void handleClientAsync(Socket socket) {
-        CompletableFuture.runAsync(() -> {
-            try (
-                    DataInputStream in = new DataInputStream(socket.getInputStream());
-                    DataOutputStream out = new DataOutputStream(socket.getOutputStream())
-            ) {
-                // Initialize ObjectMapper outside the loop
-                ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-
-                while (true) {
-                    String message;
-                    try {
-                        // Read a message from the input stream
-                        message = in.readUTF(); // Assumes protocol uses readUTF()
-                    } catch (IOException e) {
-                        // Handle disconnection or stream error
-                        logger.error("Error reading message from client", e);
-                        break;
-                    }
-
-                    if (message == null || message.isEmpty()) {
-                        // End of stream or client disconnected
-                        break;
-                    }
-
-                    logger.info(message);
-                    Message messageObj = objectMapper.readValue(message, Message.class);
-                    ServerResponse serverResponse = new ServerResponse();
-
-                    UserAction userAction = null;
-                    ConversationAction conversationAction = null;
-
-                    switch (messageObj.getMessageType()) {
-                        case USER_CREATE:
-                            userAction = new UserAction();
-                            User userCreated = userAction.userCreate(objectMapper, messageObj, serverResponse, out);
-                            if (userCreated != null) {
-                                readMyAvatar(out, userAction, userCreated);
-                            }
-                            break;
-
-                        case USER_LOG_IN:
-                            userAction = new UserAction();
-                            User userLogged = userAction.userLogIn(objectMapper, messageObj, serverResponse, out);
-                            if (userLogged != null) {
-                                readMyAvatar(out, userAction, userLogged);
-                                onlineUsers.put(userLogged.getEmailAddress(), UserSessionStatus.ONLINE);
-                                userSockets.put(userLogged.getEmailAddress(), socket);
-                            }
-                            break;
-
-                        case USER_EXIT:
-                            User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);
-                            String emailAddress = userExit.getEmailAddress();
-                            onlineUsers.remove(emailAddress);
-                            Socket userSocket = userSockets.get(emailAddress);
-                            if (userSocket != null) {
-                                userSocket.close();
-                                userSockets.remove(emailAddress);
-                            }
-                            break;
-
-                        case USER_SEARCH:
-                            userAction = new UserAction();
-                            userAction.userSearch(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        case ONLINE_USERS_FETCH:
-                            userAction = new UserAction();
-                            userAction.getOnlineUsers(objectMapper, serverResponse, out, onlineUsers);
-                            break;
-
-                        case CONVERSATION_SEARCH:
-                            conversationAction = new ConversationAction();
-                            conversationAction.conversationSearchIfExists(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        case CONVERSATION_CREATE:
-                            conversationAction = new ConversationAction();
-                            conversationAction.createConversation(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        case CONVERSATION_DISPLAY:
-                            conversationAction = new ConversationAction();
-                            conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        case READ_TARGET_AVATAR:
-                            userAction = new UserAction();
-                            userAction.searchTargetUser(objectMapper, messageObj, out);
-                            break;
-
-                        case CONVERSATION_GET:
-                            conversationAction = new ConversationAction();
-                            conversationAction.getConversation(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        case MESSAGE_SEND:
-                            sendMessageToUser(objectMapper, messageObj, serverResponse, out);
-                            break;
-
-                        default:
-                            logger.warn("Unknown message type: " + messageObj.getMessageType());
-                            break;
-                    }
-                }
-            } catch (IOException e) {
-                logger.error("Error in message processing loop", e);
-            } finally {
-                // Optional cleanup if needed, e.g., close socket if not already closed
-                try {
-                    if (!socket.isClosed()) {
-                        socket.close();
-                    }
-                } catch (IOException e) {
-                    logger.error("Error closing socket", e);
-                }
-            }
-        });
-    }*/
-
     public static void handleClientAsync(Socket socket) {
         CompletableFuture.runAsync(() -> {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-
                 String message;
                 while ((message = in.readLine()) != null) {
                     logger.info(message);
@@ -189,14 +67,14 @@ public class Server {
                             userAction = new UserAction();
                             User userCreated = userAction.userCreate(objectMapper, messageObj, serverResponse, socket);
                             if (userCreated != null) {
-                                //readMyAvatar(dataOutputStream, userAction, userCreated);
+                                userAction.searchUserAvatar(objectMapper, userCreated, dataOutputStream, serverResponse);
                             }
                             break;
                         case USER_LOG_IN:
                             userAction = new UserAction();
                             User userLogged = userAction.userLogIn(objectMapper, messageObj, serverResponse, socket);
                             if (userLogged != null) {
-                                //readMyAvatar(dataOutputStream, userAction, userLogged);
+                                userAction.searchUserAvatar(objectMapper, userLogged, dataOutputStream, serverResponse);
                             }
                             onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> UserSessionStatus.ONLINE);
                             userSockets.computeIfAbsent(userLogged.getEmailAddress(), mySocket -> socket);
@@ -260,77 +138,5 @@ public class Server {
             logger.error("Error sending message: ", e);
         }
     }
-
-    /*public static CompletableFuture<Void> sendMessageToUser(ObjectMapper objectMapper, Message messageObj,
-                                                            ServerResponse serverResponse, PrintWriter out) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                MessageAction messageAction = new MessageAction();
-                Conversation messageSentConversation = messageAction.sendMessage(objectMapper, messageObj, serverResponse, out);
-                if (messageSentConversation != null) {
-                    return messageSentConversation;
-                } else {
-                    logger.error("sendMessage returned null.  Message: {}", messageObj);
-                    return null;
-                }
-            } catch (Exception e) {
-                logger.error("Error sending message: ", e);
-                return null;
-            }
-        }, executor).thenAccept(messageSentConversation -> {
-            if (messageSentConversation != null) {
-                logger.info("Message sent successfully.");
-                UserNotificationAction userNotificationAction = new UserNotificationAction();
-                try {
-                    userNotificationAction.sendMessageToUser(userSockets, objectMapper, serverResponse,
-                            messageSentConversation);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                logger.error("Failed to send message");
-            }
-        }).exceptionally(ex -> {
-            logger.error("Unhandled exception during message sending:", ex);
-            return null;
-        });
-    }*/
-
-    /*public static void readMyAvatar(DataOutputStream dataOutputStream, UserAction userAction, User user,
-                                    ServerResponse serverResponse) throws IOException {
-        String avatarPath = user.getAvatar();
-        if (StringUtils.isNotBlank(avatarPath)) {
-            // Get avatar bytes
-            byte[] avatarBytes = userAction.getAvatarBytes(user.getAvatar());
-
-            // Encode to Base64
-            String avatarBase64 = Base64.getEncoder().encodeToString(avatarBytes);
-
-            // Create a JSON object (or your custom object) that includes the avatar
-            serverResponse.setPayload(avatarBase64);
-            serverResponse
-            // You can add other user info here if needed
-
-            // Serialize to JSON
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(avatarObject);
-
-            // Send the JSON string over DataOutputStream
-            byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
-            dataOutputStream.writeInt(jsonBytes.length);
-            dataOutputStream.write(jsonBytes);
-            dataOutputStream.flush();
-        }
-    }*/
-
-    /*public static void readMyAvatar(DataOutputStream dataOutputStream, UserAction userAction, User user) throws IOException {
-        String avatarPath = user.getAvatar();
-        if (StringUtils.isNotBlank(avatarPath)) {
-            byte[] avatarBytes = userAction.getAvatarBytes(user.getAvatar());
-            dataOutputStream.writeInt(avatarBytes.length);
-            dataOutputStream.write(avatarBytes);
-            dataOutputStream.flush();
-        }
-    }*/
 
 }

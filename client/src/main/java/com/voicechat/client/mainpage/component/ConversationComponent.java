@@ -7,6 +7,7 @@ import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
+import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
@@ -39,8 +40,6 @@ import java.util.concurrent.CompletableFuture;
 public class ConversationComponent {
 
     private final MainPageService mainPageService = new MainPageService();
-
-    private final AvatarComponent avatarComponent = new AvatarComponent();
 
     private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
 
@@ -86,11 +85,13 @@ public class ConversationComponent {
                     return Listener.getServerReader().getAvatar();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return new VBox();
+                    return new ImageView();
                 }
             }).thenAcceptAsync(imageView -> {
                 VBox avatarBox = new VBox();
                 // Update UI on JavaFX Application Thread
+                imageView.setFitHeight(40.);
+                imageView.setFitWidth(40.);
                 avatarBox.setAlignment(Pos.CENTER);
                 HBox hBoxAvatar = new HBox();
                 avatarBox.getChildren().add(imageView);
@@ -136,7 +137,6 @@ public class ConversationComponent {
                             VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, lastMessage, currentUser);
                             ScrollPane scrollPane = addMessagesScrollPane(vbox);
                             mainPane.setCenter(scrollPane);
-                            System.out.println("END METHOD");
                         });
 
                     });
@@ -340,11 +340,7 @@ public class ConversationComponent {
             mainPane.setPadding(new Insets(0, 0, 10, 0));
 
             messagesNotificationScheduler.schedule(mainPane, mainPageController.getLeftPane(), this,
-                    conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
-
-            System.out.println("AFTER SCHEDULE");
-            //onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.MESSAGES);
-
+                   conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
 
             // RIGHT pane
             rightSearchPane.getChildren().clear();
