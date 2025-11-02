@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.neo4j.ogm.session.SessionFactory;
+import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDao;
 import org.shared.Message;
 import org.shared.ServerResponse;
@@ -27,11 +29,13 @@ public class ConversationAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationAction.class);
 
+    private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
+
     public void getConversation(ObjectMapper objectMapper, Message messageObj,
                                 ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         if (conversation != null) {
-            ConversationDao conversationDao = new ConversationDao();
+            ConversationDao conversationDao = new ConversationDao(sessionFactory);
             Conversation fullConversation = conversationDao.getConversation(conversation);
             byte[] bytes = null;
             if (fullConversation != null) {
@@ -65,7 +69,7 @@ public class ConversationAction {
                                         ServerResponse serverResponse, PrintWriter out, Socket socket) throws IOException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         if (user != null) {
-            ConversationDao conversationDao = new ConversationDao();
+            ConversationDao conversationDao = new ConversationDao(sessionFactory);
             List<Conversation> conversations = conversationDao.searchUserConversations(user);
             byte[] bytes =  null;
             if (!CollectionUtils.isEmpty(conversations)) {
@@ -102,7 +106,7 @@ public class ConversationAction {
         if (conversation != null) {
             Set<User> participants = conversation.getParticipants();
             org.shared.entity.Message message = conversation.getMessages().get(0);
-            ConversationDao conversationDao = new ConversationDao();
+            ConversationDao conversationDao = new ConversationDao(sessionFactory);
             Conversation newConversation = conversationDao.createConversation(participants, message, message.getSender());
             byte[] bytes = null;
             if (newConversation != null) {
@@ -141,7 +145,7 @@ public class ConversationAction {
             if (users.size() > 1) {
                 User currentUser = users.get(0);
                 User targetUser = users.get(1);
-                ConversationDao conversationDao = new ConversationDao();
+                ConversationDao conversationDao = new ConversationDao(sessionFactory);
                 Conversation conversation = conversationDao.searchConversationIfExists(currentUser, targetUser);
                 byte[] bytes = null;
                 if (conversation != null) {

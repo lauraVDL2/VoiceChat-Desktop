@@ -3,7 +3,9 @@ package org.server.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.ogm.session.SessionFactory;
 import org.server.Server;
+import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDao;
 import org.server.dao.UserDao;
 import org.shared.JsonMapper;
@@ -30,10 +32,12 @@ public class UserNotificationAction {
 
     private static final Logger logger = LoggerFactory.getLogger(UserNotificationAction.class);
 
+    private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
+
     public void sendMessageToUser(ConcurrentHashMap<String, Socket> userSockets,
                                   ObjectMapper objectMapper, ServerResponse serverResponse,
                                   Conversation conversation) throws IOException {
-        ConversationDao conversationDao = new ConversationDao();
+        ConversationDao conversationDao = new ConversationDao(sessionFactory);
         List<String> emailAddresses = conversationDao.getConversationParticipants(conversation)
                 .stream().map(User::getEmailAddress).toList();
         List<Message> messages = conversation.getMessages();

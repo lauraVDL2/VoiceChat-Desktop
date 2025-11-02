@@ -183,10 +183,10 @@ public class HeaderController {
                             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SEARCHED) {
                                 System.out.println("conversation exists !");
                                 try {
+                                    conversationListComponent.setConversationClicked(parentController.getLeftPane(), serverResponse);
                                     conversationComponent.setMessagesComponents(parentController, parentController.getGridMainPane(),
                                             parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse, conversationListComponent,
                                             parentController.getMessagesNotificationScheduler());
-                                    conversationListComponent.setConversationClicked(parentController.getLeftPane(), serverResponse);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

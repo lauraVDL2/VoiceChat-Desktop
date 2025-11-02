@@ -20,8 +20,8 @@ public class ConversationDao {
     private SessionFactory sessionFactory;
     public static String errorMessage = "";
 
-    public ConversationDao() {
-        this.sessionFactory = Neo4jConfig.getSessionFactory();
+    public ConversationDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     public Conversation searchConversationIfExists(User currentUser, User targetUser) {
@@ -39,25 +39,27 @@ public class ConversationDao {
                         RETURN c
                         """, Map.of("currentUserEmailAddress", currentUser.getEmailAddress(),
                         "targetUserEmailAddress", targetUser.getEmailAddress()));
-                // Get messages of the conversation
-                String cypher = """
-                        MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
-                        WHERE id(c) = $conversationId
-                        WITH msg
-                        MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                        RETURN msg, u ORDER BY msg.time DESC LIMIT 20
-                        """;
-                Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
-                List<Message> messages = new ArrayList<>();
-                for (var record : records) {
-                    Message message = (Message) record.get("msg");
-                    User sender = (User) record.get("u");
-                    message.setSender(sender);
-                    messages.add(message);
+                if (conversation != null) {
+                    // Get messages of the conversation
+                    String cypher = """
+                            MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+                            WHERE id(c) = $conversationId
+                            WITH msg
+                            MATCH (msg:Message)<-[:SENT_BY]-(u:User)
+                            RETURN msg, u ORDER BY msg.time DESC LIMIT 20
+                            """;
+                    Result records = session.query(cypher, Map.of("conversationId", conversation.getId()));
+                    List<Message> messages = new ArrayList<>();
+                    for (var record : records) {
+                        Message message = (Message) record.get("msg");
+                        User sender = (User) record.get("u");
+                        message.setSender(sender);
+                        messages.add(message);
+                    }
+                    conversation.setMessages(messages.stream()
+                            .sorted(Comparator.comparing(Message::getTime))
+                            .collect(Collectors.toList()));
                 }
-                conversation.setMessages(messages.stream()
-                        .sorted(Comparator.comparing(Message::getTime))
-                        .collect(Collectors.toList()));
                 // Commit transaction
                 tx.commit();
                 return conversation;
@@ -234,10 +236,16 @@ public class ConversationDao {
 
                 tx.commit();
 
+                if (sessionFactory != null) {
+                    sessionFactory.close();
+                }
                 return fullConversation;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
             errorMessage = e.getMessage();
             return null;
         }

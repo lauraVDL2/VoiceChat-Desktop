@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.47")
+    implementation("shared-lib:voicechat-common:1.0.50")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.apache.commons:commons-collections4:4.4")
     implementation("org.neo4j:neo4j-ogm-core:4.0.19")
@@ -32,6 +32,15 @@ dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("org.neo4j.test:neo4j-harness:5.13.0")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.jar {
