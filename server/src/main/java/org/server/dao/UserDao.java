@@ -13,9 +13,9 @@ public class UserDao {
     private SessionFactory sessionFactory;
     public static String errorMessage = "";
 
-    public UserDao() {
+    public UserDao(SessionFactory sessionFactory) {
         // Initialize the driver once
-        this.sessionFactory = Neo4jConfig.getSessionFactory();
+        this.sessionFactory = sessionFactory;
     }
 
     public User login(User user) {

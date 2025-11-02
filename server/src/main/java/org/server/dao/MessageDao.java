@@ -18,8 +18,8 @@ public class MessageDao {
     private SessionFactory sessionFactory;
     public static String errorMessage = "";
 
-    public MessageDao() {
-        this.sessionFactory = Neo4jConfig.getSessionFactory();
+    public MessageDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     public Message sendMessage(Conversation conversation) {

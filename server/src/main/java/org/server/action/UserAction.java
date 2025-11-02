@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
+import org.neo4j.ogm.session.SessionFactory;
 import org.server.Server;
+import org.server.config.Neo4jConfig;
 import org.server.dao.UserDao;
 import org.shared.*;
 import org.shared.entity.User;
@@ -25,13 +27,15 @@ public class UserAction {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
+    private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
+
     public User userCreate(ObjectMapper objectMapper, Message messageObj,
                                   ServerResponse serverResponse, Socket socket) throws IOException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         user.setAvatar("/images/avatar/avatar_default.png");
-        UserDao userDao = new UserDao();
+        UserDao userDao = new UserDao(sessionFactory);
         byte[] bytes = null;
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
@@ -63,7 +67,7 @@ public class UserAction {
     public User userLogIn(ObjectMapper objectMapper, Message messageObj,
                                  ServerResponse serverResponse, Socket socket) throws IOException {
         User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
-        UserDao userDao = new UserDao();
+        UserDao userDao = new UserDao(sessionFactory);
         User resultUser = userDao.login(userLogged);
         byte[] bytes = null;
         if (resultUser != null) {
@@ -98,7 +102,7 @@ public class UserAction {
                                   ServerResponse serverResponse, Socket socket) throws IOException {
         User userSearch = objectMapper.readValue(messageObj.getPayload(), User.class);
         String displayNameSearch = userSearch.getDisplayName();
-        UserDao userDao = new UserDao();
+        UserDao userDao = new UserDao(sessionFactory);
         List<User> users = userDao.searchUsers(displayNameSearch);
         byte[] bytes = null;
         if (!CollectionUtils.isEmpty(users)) {

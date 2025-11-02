@@ -42,7 +42,7 @@ public class UserNotificationAction {
                 .stream().map(User::getEmailAddress).toList();
         List<Message> messages = conversation.getMessages();
         Message lastMessage = messages.get(messages.size() - 1);
-        User sender = new UserDao().findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
+        User sender = new UserDao(sessionFactory).findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
         for (var userSocket : userSockets.entrySet()) {
             if (!CollectionUtils.isEmpty(emailAddresses)) {
                 String emailAddress = userSocket.getKey();

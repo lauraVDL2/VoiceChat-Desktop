@@ -3086,3 +3086,269 @@ One of the property names in your query is not available in the database, make s
 2025-11-02 18:06:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@7ae97a58{/,null,STOPPED}
 2025-11-02 18:06:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@32c114d9{/db,null,STOPPED}
 2025-11-02 18:06:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@6530a1de{/,null,STOPPED}
+2025-11-02 20:11:48 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:11:48 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@620f7a39{/,null,AVAILABLE}
+2025-11-02 20:11:48 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:11:49 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@628e0403{/db,null,AVAILABLE}
+2025-11-02 20:11:49 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@5220e6ff{/,null,AVAILABLE}
+2025-11-02 20:11:49 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:38503}
+2025-11-02 20:11:49 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@3e7ddb7e{STARTING}[10.0.16,sto=0] @4265ms
+2025-11-02 20:11:49 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:11:49 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:11:49 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:11:49 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:11:50 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-11-02 20:11:50 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownLabelWarning: The provided label is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	         ^
+One of the labels in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing label name is: Conversation)
+2025-11-02 20:11:50 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-11-02 20:11:50 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownLabelWarning: The provided label is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	         ^
+One of the labels in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing label name is: Conversation)
+2025-11-02 20:11:50 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@50e336d9 
+2025-11-02 20:11:51 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@498102a4 
+2025-11-02 20:11:51 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@3e7ddb7e{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:11:51 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:11:51 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@5220e6ff{/,null,STOPPED}
+2025-11-02 20:11:51 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@628e0403{/db,null,STOPPED}
+2025-11-02 20:11:51 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@620f7a39{/,null,STOPPED}
+2025-11-02 20:13:18 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:13:18 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@192aeae2{/,null,AVAILABLE}
+2025-11-02 20:13:18 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:13:18 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@1b079e81{/db,null,AVAILABLE}
+2025-11-02 20:13:18 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@56a63c28{/,null,AVAILABLE}
+2025-11-02 20:13:18 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:39069}
+2025-11-02 20:13:18 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@5183131d{STARTING}[10.0.16,sto=0] @4881ms
+2025-11-02 20:13:19 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:13:19 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:13:19 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:13:19 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:13:20 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-11-02 20:13:20 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownLabelWarning: The provided label is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	         ^
+One of the labels in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing label name is: Conversation)
+2025-11-02 20:13:20 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	                         ^
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: HAS)
+2025-11-02 20:13:20 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownLabelWarning: The provided label is not in the database.
+	MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+	         ^
+One of the labels in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing label name is: Conversation)
+2025-11-02 20:13:20 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1455d0f5 
+2025-11-02 20:13:21 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@15c042fc 
+2025-11-02 20:13:21 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@5183131d{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:13:21 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:13:21 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@56a63c28{/,null,STOPPED}
+2025-11-02 20:13:21 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@1b079e81{/db,null,STOPPED}
+2025-11-02 20:13:21 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@192aeae2{/,null,STOPPED}
+2025-11-02 20:14:14 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:14:14 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@192aeae2{/,null,AVAILABLE}
+2025-11-02 20:14:14 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:14:15 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@1b079e81{/db,null,AVAILABLE}
+2025-11-02 20:14:15 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@56a63c28{/,null,AVAILABLE}
+2025-11-02 20:14:15 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:32875}
+2025-11-02 20:14:15 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@5183131d{STARTING}[10.0.16,sto=0] @4738ms
+2025-11-02 20:14:15 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:14:15 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:14:15 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:14:15 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:17:49 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:17:49 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@620f7a39{/,null,AVAILABLE}
+2025-11-02 20:17:49 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:17:49 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@628e0403{/db,null,AVAILABLE}
+2025-11-02 20:17:49 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@5220e6ff{/,null,AVAILABLE}
+2025-11-02 20:17:49 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:39503}
+2025-11-02 20:17:49 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@3e7ddb7e{STARTING}[10.0.16,sto=0] @4235ms
+2025-11-02 20:17:50 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:17:50 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:17:50 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:17:50 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:17:51 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@73864c16 
+2025-11-02 20:17:52 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@48149568 
+2025-11-02 20:17:52 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@3e7ddb7e{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:17:52 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:17:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@5220e6ff{/,null,STOPPED}
+2025-11-02 20:17:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@628e0403{/db,null,STOPPED}
+2025-11-02 20:17:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@620f7a39{/,null,STOPPED}
+2025-11-02 20:18:11 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:18:11 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@192aeae2{/,null,AVAILABLE}
+2025-11-02 20:18:11 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:18:12 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@1b079e81{/db,null,AVAILABLE}
+2025-11-02 20:18:12 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@56a63c28{/,null,AVAILABLE}
+2025-11-02 20:18:12 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:44355}
+2025-11-02 20:18:12 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@5183131d{STARTING}[10.0.16,sto=0] @4743ms
+2025-11-02 20:18:12 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:18:12 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:18:12 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:18:12 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:18:14 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5c4e86e7 
+2025-11-02 20:20:41 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:20:41 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@620f7a39{/,null,AVAILABLE}
+2025-11-02 20:20:41 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:20:41 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@628e0403{/db,null,AVAILABLE}
+2025-11-02 20:21:03 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:21:03 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@192aeae2{/,null,AVAILABLE}
+2025-11-02 20:21:03 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:21:04 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@1b079e81{/db,null,AVAILABLE}
+2025-11-02 20:21:04 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@56a63c28{/,null,AVAILABLE}
+2025-11-02 20:21:04 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:40967}
+2025-11-02 20:21:04 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@5183131d{STARTING}[10.0.16,sto=0] @4763ms
+2025-11-02 20:21:04 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:21:04 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:21:04 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:21:04 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:21:06 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@5c4e86e7 
+2025-11-02 20:21:12 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (1)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:21:12 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (0)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:21:15 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@1cb09347 
+2025-11-02 20:21:15 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@4723445c 
+2025-11-02 20:21:15 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@5183131d{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:21:15 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@13edc1bc{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:21:15 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@56a63c28{/,null,STOPPED}
+2025-11-02 20:21:15 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@1b079e81{/db,null,STOPPED}
+2025-11-02 20:21:15 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@192aeae2{/,null,STOPPED}
+2025-11-02 20:23:02 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:23:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@620f7a39{/,null,AVAILABLE}
+2025-11-02 20:23:02 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:23:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@628e0403{/db,null,AVAILABLE}
+2025-11-02 20:23:02 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@5220e6ff{/,null,AVAILABLE}
+2025-11-02 20:23:02 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:46713}
+2025-11-02 20:23:02 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@3e7ddb7e{STARTING}[10.0.16,sto=0] @4321ms
+2025-11-02 20:23:02 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:23:02 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:23:02 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:23:02 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:23:04 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@73864c16 
+2025-11-02 20:23:04 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (1)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:23:04 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (0)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:23:04 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@21b96db 
+2025-11-02 20:23:04 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@71077d1 
+2025-11-02 20:23:05 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@3e7ddb7e{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:23:05 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@68b3de47{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:23:05 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@5220e6ff{/,null,STOPPED}
+2025-11-02 20:23:05 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@628e0403{/db,null,STOPPED}
+2025-11-02 20:23:05 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@620f7a39{/,null,STOPPED}
+2025-11-02 20:23:39 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:23:40 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@67d55a46{/,null,AVAILABLE}
+2025-11-02 20:23:40 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:23:40 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@951053f{/db,null,AVAILABLE}
+2025-11-02 20:23:40 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@4feea86f{/,null,AVAILABLE}
+2025-11-02 20:23:40 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@4172c967{HTTP/1.1, (http/1.1)}{localhost:39011}
+2025-11-02 20:23:40 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@2fbd47b7{STARTING}[10.0.16,sto=0] @4213ms
+2025-11-02 20:23:40 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:23:40 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:23:40 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:23:40 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:23:42 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@2298d741 
+2025-11-02 20:23:42 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3ea95f79 
+2025-11-02 20:23:42 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@140e003e 
+2025-11-02 20:23:43 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@dcc7d1c 
+2025-11-02 20:23:43 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@3d41881 
+2025-11-02 20:23:44 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7ce58c1c 
+2025-11-02 20:23:44 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7ec63b9a 
+2025-11-02 20:23:44 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@72c8de78 
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	                         ^
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: READ_BY)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownPropertyKeyWarning: The provided property key is not in the database
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+	              ^
+One of the property names in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing property name is: isRead)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	                         ^
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: READ_BY)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownPropertyKeyWarning: The provided property key is not in the database
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+	              ^
+One of the property names in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing property name is: isRead)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	                         ^
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: READ_BY)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownPropertyKeyWarning: The provided property key is not in the database
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+	              ^
+One of the property names in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing property name is: isRead)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownRelationshipTypeWarning: The provided relationship type is not in the database.
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	                         ^
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+One of the relationship types in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing relationship type is: READ_BY)
+2025-11-02 20:23:44 [Test worker] WARN  o.n.o.d.b.r.B.unrecognized - Neo.ClientNotification.Statement.UnknownPropertyKeyWarning: The provided property key is not in the database
+	MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)
+	WHERE id(c) = $conversationId
+	WITH msg
+	OPTIONAL MATCH (msg)<-[r:READ_BY]-(u:User {emailAddress: $emailAddress})
+	RETURN msg, r.isRead AS isRead ORDER BY msg.time DESC LIMIT 20
+	              ^
+One of the property names in your query is not available in the database, make sure you didn't misspell it or that the label is available when you run this statement in your application (the missing property name is: isRead)
+2025-11-02 20:23:44 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7b3db079 
+2025-11-02 20:23:45 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@11034fdb 
+2025-11-02 20:23:45 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@2fbd47b7{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:23:45 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@4172c967{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:23:45 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@4feea86f{/,null,STOPPED}
+2025-11-02 20:23:45 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@951053f{/db,null,STOPPED}
+2025-11-02 20:23:45 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@67d55a46{/,null,STOPPED}
+2025-11-02 20:23:52 [Test worker] INFO  org.eclipse.jetty.server.Server - jetty-10.0.16; built: 2023-08-25T19:11:25.422Z; git: a2735a9ae9d1afc124974253f1e223e5678be1f4; jvm 21.0.8+9-Ubuntu-0ubuntu122.04.1
+2025-11-02 20:23:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.MovedContextHandler@34d08905{/,null,AVAILABLE}
+2025-11-02 20:23:52 [Test worker] INFO  o.e.j.s.s.DefaultSessionIdManager - Session workerName=node0
+2025-11-02 20:23:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@28bf7bea{/db,null,AVAILABLE}
+2025-11-02 20:23:52 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@645a9649{/,null,AVAILABLE}
+2025-11-02 20:23:52 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Started http@5ed4c87{HTTP/1.1, (http/1.1)}{localhost:33307}
+2025-11-02 20:23:52 [Test worker] INFO  org.eclipse.jetty.server.Server - Started Server@5453020f{STARTING}[10.0.16,sto=0] @16825ms
+2025-11-02 20:23:53 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Starting Post-processing phase
+2025-11-02 20:23:53 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building byLabel lookup maps
+2025-11-02 20:23:53 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Building interface class map for 4 classes
+2025-11-02 20:23:53 [Test worker] INFO  org.neo4j.ogm.metadata.DomainInfo - Post-processing complete
+2025-11-02 20:23:53 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@73c25e8 
+2025-11-02 20:23:53 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (0)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:23:53 [Test worker] WARN  o.n.ogm.context.GraphEntityMapper - Relationship (1)-[READ_BY]->(4) cannot be fully hydrated because one or more required node entities have not been part of the result set.
+2025-11-02 20:23:53 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@73344f4a 
+2025-11-02 20:23:53 [Test worker] INFO  o.n.o.drivers.bolt.driver.BoltDriver - Shutting down Bolt driver org.neo4j.driver.internal.InternalDriver@7d25d10e 
+2025-11-02 20:23:54 [Test worker] INFO  org.eclipse.jetty.server.Server - Stopped Server@5453020f{STOPPING}[10.0.16,sto=0]
+2025-11-02 20:23:54 [Test worker] INFO  o.e.jetty.server.AbstractConnector - Stopped http@5ed4c87{HTTP/1.1, (http/1.1)}{localhost:0}
+2025-11-02 20:23:54 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@645a9649{/,null,STOPPED}
+2025-11-02 20:23:54 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@28bf7bea{/db,null,STOPPED}
+2025-11-02 20:23:54 [Test worker] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.h.MovedContextHandler@34d08905{/,null,STOPPED}

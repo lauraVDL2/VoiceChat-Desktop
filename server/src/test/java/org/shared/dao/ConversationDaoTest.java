@@ -55,7 +55,7 @@ public class ConversationDaoTest {
     }
 
     @Test
-    public void getConversation() {
+    public void testGetConversation() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
 
@@ -77,7 +77,7 @@ public class ConversationDaoTest {
     }
 
     @Test
-    public void searchUserConversations() {
+    public void testSearchUserConversations() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
         User user3 = createDummyUser("test3.test@yahoo.fr", "Test 3");
@@ -98,7 +98,7 @@ public class ConversationDaoTest {
     }
 
     @Test
-    public void getConversationParticipants() {
+    public void testGetConversationParticipants() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
 
@@ -115,7 +115,7 @@ public class ConversationDaoTest {
     }
 
     @Test
-    public void searchExistingConversation() {
+    public void testSearchExistingConversation() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
 
@@ -133,7 +133,7 @@ public class ConversationDaoTest {
     }
 
     @Test
-    public void searchNonExistingConversation() {
+    public void testSearchNonExistingConversation() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
 
