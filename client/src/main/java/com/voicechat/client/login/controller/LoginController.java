@@ -1,10 +1,7 @@
 package com.voicechat.client.login.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
-import com.voicechat.client.login.UserSession;
 import com.voicechat.client.login.service.LoginService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,12 +13,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.shared.ServerResponse;
-import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class LoginController {
@@ -72,8 +68,9 @@ public class LoginController {
             CompletableFuture.supplyAsync(() -> {
                 User user = new User(email, password);
                 try {
-                    loginService.login(user);
-                    return Listener.getServerReader().getServerResponse();
+                    String correlationId = UUID.randomUUID().toString();
+                    loginService.login(user, correlationId);
+                    return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;

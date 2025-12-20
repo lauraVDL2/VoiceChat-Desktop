@@ -11,7 +11,10 @@ import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -24,6 +27,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Duration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
@@ -35,6 +39,7 @@ import org.shared.entity.User;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class ConversationComponent {
@@ -73,7 +78,7 @@ public class ConversationComponent {
         mainPane.setCenter(hBox);
     }
 
-    public void addMessageComponents(BorderPane mainPane, ServerResponse serverResponse) throws IOException {
+    public void addMessageComponents(MainPageController mainPageController, BorderPane mainPane, ServerResponse serverResponse, Conversation conversation) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         Message message = objectMapper.readValue(serverResponse.getBinaryPayload(), Message.class);
         User currentUser = UserSession.INSTANCE.getUser();
@@ -81,8 +86,9 @@ public class ConversationComponent {
         Platform.runLater(() -> {
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    mainPageService.sendAvatarInfo(message.getSender());
-                    return Listener.getServerReader().getAvatar();
+                    String correlationId = UUID.randomUUID().toString();
+                    mainPageService.sendAvatarInfo(correlationId, message.getSender());
+                    return Listener.getServerReader().getAvatarByCorrelationId(correlationId);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return new ImageView();
@@ -99,17 +105,19 @@ public class ConversationComponent {
 
                 VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
                 VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                ScrollPane scrollPane = addMessagesScrollPane(vbox);
+                ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, conversation);
                 mainPane.setCenter(scrollPane);
             });
         });
     }
 
-    public void addMessagesReceivedComponents(ServerResponse serverResponse, BorderPane mainPane, Conversation initialConversation)
+    public void addMessagesReceivedComponents(MainPageController mainPageController, ServerResponse serverResponse, BorderPane mainPane, Conversation initialConversation)
             throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
         User currentUser = UserSession.INSTANCE.getUser();
+
+
 
         if (conversation.getId() == initialConversation.getId()) {
             if (!CollectionUtils.isEmpty(conversation.getMessages())) {
@@ -119,7 +127,7 @@ public class ConversationComponent {
                     Platform.runLater(() -> {
                         CompletableFuture.supplyAsync(() -> {
                             try {
-                                return Listener.getServerReader().getAvatar();
+                                return Listener.getServerReader().getAvatarByCorrelationId(serverResponse.getCorrelationId());
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                                 return new ImageView();
@@ -135,7 +143,7 @@ public class ConversationComponent {
 
                             VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
                             VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, lastMessage, currentUser);
-                            ScrollPane scrollPane = addMessagesScrollPane(vbox);
+                            ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, initialConversation);
                             mainPane.setCenter(scrollPane);
                         });
 
@@ -226,8 +234,9 @@ public class ConversationComponent {
             if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
                 if (i == 0) {
                     try {
-                        mainPageService.sendAvatarInfo(participant);
-                        ImageView avatarView = Listener.getServerReader().getAvatar();
+                        String correlationId = UUID.randomUUID().toString();
+                        mainPageService.sendAvatarInfo(correlationId, participant);
+                        ImageView avatarView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
                         avatarView.setFitHeight(40.);
                         avatarView.setFitWidth(40.);
                         targetUserInfo.getChildren().add(avatarView);
@@ -261,7 +270,7 @@ public class ConversationComponent {
         return hBox;
     }
     
-    public ScrollPane addConversationMessagesScrollPane(Conversation conversation, GridPane gridMainPane,
+    public ScrollPane addConversationMessagesScrollPane(MainPageController mainPageController, Conversation conversation, GridPane gridMainPane,
                                                         User currentUser) {
         VBox messageContentBox = new VBox();
         messageContentBox.setId("messageContentBox");
@@ -271,9 +280,11 @@ public class ConversationComponent {
             Platform.runLater(() -> {
                 try {
                     HBox hBoxAvatar = new HBox();
-                    mainPageService.sendAvatarInfo(message.getSender());
+                    String correlationId = UUID.randomUUID().toString();
+                    mainPageService.sendAvatarInfo(correlationId, message.getSender());
                     VBox avatarBox = new VBox();
-                    ImageView imageView = Listener.getServerReader().getAvatar();
+
+                    ImageView imageView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
                     imageView.setFitWidth(40.);
                     imageView.setFitHeight(40.);
                     avatarBox.getChildren().add(imageView);
@@ -285,7 +296,7 @@ public class ConversationComponent {
                 }
             });
         }
-        ScrollPane scrollPane = addMessagesScrollPane(messageContentBox);
+        ScrollPane scrollPane = addMessagesScrollPane(mainPageController, messageContentBox, conversation);
         
         return scrollPane;
     }
@@ -332,14 +343,14 @@ public class ConversationComponent {
             mainPane.setTop(addConversationTopBox(conversation.getParticipants(), currentUser));
 
             // MIDDLE (messages)
-            mainPane.setCenter(addConversationMessagesScrollPane(conversation, gridMainPane, currentUser));
+            mainPane.setCenter(addConversationMessagesScrollPane(mainPageController, conversation, gridMainPane, currentUser));
 
             // Bottom send box
             mainPane.setBottom(addConversationSendMessageBox(mainPageController, conversation, ConversationAction.CONTINUE));
 
             mainPane.setPadding(new Insets(0, 0, 10, 0));
 
-            messagesNotificationScheduler.schedule(mainPane, mainPageController.getLeftPane(), this,
+            messagesNotificationScheduler.schedule(currentUser.getEmailAddress(), mainPageController, mainPane, mainPageController.getLeftPane(), this,
                    conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
 
             // RIGHT pane
@@ -354,7 +365,7 @@ public class ConversationComponent {
         });
     }
 
-    public ScrollPane addMessagesScrollPane(VBox vBox) {
+    public ScrollPane addMessagesScrollPane(MainPageController mainPageController, VBox vBox, Conversation conversation) {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(vBox);
         scrollPane.fitToHeightProperty().set(true);
@@ -373,9 +384,37 @@ public class ConversationComponent {
                     scrollPane.setVvalue(1.0);
                 });
             }
+            PauseTransition delay = new PauseTransition(Duration.millis(500));
+            delay.setOnFinished(event -> {
+                loadMoreMessages(mainPageController, scrollPane, conversation);
+            });
+            delay.play();
         });
 
         return scrollPane;
+    }
+
+    public void loadMoreMessages(MainPageController mainPageController, ScrollPane scrollPane, Conversation conversation) {
+        scrollPane.vvalueProperty().addListener(
+                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    short offset = 0;
+                    if(newValue.doubleValue() == 0) {
+                        offset++;
+                        try {
+                            System.out.println( "AT TOP" );
+                            mainPageController.scrollConversationMessages(conversation, offset);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        // load more items
+                    }
+                    else if(newValue.doubleValue() >= 1) {
+                        offset--;
+                        System.out.println("AT BOTTOM");
+                    }
+                }
+        );
     }
 
     public void newConversationComponents(User targetUser, MainPageController parentController,
@@ -389,7 +428,7 @@ public class ConversationComponent {
             mainPane.setTop(addConversationTopBox(Set.of(currentUser, targetUser), currentUser));
 
             // MIDDLE (messages)
-            mainPane.setCenter(addConversationMessagesScrollPane(new Conversation(), gridPane, currentUser));
+            mainPane.setCenter(addConversationMessagesScrollPane(parentController, new Conversation(), gridPane, currentUser));
 
             // Bottom send box
             mainPane.setBottom(addConversationSendMessageBox(parentController, null, ConversationAction.START));

@@ -78,7 +78,7 @@ public class HeaderController {
     }
 
     public void initializeAvatar() {
-        CompletableFuture.runAsync(() -> {
+        /*CompletableFuture.runAsync(() -> {
             try {
                 myAvatar.setImage(Listener.getServerReader().getAvatar().getImage());
                 myAvatar.setFitWidth(40.);
@@ -86,7 +86,7 @@ public class HeaderController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }, executor);
+        }, executor);*/
     }
 
     public void searchUsers() {

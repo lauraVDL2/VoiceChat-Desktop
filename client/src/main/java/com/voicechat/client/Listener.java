@@ -1,6 +1,5 @@
 package com.voicechat.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.login.controller.ConnectController;
 import com.voicechat.client.login.controller.LoginController;
 import io.github.resilience4j.retry.Retry;
@@ -9,7 +8,6 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.shared.ServerResponse;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+
+import java.io.*;
 
 public class Listener {
     private static final String SERVER_HOST = "localhost";
@@ -43,10 +43,9 @@ public class Listener {
 
     private static ServerReader serverReader;
 
-    public Listener() {
-
-    }
-
+    /**
+     * Initialize connection and server reader
+     */
     public static void connect(LoginController loginController, ConnectController connectController, Stage stage, Parent loginRoot) {
         displayConnectPanel(connectController);
         // Wrap connection logic in a supplier
@@ -65,43 +64,23 @@ public class Listener {
                 executor
         );
 
-        socketFuture.thenAcceptAsync(socket -> {
+        socketFuture.thenAcceptAsync(sock -> {
             try {
                 userInput = new BufferedReader(new InputStreamReader(System.in));
-                serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                serverOut = new PrintWriter(socket.getOutputStream(), true);
-                dataInputStream = new DataInputStream(socket.getInputStream());
-                serverReader = new ServerReader(dataInputStream);
+                serverIn = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+                serverOut = new PrintWriter(sock.getOutputStream(), true);
+                dataInputStream = new DataInputStream(sock.getInputStream());
 
-                serverReader.startReading();
+                // Initialize ServerReader with a broadcast handler if needed
+                serverReader = new ServerReader(dataInputStream);
+                serverReader.startReadingWithCorrelationId();
+
+                // Register serverReader with this class for request-response handling
+                // (Optionally, you can make serverReader static or manage differently)
+
                 displayLogPanel(loginController, stage, loginRoot);
 
-                // Asynchronously read messages from server
-                /*CompletableFuture.runAsync(() -> {
-                    String messageFromServer;
-                    try {
-                        while ((messageFromServer = serverIn.readLine()) != null) {
-                            System.out.println("Server: " + messageFromServer);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }, executor);*/
-
-                // Send user input to server
-                String userMessage;
-                /*while ((userMessage = userInput.readLine()) != null) {
-                    serverOut.println(userMessage);
-                    *//*ObjectMapper objectMapper = new ObjectMapper();
-                    ServerResponse response = objectMapper.readValue(userMessage, ServerResponse.class);
-                    switch (response.getServerResponseStatus()) {
-                        case SUCCESS:
-                            switch (response.getServerResponseMessage()) {
-                                case USER_CREATED:
-                            }
-                            break;
-                    }*//*
-                }*/
+                // Further message handling...
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -109,11 +88,9 @@ public class Listener {
     }
 
     public static void displayLogPanel(LoginController loginController, Stage stage, Parent loginRoot) {
-        // Notify UI that connection is successful
         Platform.runLater(() -> {
             if (loginController != null) {
-                System.out.println("ok");
-                Scene scene = new Scene(loginRoot,  300, 300);
+                Scene scene = new Scene(loginRoot, 300, 300);
                 scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/login.css").toExternalForm());
                 stage.setScene(scene);
                 loginController.onConnected();
@@ -152,5 +129,4 @@ public class Listener {
     public static ServerReader getServerReader() {
         return serverReader;
     }
-
 }

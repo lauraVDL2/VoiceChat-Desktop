@@ -67,14 +67,14 @@ public class Server {
                             userAction = new UserAction();
                             User userCreated = userAction.userCreate(objectMapper, messageObj, serverResponse, socket);
                             if (userCreated != null) {
-                                userAction.searchUserAvatar(objectMapper, userCreated, dataOutputStream, serverResponse);
+                                userAction.searchUserAvatar(messageObj, objectMapper, userCreated, dataOutputStream, serverResponse);
                             }
                             break;
                         case USER_LOG_IN:
                             userAction = new UserAction();
                             User userLogged = userAction.userLogIn(objectMapper, messageObj, serverResponse, socket);
                             if (userLogged != null) {
-                                userAction.searchUserAvatar(objectMapper, userLogged, dataOutputStream, serverResponse);
+                                userAction.searchUserAvatar(messageObj, objectMapper, userLogged, dataOutputStream, serverResponse);
                             }
                             onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> UserSessionStatus.ONLINE);
                             userSockets.computeIfAbsent(userLogged.getEmailAddress(), mySocket -> socket);
@@ -92,7 +92,7 @@ public class Server {
                             break;
                         case ONLINE_USERS_FETCH:
                             userAction = new UserAction();
-                            userAction.getOnlineUsers(objectMapper, serverResponse, socket, onlineUsers);
+                            userAction.getOnlineUsers(messageObj, objectMapper, serverResponse, socket, onlineUsers);
                             break;
                         case CONVERSATION_SEARCH:
                             conversationAction = new ConversationAction();
@@ -105,6 +105,10 @@ public class Server {
                         case CONVERSATION_DISPLAY:
                             conversationAction = new ConversationAction();
                             conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out, socket);
+                            break;
+                        case CONVERSATION_SCROLL:
+                            conversationAction = new ConversationAction();
+                            conversationAction.scrollConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case READ_TARGET_AVATAR:
                             userAction = new UserAction();
@@ -132,7 +136,7 @@ public class Server {
             MessageAction messageAction = new MessageAction();
             Conversation messageSentConversation = messageAction.sendMessage(objectMapper, messageObj, serverResponse, socket);
             UserNotificationAction userNotificationAction = new UserNotificationAction();
-            userNotificationAction.sendMessageToUser(userSockets, objectMapper, serverResponse,
+            userNotificationAction.sendMessageToUser(messageObj, userSockets, objectMapper, serverResponse,
                     messageSentConversation);
         } catch (Exception e) {
             logger.error("Error sending message: ", e);

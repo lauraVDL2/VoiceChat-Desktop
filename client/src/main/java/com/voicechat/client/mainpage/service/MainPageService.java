@@ -7,6 +7,8 @@ import org.shared.entity.Conversation;
 import org.shared.entity.User;
 
 import java.io.*;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class MainPageService {
 
@@ -14,20 +16,34 @@ public class MainPageService {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(conversation);
         Message message = new Message(MessageType.CONVERSATION_CREATE, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
 
-        return Listener.getServerReader().getServerResponse();
-
-        /*String serverInLine = Listener.getServerIn().readLine();
-        return objectMapper.readValue(serverInLine, ServerResponse.class);*/
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
 
-    public void displayUserConversations(User user) throws IOException {
+    public ServerResponse scrollMessages(Conversation conversation, int offset) throws Exception {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(conversation);
+        Message message = new Message(MessageType.CONVERSATION_SCROLL, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+        message.setOffset(offset);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
+
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
+
+    public void displayUserConversations(User user, String correlationId) throws IOException, InterruptedException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(user);
         Message message = new Message(MessageType.CONVERSATION_DISPLAY, json);
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
@@ -74,10 +90,11 @@ public class MainPageService {
         return objectMapper.readValue(bytes, ServerResponse.class);*/
     }
 
-    public void sendAvatarInfo(User targetUser) throws IOException {
+    public void sendAvatarInfo(String correlationId, User targetUser) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(targetUser);
         Message message = new Message(MessageType.READ_TARGET_AVATAR, json);
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
@@ -92,27 +109,26 @@ public class MainPageService {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(conversation);
         Message message = new Message(MessageType.CONVERSATION_GET, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
 
-        return Listener.getServerReader().getServerResponse();
+        System.out.println(objectMapper.writeValueAsString(message));
 
-        /*String serverInLine = Listener.getServerIn().readLine();
-        System.out.println("CONVERSATION GET = " + serverInLine);
-        return objectMapper.readValue(serverInLine, ServerResponse.class);*/
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
 
-    public ServerResponse sendMessage(Conversation conversation) throws Exception {
+    public ServerResponse sendMessage(String correlationId, Conversation conversation) throws Exception {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(conversation);
         Message message = new Message(MessageType.MESSAGE_SEND, json);
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
 
-        return Listener.getServerReader().getServerResponse();
-        /*String serverInLine = Listener.getServerIn().readLine();
-        return objectMapper.readValue(serverInLine, ServerResponse.class);*/
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
 }

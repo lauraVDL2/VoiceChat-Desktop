@@ -27,10 +27,11 @@ public class RegisterService {
         return matcher.matches();
     }
 
-    public void register(User user) throws IOException {
+    public void register(User user, String correlationId) throws IOException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_CREATE, json);
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         // Send the request

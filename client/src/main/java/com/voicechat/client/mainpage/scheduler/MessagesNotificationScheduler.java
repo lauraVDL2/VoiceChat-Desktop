@@ -6,6 +6,7 @@ import com.voicechat.client.ServerReader;
 import com.voicechat.client.Listener;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
+import com.voicechat.client.mainpage.controller.MainPageController;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -17,13 +18,14 @@ import org.shared.entity.Conversation;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 public class MessagesNotificationScheduler {
 
     private ScheduledFuture<?> messageNotificationSchedule = null;
 
-    public void schedule(BorderPane borderPane, VBox leftPane, ConversationComponent conversationComponent,
+    public void schedule(String emailAddress, MainPageController mainPageController, BorderPane borderPane, VBox leftPane, ConversationComponent conversationComponent,
                          ConversationListComponent conversationListComponent, Conversation conversation,
                          GridPane gridMainPane, OnlineUsersScheduler onlineUsersScheduler) {
 
@@ -32,15 +34,15 @@ public class MessagesNotificationScheduler {
         messageNotificationSchedule = scheduler.scheduleAtFixedRate(() -> {
                 try {
                     onlineUsersScheduler.waitOnlineScheduleToBeDone();
-                    onlineUsersScheduler.fetchLoggedUsers(gridMainPane, OnlineFetch.MESSAGES);
-                    ServerResponse serverResponse = Listener.getServerReader().getServerResponse();
-                    System.out.println("BEFORE NULL");
+                    onlineUsersScheduler.fetchLoggedUsers(UUID.randomUUID().toString(), gridMainPane, OnlineFetch.MESSAGES);
+                    ServerResponse serverResponse = Listener.getServerReader().getServerResponseByEmail("notif-" + emailAddress);
                     if (serverResponse != null) {
+                        System.out.println("server response apres" + serverResponse.getCorrelationId() + " " + serverResponse.getServerResponseMessage());
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.NEW_MESSAGE_NOTIFIED
                                 && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                             Platform.runLater(() -> {
                                 try {
-                                    conversationComponent.addMessagesReceivedComponents(serverResponse, borderPane, conversation);
+                                    conversationComponent.addMessagesReceivedComponents(mainPageController, serverResponse, borderPane, conversation);
                                     conversationListComponent.setLastMessageOnSchedule(leftPane, serverResponse);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -55,11 +57,11 @@ public class MessagesNotificationScheduler {
     }
 
     public void waitMessageScheduleToBeDone() {
-        try {
+        /*try {
             messageNotificationSchedule.cancel(true);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 }

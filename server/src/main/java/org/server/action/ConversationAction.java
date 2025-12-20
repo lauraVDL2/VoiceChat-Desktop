@@ -7,10 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.neo4j.ogm.session.SessionFactory;
 import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDao;
-import org.shared.Message;
-import org.shared.ServerResponse;
-import org.shared.ServerResponseMessage;
-import org.shared.ServerResponseStatus;
+import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.slf4j.Logger;
@@ -40,6 +37,7 @@ public class ConversationAction {
             byte[] bytes = null;
             if (fullConversation != null) {
                 logger.info("Conversation found !");
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
@@ -52,8 +50,44 @@ public class ConversationAction {
             }
             else {
                 logger.error("Conversation not found !");
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
+                serverResponse.setMessage("Conversation not found !");
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+        }
+    }
+
+    public void scrollConversation(ObjectMapper objectMapper, Message messageObj,
+                                   ServerResponse serverResponse, Socket socket) throws IOException {
+        Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
+        if (conversation != null) {
+            ConversationDao conversationDao = new ConversationDao(sessionFactory);
+            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, messageObj.getOffset());
+            byte[] bytes = null;
+            if (fullConversation != null) {
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SCROLLED);
+                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+            else {
+                logger.error("Conversation not found !");
+                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SCROLLED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setMessage("Conversation not found !");
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -76,6 +110,7 @@ public class ConversationAction {
                 logger.info("Conversations found !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_DISPLAYED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversations));
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -89,6 +124,7 @@ public class ConversationAction {
                 logger.info("No conversation found !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.INFO);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_DISPLAYED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setMessage("No conversations yet, start a new one !");
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -113,6 +149,7 @@ public class ConversationAction {
                 logger.info("Conversation created !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(newConversation));
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -125,6 +162,7 @@ public class ConversationAction {
                 logger.info("Conversation could not be created !");
                 serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
@@ -153,6 +191,7 @@ public class ConversationAction {
                     serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                     serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SEARCHED);
                     serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversation));
+                    serverResponse.setCorrelationId(messageObj.getCorrelationId());
                     bytes = objectMapper.writeValueAsBytes(serverResponse);
                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                     outputStream.writeUTF("JSON_RESPONSE");
@@ -164,6 +203,7 @@ public class ConversationAction {
                     logger.info("No conversation found !");
                     serverResponse.setServerResponseStatus(ServerResponseStatus.INFO);
                     serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SEARCHED);
+                    serverResponse.setCorrelationId(messageObj.getCorrelationId());
                     bytes = objectMapper.writeValueAsBytes(serverResponse);
                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                     outputStream.writeUTF("JSON_RESPONSE");

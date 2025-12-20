@@ -22,6 +22,7 @@ import org.shared.entity.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,11 +60,11 @@ public class RegisterController {
 
     private final RegisterService registerService = new RegisterService();
 
-    private final ServerReader serverReader = new ServerReader(Listener.getDataInputStream());
+    private final ServerReader serverReader = Listener.getServerReader();
 
     @FXML
     public void initialize() {
-        serverReader.startReading();
+        serverReader.startReadingWithCorrelationId();
         switchLoginView();
         registerUser();
     }
@@ -101,8 +102,9 @@ public class RegisterController {
                 stage.setScene(scene);
 
                 User user = new User(email, displayedName, password);
-                registerService.register(user);
-                serverResponse = serverReader.getServerResponse();
+                String correlationId = UUID.randomUUID().toString();
+                registerService.register(user, correlationId);
+                serverResponse = serverReader.getServerResponseByCorrelationId(correlationId);
                 ConnectController.loadUserScreen(serverResponse, stage);
             } catch (Exception e) {
                 e.printStackTrace();

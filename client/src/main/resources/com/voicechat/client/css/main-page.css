@@ -136,6 +136,10 @@
     -fx-text-fill: black;
 }
 
+#sendButton {
+    -fx-cursor: hand;
+}
+
 .sendMessageField {
     -fx-background-color: "#b6d1ff";
     -fx-control-inner-background: "#b6d1ff";

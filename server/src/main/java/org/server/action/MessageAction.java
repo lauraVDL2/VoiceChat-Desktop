@@ -32,6 +32,7 @@ public class MessageAction {
         byte[] bytes = null;
         if (message != null) {
             logger.info("Message sent !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
             serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(message));
@@ -46,6 +47,7 @@ public class MessageAction {
         }
         else {
             logger.error("Failed to send message !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
             bytes = objectMapper.writeValueAsBytes(serverResponse);

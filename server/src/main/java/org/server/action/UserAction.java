@@ -39,6 +39,7 @@ public class UserAction {
         byte[] bytes = null;
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             bytes = objectMapper.writeValueAsBytes(serverResponse);
@@ -51,6 +52,7 @@ public class UserAction {
         }
         else {
             logger.error("Registration failed !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
             serverResponse.setMessage(UserDao.errorMessage);
@@ -72,6 +74,7 @@ public class UserAction {
         byte[] bytes = null;
         if (resultUser != null) {
             logger.info("User connected !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(resultUser));
@@ -85,6 +88,7 @@ public class UserAction {
         }
         else {
             logger.error("Connection failed !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
             serverResponse.setMessage(UserDao.errorMessage);
@@ -107,6 +111,7 @@ public class UserAction {
         byte[] bytes = null;
         if (!CollectionUtils.isEmpty(users)) {
             logger.info("Users found !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
             serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(users));
@@ -119,6 +124,7 @@ public class UserAction {
         }
         else {
             logger.info("Users not found !");
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
             serverResponse.setMessage("No user found !");
@@ -131,11 +137,12 @@ public class UserAction {
         }
     }
 
-    public void getOnlineUsers(ObjectMapper objectMapper,
+    public void getOnlineUsers(Message messageObj, ObjectMapper objectMapper,
                                ServerResponse serverResponse, Socket socket,
                                ConcurrentHashMap<String, UserSessionStatus> onlineUsers) throws IOException {
         serverResponse.setServerResponseMessage(ServerResponseMessage.ONLINE_USERS_FETCHED);
         serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+        serverResponse.setCorrelationId(messageObj.getCorrelationId());
         ServerInformation serverInformation = new ServerInformation();
         serverInformation.setOnlineUsers(onlineUsers);
         serverResponse.setServerInformation(serverInformation);
@@ -154,6 +161,7 @@ public class UserAction {
             if (StringUtils.isNotBlank(targetUser.getAvatar())) {
                 byte[] avatarBytes = getAvatarBytes(targetUser.getAvatar());
                 serverResponse.setBinaryPayload(avatarBytes);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);
 
@@ -166,12 +174,13 @@ public class UserAction {
         }
     }
 
-    public void searchUserAvatar(ObjectMapper objectMapper, User user,
+    public void searchUserAvatar(Message messageObj, ObjectMapper objectMapper, User user,
                                  DataOutputStream dataOutputStream, ServerResponse serverResponse) throws IOException {
         if (user != null) {
             if (StringUtils.isNotBlank(user.getAvatar())) {
                 byte[] avatarBytes = getAvatarBytes(user.getAvatar());
                 serverResponse.setBinaryPayload(avatarBytes);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);
 

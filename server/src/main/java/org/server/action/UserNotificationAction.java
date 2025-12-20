@@ -26,6 +26,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserNotificationAction {
@@ -34,7 +35,7 @@ public class UserNotificationAction {
 
     private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
 
-    public void sendMessageToUser(ConcurrentHashMap<String, Socket> userSockets,
+    public void sendMessageToUser(org.shared.Message messageObj, ConcurrentHashMap<String, Socket> userSockets,
                                   ObjectMapper objectMapper, ServerResponse serverResponse,
                                   Conversation conversation) throws IOException {
         ConversationDao conversationDao = new ConversationDao(sessionFactory);
@@ -51,6 +52,8 @@ public class UserNotificationAction {
                         && !StringUtils.equals(sender.getEmailAddress(), emailAddress)) {
                     serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                     serverResponse.setServerResponseMessage(ServerResponseMessage.NEW_MESSAGE_NOTIFIED);
+                    serverResponse.getUserMessageMap().computeIfAbsent("notif-" + emailAddress, k -> "notif-" + messageObj.getCorrelationId());
+                    serverResponse.setCorrelationId("notif-" + messageObj.getCorrelationId());
                     serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversation));
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
@@ -60,18 +63,20 @@ public class UserNotificationAction {
                     dataOutputStream.flush();
 
                     //searchSentAvatar(objectMapper, sender, socket, serverResponse);
-                    searchSentAvatar(objectMapper, sender, socket, serverResponse);
+                    searchSentAvatar(emailAddress, messageObj, objectMapper, sender, socket, serverResponse);
                 }
             }
         }
     }
 
-    public void searchSentAvatar(ObjectMapper objectMapper, User sender,
+    public void searchSentAvatar(String emailAddress, org.shared.Message messageObj, ObjectMapper objectMapper, User sender,
                                  Socket socket, ServerResponse serverResponse) throws IOException {
         if (sender != null) {
             if (StringUtils.isNotBlank(sender.getAvatar())) {
                 byte[] avatarBytes = getAvatarBytes(sender.getAvatar());
                 serverResponse.setBinaryPayload(avatarBytes);
+                serverResponse.getUserMessageMap().computeIfAbsent(emailAddress, k -> "notif-" + messageObj.getCorrelationId());
+                serverResponse.setCorrelationId("notif-" + messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.READ_TARGET_AVATAR);
 

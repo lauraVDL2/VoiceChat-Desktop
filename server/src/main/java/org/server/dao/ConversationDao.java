@@ -159,6 +159,50 @@ public class ConversationDao {
         return new ArrayList<>();
     }
 
+    public Conversation scrollConversationMessages(Conversation conversation, int offset) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            int skip = offset * 20;
+            String cypher = """
+                    MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
+                    WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
+                    RETURN msg, u ORDER BY msg.time DESC SKIP $skip LIMIT 20
+                    """;
+            Result records = session.query(cypher, Map.of("id", conversation.getId(), "skip", 60));
+            List<Message> messages = new ArrayList<>();
+            for (var record : records) {
+                Message message = (Message) record.get("msg");
+                User sender = (User) record.get("u");
+                message.setSender(sender);
+                messages.add(message);
+            }
+
+            conversation.setMessages(messages.stream()
+                    .sorted(Comparator.comparing(Message::getTime))
+                    .collect(Collectors.toList()));
+            String cypher2 = """
+                    MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+                    """;
+            Result usersRecord = session.query(cypher2, Map.of("id", conversation.getId()));
+            Set<User> participants = new LinkedHashSet<>();
+            for (var userRecord : usersRecord) {
+                User participant = (User) userRecord.get("u");
+                participants.add(participant);
+            }
+            conversation.setParticipants(participants);
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+            return conversation;
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
+    }
+
     public Conversation getConversation(Conversation conversation) {
         try {
             Session session = this.sessionFactory.openSession();

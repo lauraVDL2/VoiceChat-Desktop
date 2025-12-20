@@ -30,6 +30,7 @@ import org.shared.entity.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ConversationListComponent {
 
@@ -114,11 +115,12 @@ public class ConversationListComponent {
                     if (!StringUtils.equals(participant.getEmailAddress(), currentUser.getEmailAddress())) {
                         if (i == 0) {
                             try {
-                                mainPageService.sendAvatarInfo(participant);
+                                String correlationId = UUID.randomUUID().toString();
+                                mainPageService.sendAvatarInfo(correlationId, participant);
                                 vbox2 = new VBox();
                                 StackPane stackAvatar = new StackPane();
                                 stackAvatar.getStyleClass().add("stackAvatarConversationList");
-                                ImageView imageView = Listener.getServerReader().getAvatar();
+                                ImageView imageView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
                                 imageView.setFitWidth(40.);
                                 imageView.setFitHeight(40.);
                                 stackAvatar.getChildren().add(imageView);

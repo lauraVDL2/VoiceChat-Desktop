@@ -22,6 +22,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -97,18 +99,52 @@ public class MainPageController {
         });
     }
 
+    public void scrollConversationMessages(Conversation conversation, int offset) {
+        CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return mainPageService.scrollMessages(conversation, offset);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executor).thenAcceptAsync(serverResponse -> {
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SCROLLED) {
+                                try {
+                                    Conversation conversation1 = JsonMapper.getJsonMapper().readValue(serverResponse.getBinaryPayload(), Conversation.class);
+                                    Platform.runLater(() -> {
+                                        mainPane.setCenter(conversationComponent.addConversationMessagesScrollPane(this, conversation1, gridMainPane, UserSession.INSTANCE.getUser()));
+                                    });
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } else {
+                            System.err.println("ERROR: Failed to scroll messages. Status: " + serverResponse.getServerResponseStatus());
+                        }
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Exception while scrolling messages:");
+                    ex.printStackTrace();
+                    return null;
+                });
+    }
+
     public void getUserConversations() {
         Platform.runLater(() -> {
             User user = UserSession.INSTANCE.getUser();
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    mainPageService.displayUserConversations(user);
-                    return Listener.getServerReader().getServerResponse();
+                    String correlationId = UUID.randomUUID().toString();
+                    mainPageService.displayUserConversations(user, correlationId);
+                    return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
-            }, executor).thenAcceptAsync((serverResponse) -> {
+            }).thenAcceptAsync((serverResponse) -> {
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
@@ -119,7 +155,7 @@ public class MainPageController {
                         System.out.println("ERROR");
                     }
                 }
-            }, executor);
+            });
         });
     }
 
@@ -245,21 +281,22 @@ public class MainPageController {
                     conversation1.setMessages(List.of(message));
                     onlineUsersScheduler.waitOnlineScheduleToBeDone();
                     messagesNotificationScheduler.waitMessageScheduleToBeDone();
-                    return mainPageService.sendMessage(conversation1);
+                    String correlationId = UUID.randomUUID().toString();
+                    return mainPageService.sendMessage(correlationId, conversation1);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             }, executor).thenAcceptAsync((serverResponse) -> {
-                messagesNotificationScheduler.schedule(mainPane, leftPane, conversationComponent,
-                        conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
-                onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_SENT) {
                                 try {
                                     System.out.println("Message sent !");
-                                    conversationComponent.addMessageComponents(mainPane, serverResponse);
+                                    conversationComponent.addMessageComponents(this, mainPane, serverResponse, conversation);
+                                    messagesNotificationScheduler.schedule("toto1.toto@yahoo.fr", this, mainPane, leftPane, conversationComponent,
+                                            conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
+                                    onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

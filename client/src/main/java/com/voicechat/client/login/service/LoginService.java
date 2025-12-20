@@ -13,13 +13,13 @@ import java.io.PrintWriter;
 
 public class LoginService {
 
-    public void login(User user) throws IOException {
+    public void login(User user, String correlationId) throws IOException {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(user);
         Message message = new Message(MessageType.USER_LOG_IN, json);
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        System.out.println(mapper.writeValueAsString(message));
         serverOut.println(mapper.writeValueAsString(message));
 
         /*String serverInLine = Listener.getServerIn().readLine();

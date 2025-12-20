@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -26,33 +27,35 @@ public class OnlineUsersScheduler {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         onlineSchedules.add(scheduler.scheduleAtFixedRate(() -> {
             try {
-                fetchLoggedUsers(gridPane, onlineFetch);
+                String correlationId = UUID.randomUUID().toString();
+                fetchLoggedUsers(correlationId, gridPane, onlineFetch);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 3, 60, TimeUnit.SECONDS));
     }
 
-    public void fetchLoggedUsers(GridPane gridPane, OnlineFetch onlineFetch) throws IOException, InterruptedException {
+    public void fetchLoggedUsers(String correlationId, GridPane gridPane, OnlineFetch onlineFetch) throws IOException, InterruptedException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         Message message = new Message(MessageType.ONLINE_USERS_FETCH, "");
+        message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
         serverOut.println(objectMapper.writeValueAsString(message));
 
-        ServerResponse serverResponse = Listener.getServerReader().getServerResponse();
-        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {
-            if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                switch (onlineFetch) {
-                    case CONVERSATION_LIST:
-                        avatarComponent.modifyUsersOnlineConversationList(gridPane, serverResponse);
-                        break;
-                    case MESSAGES:
-                        avatarComponent.modifyUsersOnlineMessage(gridPane, serverResponse);
-                        break;
+        var serverResponse = Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    switch (onlineFetch) {
+                        case CONVERSATION_LIST:
+                            avatarComponent.modifyUsersOnlineConversationList(gridPane, serverResponse);
+                            break;
+                        case MESSAGES:
+                            avatarComponent.modifyUsersOnlineMessage(gridPane, serverResponse);
+                            break;
+                    }
                 }
             }
-       }
     }
 
     public List<ScheduledFuture<?>> getOnlineSchedules() {
@@ -65,11 +68,11 @@ public class OnlineUsersScheduler {
 
     public void waitOnlineScheduleToBeDone() {
         this.onlineSchedules.forEach(s -> {
-            try {
+            /*try {
                 s.cancel(true);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         });
     }
 
