@@ -27,6 +27,7 @@ import org.shared.entity.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,15 +79,18 @@ public class HeaderController {
     }
 
     public void initializeAvatar() {
-        /*CompletableFuture.runAsync(() -> {
+
+        CompletableFuture.runAsync(() -> {
             try {
-                myAvatar.setImage(Listener.getServerReader().getAvatar().getImage());
+                String correlationId = UUID.randomUUID().toString();
+                headerService.sendAvatarInfo(correlationId, UserSession.INSTANCE.getUser());
+                myAvatar.setImage(Listener.getServerReader().getAvatarByCorrelationId(correlationId).getImage());
                 myAvatar.setFitWidth(40.);
                 myAvatar.setFitHeight(40.);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, executor);*/
+        }, executor);
     }
 
     public void searchUsers() {

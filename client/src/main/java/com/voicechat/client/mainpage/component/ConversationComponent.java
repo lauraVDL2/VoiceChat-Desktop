@@ -23,6 +23,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -395,26 +396,33 @@ public class ConversationComponent {
     }
 
     public void loadMoreMessages(MainPageController mainPageController, ScrollPane scrollPane, Conversation conversation) {
-        scrollPane.vvalueProperty().addListener(
-                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    short offset = 0;
-                    if(newValue.doubleValue() == 0) {
-                        offset++;
+        PauseTransition pause = new PauseTransition(Duration.millis(200));
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            // Reset the timer on each scroll event
+            pause.stop();
+            pause.setOnFinished(ev -> {
+                if (scrollPane.getVvalue() >= 1.0) {
+                    if (event.getDeltaY() < 0) {
+                        System.out.println("bottom");
+                        if (Listener.getOffset() >= 0) {
+                            mainPageController.scrollConversationMessages(conversation, Listener.decrementOffset());
+                        }
+                    }
+                }
+                else if (scrollPane.getVvalue() <= 0.0) {
+                    if (event.getDeltaY() > 0) {
                         try {
                             System.out.println( "AT TOP" );
-                            mainPageController.scrollConversationMessages(conversation, offset);
+                            mainPageController.scrollConversationMessages(conversation, Listener.incrementOffset());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-                        // load more items
-                    }
-                    else if(newValue.doubleValue() >= 1) {
-                        offset--;
-                        System.out.println("AT BOTTOM");
                     }
                 }
-        );
+                System.out.println("offset = " + Listener.getOffset());
+            });
+            pause.playFromStart();
+        });
     }
 
     public void newConversationComponents(User targetUser, MainPageController parentController,

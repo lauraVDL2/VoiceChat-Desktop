@@ -8,6 +8,7 @@ import org.shared.MessageType;
 import org.shared.ServerResponse;
 import org.shared.entity.User;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,16 @@ public class HeaderService {
         serverOut.println(mapper.writeValueAsString(message));
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
+
+    public void sendAvatarInfo(String correlationId, User targetUser) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(targetUser);
+        Message message = new Message(MessageType.READ_TARGET_AVATAR, json);
+        message.setCorrelationId(correlationId);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
     }
 
     public ServerResponse searchConversationIfExists(List<User> users) throws Exception {

@@ -43,6 +43,8 @@ public class Listener {
 
     private static ServerReader serverReader;
 
+    private static short offset = 0;
+
     /**
      * Initialize connection and server reader
      */
@@ -128,5 +130,17 @@ public class Listener {
 
     public static ServerReader getServerReader() {
         return serverReader;
+    }
+
+    public static short getOffset() {
+        return offset;
+    }
+
+    public static short incrementOffset() {
+        return ++offset;
+    }
+
+    public static short decrementOffset() {
+        return --offset;
     }
 }

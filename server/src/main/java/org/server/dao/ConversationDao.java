@@ -168,7 +168,7 @@ public class ConversationDao {
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
                     RETURN msg, u ORDER BY msg.time DESC SKIP $skip LIMIT 20
                     """;
-            Result records = session.query(cypher, Map.of("id", conversation.getId(), "skip", 60));
+            Result records = session.query(cypher, Map.of("id", conversation.getId(), "skip", skip));
             List<Message> messages = new ArrayList<>();
             for (var record : records) {
                 Message message = (Message) record.get("msg");
