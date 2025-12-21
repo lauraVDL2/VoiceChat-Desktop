@@ -131,4 +131,18 @@ public class MainPageService {
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
+
+    public ServerResponse searchMessageInConversation(Conversation conversation) throws Exception {
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
+        String json = mapper.writeValueAsString(conversation);
+        Message message = new Message(MessageType.MESSAGE_CONVERSATION_SEARCH, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(mapper.writeValueAsString(message));
+
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
 }

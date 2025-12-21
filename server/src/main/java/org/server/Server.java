@@ -121,6 +121,10 @@ public class Server {
                         case MESSAGE_SEND:
                             sendMessageToUser(objectMapper, messageObj, serverResponse, socket);
                             break;
+                        case MESSAGE_CONVERSATION_SEARCH:
+                            messageAction = new MessageAction();
+                            messageAction.searchMessageInConversation(objectMapper, messageObj, serverResponse, socket);
+                            break;
                     }
                 }
             }

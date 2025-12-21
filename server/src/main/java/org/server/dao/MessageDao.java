@@ -96,4 +96,29 @@ public class MessageDao {
         return null;
     }
 
+    public List<Message> searchMessageInConversation(Conversation conversation) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            String cypher = """
+                    MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
+                    AND msg.content CONTAINS $messageContent
+                    RETURN msg AS messages LIMIT 20
+                    """;
+            Result records = session.query(cypher, Map.of("id", conversation.getId(),
+                    "messageContent", conversation.getMessages().getFirst().getContent()));
+            List<Message> messages = new ArrayList<>();
+            for (var record : records) {
+                Message message = (Message) record.get("messages");
+                messages.add(message);
+            }
+            return messages;
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
+    }
+
 }

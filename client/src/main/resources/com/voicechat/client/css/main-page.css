@@ -6,6 +6,13 @@
     -fx-background-color: "#f7f7f7";
 }
 
+.messageConversationSearchedBox {
+    -fx-background-color: "#b6d1ff";
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+}
+
 .topPane {
     -fx-background-color: "#006abc";
     -fx-border-color: transparent transparent #b6d1ff transparent; /* top, right, bottom, left */

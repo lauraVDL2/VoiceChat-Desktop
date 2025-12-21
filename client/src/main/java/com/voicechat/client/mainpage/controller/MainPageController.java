@@ -1,6 +1,8 @@
 package com.voicechat.client.mainpage.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.ServerReader;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
@@ -20,8 +22,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -263,6 +267,41 @@ public class MainPageController {
                     }
                 }, executor);
             }
+        });
+    }
+
+    public void searchMessageInConversation(VBox rightSearchPane, TextField searchMessage, Conversation conversation) {
+        searchMessage.setOnAction(event -> {
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    String content = searchMessage.getText();
+                    Message message = new Message();
+                    message.setContent(content);
+                    conversation.setMessages(List.of(message));
+                    return mainPageService.searchMessageInConversation(conversation);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+            }, executor).thenAcceptAsync((serverResponse) -> {
+                if (serverResponse != null) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_CONVERSATION_SEARCHED) {
+                            try {
+                                ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                                List<Message> messages = objectMapper.readValue(serverResponse.getBinaryPayload(),
+                                        new TypeReference<List<Message>>() {});
+                                if (CollectionUtils.isNotEmpty(messages)) {
+                                    conversationComponent.setMessagesSearched(rightSearchPane, messages, conversation, this);
+                                }
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            });
         });
     }
 
