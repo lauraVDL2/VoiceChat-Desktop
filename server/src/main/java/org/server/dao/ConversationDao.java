@@ -159,6 +159,29 @@ public class ConversationDao {
         return new ArrayList<>();
     }
 
+    public Conversation goToMessage(Conversation conversation) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            String cypher1 = """
+                    MATCH (c:Conversation)-[:CONTAINS]->(m:Message)
+                    WHERE id(c) = $conversationId AND m.time > $targetMessageTime
+                    RETURN count(m)
+                    """;
+            int messageCount = session.queryForObject(Integer.class, cypher1, Map.of("conversationId", conversation.getId(),
+                    "targetMessageTime", conversation.getMessages().getFirst().getTime()));
+            int skip = messageCount;
+            int pageSize = 20;
+            int offset = skip/pageSize;
+            return scrollConversationMessages(conversation, offset);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
+    }
+
     public Conversation scrollConversationMessages(Conversation conversation, int offset) {
         try {
             Session session = this.sessionFactory.openSession();

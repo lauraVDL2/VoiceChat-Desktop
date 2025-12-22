@@ -10,6 +10,7 @@ import com.voicechat.client.login.UserSession;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
+import com.voicechat.client.mainpage.component.ConversationMessageSearchComponent;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
 import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
@@ -73,6 +74,8 @@ public class MainPageController {
 
     private final ConversationListComponent conversationListComponent = new ConversationListComponent();
 
+    private final ConversationMessageSearchComponent conversationMessageSearchComponent = new ConversationMessageSearchComponent();
+
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
@@ -100,6 +103,48 @@ public class MainPageController {
             Platform.runLater(() -> {
                 onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
             });
+        });
+    }
+
+    public void goToMessage(HBox hBox, Conversation conversation, Message message) {
+        hBox.setOnMouseClicked(event -> {
+            CompletableFuture.supplyAsync(() -> {
+                        try {
+                            conversation.setMessages(List.of(message));
+                            return mainPageService.goToMessageInConversation(conversation);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }, executor).thenAcceptAsync(serverResponse -> {
+                        if (serverResponse != null) {
+                            if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_CONVERSATION_WENT) {
+                                    try {
+                                        System.out.println("Message found !");
+                                        Conversation conversation1 = JsonMapper.getJsonMapper()
+                                                .readValue(serverResponse.getBinaryPayload(), Conversation.class);
+                                        Platform.runLater(() -> {
+                                            mainPane.setCenter(
+                                                    conversationComponent.addConversationMessagesScrollPane(
+                                                            this, conversation1, gridMainPane, UserSession.INSTANCE.getUser()
+                                                    )
+                                            );
+                                        });
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } else {
+                                System.err.println("ERROR: Failed to scroll messages. Status: " + serverResponse.getServerResponseStatus());
+                            }
+                        }
+                    }, Platform::runLater)
+                    .exceptionally(ex -> {
+                        System.err.println("Exception while scrolling messages:");
+                        ex.printStackTrace();
+                        return null;
+                    });
         });
     }
 
@@ -292,7 +337,7 @@ public class MainPageController {
                                 List<Message> messages = objectMapper.readValue(serverResponse.getBinaryPayload(),
                                         new TypeReference<List<Message>>() {});
                                 if (CollectionUtils.isNotEmpty(messages)) {
-                                    conversationComponent.setMessagesSearched(rightSearchPane, messages, conversation, this);
+                                    conversationMessageSearchComponent.setMessagesSearched(rightSearchPane, messages, conversation, this);
                                 }
                             }
                             catch (Exception e) {

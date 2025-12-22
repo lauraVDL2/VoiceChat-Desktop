@@ -100,15 +100,17 @@ public class MessageDao {
         try {
             Session session = this.sessionFactory.openSession();
             String cypher = """
-                    MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
+                    MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)<-[:SENT_BY]-(u:User) WHERE id(c) = $id
                     AND msg.content CONTAINS $messageContent
-                    RETURN msg AS messages LIMIT 20
+                    RETURN msg AS messages, u AS sender LIMIT 20
                     """;
             Result records = session.query(cypher, Map.of("id", conversation.getId(),
                     "messageContent", conversation.getMessages().getFirst().getContent()));
             List<Message> messages = new ArrayList<>();
             for (var record : records) {
                 Message message = (Message) record.get("messages");
+                User sender = (User) record.get("sender");
+                message.setSender(sender);
                 messages.add(message);
             }
             return messages;

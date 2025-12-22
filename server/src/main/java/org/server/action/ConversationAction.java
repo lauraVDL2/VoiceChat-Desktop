@@ -64,6 +64,41 @@ public class ConversationAction {
         }
     }
 
+    public void goToMessage(ObjectMapper objectMapper, Message messageObj,
+                            ServerResponse serverResponse, Socket socket) throws IOException {
+        Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
+        if (conversation != null) {
+            ConversationDao conversationDao = new ConversationDao(sessionFactory);
+            Conversation fullConversation = conversationDao.goToMessage(conversation);
+            byte[] bytes = null;
+            if (fullConversation != null) {
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
+                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+            else {
+                logger.error("Conversation not found !");
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
+                serverResponse.setMessage("Conversation not found !");
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+        }
+    }
+
     public void scrollConversation(ObjectMapper objectMapper, Message messageObj,
                                    ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);

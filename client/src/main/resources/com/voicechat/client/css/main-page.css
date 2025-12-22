@@ -12,6 +12,9 @@
     -fx-background-radius: 10;
     -fx-padding: 5;
 }
+.messageConversationSearched {
+    -fx-cursor: hand;
+}
 
 .topPane {
     -fx-background-color: "#006abc";

@@ -125,6 +125,10 @@ public class Server {
                             messageAction = new MessageAction();
                             messageAction.searchMessageInConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
+                        case MESSAGE_CONVERSATION_GO:
+                            conversationAction = new ConversationAction();
+                            conversationAction.goToMessage(objectMapper, messageObj, serverResponse, socket);
+                            break;
                     }
                 }
             }
