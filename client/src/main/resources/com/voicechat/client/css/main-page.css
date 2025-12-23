@@ -31,6 +31,22 @@
     -fx-background-color: "#006abc";
     -fx-border-color: transparent #b6d1ff transparent transparent; /* top, right, bottom, left */
     -fx-border-width: 0 1 0 0;
+    -fx-alignment: top-center;
+}
+
+.leftPaneButton {
+    -fx-alignment: top-center;
+    -fx-cursor: hand;
+}
+
+.leftPaneButtonClicked {
+    -fx-background-color: "#b6d1ff";
+}
+
+.leftPaneLabel {
+    -fx-text-fill: black;
+    -fx-font-size: 15px;
+    -fx-font-family: "Helvetica";
 }
 
 .searchField {

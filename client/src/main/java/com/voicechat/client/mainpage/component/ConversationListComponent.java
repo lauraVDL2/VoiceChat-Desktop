@@ -184,7 +184,6 @@ public class ConversationListComponent {
                 leftPane.getChildren().add(contentStackPane);
                 mainPageController.goToConversation(contentStackPane);
             }
-            System.out.println("end method");
         });
     }
 

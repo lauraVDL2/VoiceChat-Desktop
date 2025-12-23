@@ -69,12 +69,14 @@ public class ConversationAction {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         if (conversation != null) {
             ConversationDao conversationDao = new ConversationDao(sessionFactory);
-            Conversation fullConversation = conversationDao.goToMessage(conversation);
+            int offset = conversationDao.getOffset(conversation);
+            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, offset);
             byte[] bytes = null;
             if (fullConversation != null) {
                 serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
+                serverResponse.setOffset(offset);
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -110,6 +112,7 @@ public class ConversationAction {
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SCROLLED);
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
+                serverResponse.setOffset(messageObj.getOffset());
                 serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());

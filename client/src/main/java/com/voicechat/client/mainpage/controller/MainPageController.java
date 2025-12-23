@@ -121,7 +121,7 @@ public class MainPageController {
                             if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                                 if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_CONVERSATION_WENT) {
                                     try {
-                                        System.out.println("Message found !");
+                                        Listener.setOffset(serverResponse.getOffset());
                                         Conversation conversation1 = JsonMapper.getJsonMapper()
                                                 .readValue(serverResponse.getBinaryPayload(), Conversation.class);
                                         Platform.runLater(() -> {

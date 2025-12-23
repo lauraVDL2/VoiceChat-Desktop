@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="com.voicechat.client.mainpage.controller.MainPageController"
           fx:id="gridMainPane" styleClass="gridMainPane">
@@ -23,9 +24,33 @@
 
     <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS"
           styleClass="infoLeftPane">
-        <Button text="Item 1"/>
-        <Button text="Item 2"/>
-        <Button text="Item 3"/>
+        <Region prefHeight="10" />
+        <VBox styleClass="leftPaneButton">
+            <ImageView pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/notification.png" />
+                </image>
+            </ImageView>
+            <Label text="Activity" styleClass="leftPaneLabel"/>
+        </VBox>
+        <Region prefHeight="10" />
+        <VBox styleClass="leftPaneButton, leftPaneButtonClicked">
+            <ImageView pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/dm.png" />
+                </image>
+            </ImageView>
+            <Label text="Chat" styleClass="leftPaneLabel"/>
+        </VBox>
+        <Region prefHeight="10" />
+        <VBox styleClass="leftPaneButton">
+            <ImageView pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/calendar.png" />
+                </image>
+            </ImageView>
+            <Label text="Calendar" styleClass="leftPaneLabel"/>
+        </VBox>
     </VBox>
 
     <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="splitPane">

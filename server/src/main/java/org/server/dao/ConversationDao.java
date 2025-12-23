@@ -159,7 +159,7 @@ public class ConversationDao {
         return new ArrayList<>();
     }
 
-    public Conversation goToMessage(Conversation conversation) {
+    public int getOffset(Conversation conversation) {
         try {
             Session session = this.sessionFactory.openSession();
             String cypher1 = """
@@ -172,14 +172,14 @@ public class ConversationDao {
             int skip = messageCount;
             int pageSize = 20;
             int offset = skip/pageSize;
-            return scrollConversationMessages(conversation, offset);
+            return offset;
         } catch (Exception e) {
             e.printStackTrace();
             if (sessionFactory != null) {
                 sessionFactory.close();
             }
         }
-        return null;
+        return 0;
     }
 
     public Conversation scrollConversationMessages(Conversation conversation, int offset) {
