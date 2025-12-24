@@ -18,8 +18,6 @@ public class GraphClient {
 
     private String tenantId;
 
-    private String clientSecret;
-
     private String[] graphUserScopes;
 
     private Properties properties = new Properties();
@@ -33,7 +31,6 @@ public class GraphClient {
             properties.load(input);
             clientId = properties.getProperty("app.clientId");
             tenantId = properties.getProperty("app.tenantId");
-            clientSecret = properties.getProperty("app.clientSecret");
             String scopesStr = properties.getProperty("app.graphUserScopes");
             graphUserScopes = scopesStr.split(",");
 
