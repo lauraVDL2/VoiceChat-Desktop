@@ -32,6 +32,9 @@ dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
+    implementation("com.microsoft.graph:microsoft-graph:5.25.0") // Check for latest version
+    implementation("com.microsoft.graph:microsoft-graph-core:2.0.15")
+    implementation("com.azure:azure-identity:1.4.4") // For OAuth2 authentication
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
