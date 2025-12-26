@@ -62,6 +62,8 @@ public class RegisterController {
 
     private final ServerReader serverReader = Listener.getServerReader();
 
+    private final ConnectController connectController = new ConnectController();
+
     @FXML
     public void initialize() {
         serverReader.startReadingWithCorrelationId();
@@ -105,7 +107,7 @@ public class RegisterController {
                 String correlationId = UUID.randomUUID().toString();
                 registerService.register(user, correlationId);
                 serverResponse = serverReader.getServerResponseByCorrelationId(correlationId);
-                ConnectController.loadUserScreen(serverResponse, stage);
+                connectController.loadUserScreen(serverResponse, stage);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.57")
+    implementation("shared-lib:voicechat-common:1.0.59")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.apache.commons:commons-collections4:4.4")
     implementation("org.neo4j:neo4j-ogm-core:4.0.19")
@@ -35,6 +35,7 @@ dependencies {
     implementation("com.microsoft.graph:microsoft-graph:5.25.0") // Check for latest version
     implementation("com.microsoft.graph:microsoft-graph-core:2.0.15")
     implementation("com.azure:azure-identity:1.4.4") // For OAuth2 authentication
+    implementation("io.netty:netty-transport-native-epoll:4.1.92.Final:linux-x86_64")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

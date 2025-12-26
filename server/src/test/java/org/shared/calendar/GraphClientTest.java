@@ -1,19 +1,24 @@
-/*
 package org.shared.calendar;
 
 import com.microsoft.graph.models.Calendar;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.server.calendar.CalendarRequester;
 import org.server.calendar.GraphClient;
+import org.shared.JsonMapper;
+import org.shared.Message;
+import org.shared.ServerResponse;
+
+import java.net.Socket;
 
 public class GraphClientTest {
 
-    @Test
+    /*@Test
     public void testGetUserCalendar() {
-        GraphClient graphClient = new GraphClient();
-        var calendar = graphClient.getUserCalendar();
+        var client = GraphClient.getClient(JsonMapper.getJsonMapper(), new Socket(), new Message(), new ServerResponse());
 
-        Assertions.assertNotNull(calendar);
-    }
+        var calendar = new CalendarRequester().getUserCalendar(client);
+
+        //Assertions.assertNotNull(calendar);
+    }*/
 }
-*/

@@ -1,0 +1,35 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" styleClass="infoLeftPane">
+    <Region prefHeight="10" />
+    <VBox styleClass="leftPaneButton">
+        <ImageView pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/notification.png" />
+            </image>
+        </ImageView>
+        <Label text="Activity" styleClass="leftPaneLabel"/>
+    </VBox>
+    <Region prefHeight="10" />
+    <VBox styleClass="leftPaneButton, leftPaneButtonClicked">
+        <ImageView pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/dm.png" />
+            </image>
+        </ImageView>
+        <Label text="Chat" styleClass="leftPaneLabel"/>
+    </VBox>
+    <Region prefHeight="10" />
+    <VBox styleClass="leftPaneButton">
+        <ImageView pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/calendar.png" />
+            </image>
+        </ImageView>
+        <Label text="Calendar" styleClass="leftPaneLabel"/>
+    </VBox>
+</VBox>

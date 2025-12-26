@@ -40,6 +40,8 @@ public class LoginController {
 
     private final LoginService loginService = new LoginService();
 
+    private final ConnectController connectController = new ConnectController();
+
     @FXML
     public void initialize() {
         switchRegisterView();
@@ -91,7 +93,7 @@ public class LoginController {
                                 Parent root = mainPageLoader.load();
                                 Scene scene = new Scene(root, 300, 300);
                                 stage.setScene(scene);
-                                ConnectController.loadUserScreen(serverResponse, stage);
+                                connectController.loadUserScreen(serverResponse, stage);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

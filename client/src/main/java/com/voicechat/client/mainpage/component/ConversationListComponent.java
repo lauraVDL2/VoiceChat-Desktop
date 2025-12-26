@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.login.UserSession;
+import com.voicechat.client.login.component.AuthenticatePopupComponent;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.utils.DateHandler;
@@ -98,6 +99,8 @@ public class ConversationListComponent {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+
+            AuthenticatePopupComponent.closePopup();
             User currentUser = UserSession.INSTANCE.getUser();
             currentUser.setConversation(conversations);
             for (Conversation conversation : conversations) {

@@ -6,12 +6,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.microsoft.graph.requests.GraphServiceClient;
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.server.action.ConversationAction;
 import org.server.action.MessageAction;
 import org.server.action.UserAction;
 import org.server.action.UserNotificationAction;
+import org.server.calendar.CalendarRequester;
+import org.server.calendar.GraphClient;
+import org.server.calendar.UserRequester;
 import org.server.dao.MessageDao;
 import org.server.dao.UserDao;
 import org.shared.entity.Conversation;
@@ -36,6 +40,7 @@ public class Server {
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
     private final static ConcurrentHashMap<String, UserSessionStatus> onlineUsers = new ConcurrentHashMap<>();
     private final static ConcurrentHashMap<String, Socket> userSockets = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, GraphServiceClient> microsoftUsers = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
@@ -62,6 +67,9 @@ public class Server {
                     ConversationAction conversationAction = null;
                     MessageAction messageAction = null;
                     UserNotificationAction userNotificationAction = null;
+                    UserRequester userRequester = null;
+                    CalendarRequester calendarRequester = null;
+                    User user = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -79,10 +87,19 @@ public class Server {
                             onlineUsers.computeIfAbsent(userLogged.getEmailAddress(), status -> UserSessionStatus.ONLINE);
                             userSockets.computeIfAbsent(userLogged.getEmailAddress(), mySocket -> socket);
                             break;
+                        case MICROSOFT_AUTHENTICATE:
+                            var serviceClient = GraphClient.getClient(objectMapper, socket, messageObj, serverResponse);
+                            user = objectMapper.readValue(messageObj.getPayload(), User.class);
+                            userRequester = new UserRequester();
+                            System.out.println(user.getEmailAddress());
+                            var microsoftUser = userRequester.getUser(serviceClient);
+                            microsoftUsers.computeIfAbsent(user.getEmailAddress(), client -> serviceClient);
+                            break;
                         case USER_EXIT:
                             User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);
                             String emailAddress = userExit.getEmailAddress();
                             onlineUsers.remove(emailAddress);
+                            microsoftUsers.remove(emailAddress);
                             userSockets.get(emailAddress).close();
                             userSockets.remove(emailAddress);
                             break;

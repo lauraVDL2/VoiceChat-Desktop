@@ -6,6 +6,7 @@ import com.voicechat.client.login.UserSession;
 import com.voicechat.client.login.controller.ConnectController;
 import com.voicechat.client.login.controller.LoginController;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,8 +23,11 @@ import java.io.PrintWriter;
 
 public class VoiceChatApplication extends Application {
 
+    private static HostServices hostServices;
+
     @Override
     public void start(Stage stage) throws IOException {
+        hostServices = this.getHostServices();
 
         Image icon = new Image(getClass().getResourceAsStream("/com/voicechat/client/images/voiceCallIcon.png"));
 
@@ -72,5 +76,9 @@ public class VoiceChatApplication extends Application {
 
             UserSession.INSTANCE.clear();
         }
+    }
+
+    public static HostServices getBrowserServices() {
+        return hostServices;
     }
 }
