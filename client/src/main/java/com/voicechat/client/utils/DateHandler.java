@@ -29,4 +29,11 @@ public class DateHandler {
         }
         return result;
     }
+
+    public static LocalDateTime toLocalDateTime(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
+        // Parse the string into a LocalDateTime
+        return LocalDateTime.parse(date, formatter);
+    }
 }

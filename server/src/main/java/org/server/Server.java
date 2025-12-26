@@ -1,34 +1,21 @@
 package org.server;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.graph.requests.GraphServiceClient;
-import org.apache.commons.lang3.StringUtils;
-import org.mindrot.jbcrypt.BCrypt;
-import org.server.action.ConversationAction;
-import org.server.action.MessageAction;
-import org.server.action.UserAction;
-import org.server.action.UserNotificationAction;
-import org.server.calendar.CalendarRequester;
+import org.server.action.*;
+import org.server.calendar.requester.CalendarRequester;
 import org.server.calendar.GraphClient;
-import org.server.calendar.UserRequester;
-import org.server.dao.MessageDao;
-import org.server.dao.UserDao;
+import org.server.calendar.requester.UserRequester;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.shared.*;
+import org.shared.mapped_entity.VoiceChatCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Base64;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -70,6 +57,8 @@ public class Server {
                     UserRequester userRequester = null;
                     CalendarRequester calendarRequester = null;
                     User user = null;
+                    GraphServiceClient graphServiceClient = null;
+                    CalendarAction calendarAction = new CalendarAction();
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -94,6 +83,14 @@ public class Server {
                             System.out.println(user.getEmailAddress());
                             var microsoftUser = userRequester.getUser(serviceClient);
                             microsoftUsers.computeIfAbsent(user.getEmailAddress(), client -> serviceClient);
+                            break;
+                        case EVENTS_GET:
+                            VoiceChatCalendar voiceChatCalendar = objectMapper.readValue(messageObj.getPayload(), VoiceChatCalendar.class);
+                            graphServiceClient = microsoftUsers.get(voiceChatCalendar.getOwnerEmailAddress());
+                            System.out.
+                                    println("apres users");
+                            calendarAction.getEvents(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatCalendar);
+                            System.out.println("apres events");
                             break;
                         case USER_EXIT:
                             User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);

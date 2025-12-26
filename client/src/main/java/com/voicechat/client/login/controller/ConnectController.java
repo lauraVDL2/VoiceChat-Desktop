@@ -50,6 +50,7 @@ public class ConnectController {
                 if (root != null) {
                     Scene scene = new Scene(root, 300, 300);
                     scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
+                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/left-pane.css").toExternalForm());
                     Platform.runLater(() -> {
                         stage.setScene(scene);
                     });

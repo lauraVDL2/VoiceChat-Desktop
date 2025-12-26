@@ -27,7 +27,9 @@ module com.voicechat.client {
     exports com.voicechat.client.login;
     exports com.voicechat.client.login.controller;
     exports com.voicechat.client.mainpage.controller;
+    exports com.voicechat.client.calendar.controller;
 
     opens com.voicechat.client.login.controller to javafx.fxml;
     opens com.voicechat.client.mainpage.controller to javafx.fxml;
+    opens com.voicechat.client.calendar.controller to javafx.fxml;
 }

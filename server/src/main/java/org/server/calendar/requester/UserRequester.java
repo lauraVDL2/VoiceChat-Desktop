@@ -1,4 +1,4 @@
-package org.server.calendar;
+package org.server.calendar.requester;
 
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.GraphServiceClient;
