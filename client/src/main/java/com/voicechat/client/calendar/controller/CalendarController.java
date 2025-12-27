@@ -48,8 +48,8 @@ public class CalendarController {
         CompletableFuture.supplyAsync(() -> {
             try {
                 VoiceChatCalendar voiceChatCalendar = new VoiceChatCalendar();
-                voiceChatCalendar.setStartWeekTime("2025-02-03T00:00:00-08:00");
-                voiceChatCalendar.setEndWeekTime("2025-02-07T23:59:00-08:00");
+                voiceChatCalendar.setStartWeekTime("2025-12-22T00:00:00-08:00");
+                voiceChatCalendar.setEndWeekTime("2025-12-26T23:59:00-08:00");
                 voiceChatCalendar.setOwnerEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
                 return calendarService.getEvents(voiceChatCalendar);
             } catch (Exception e) {
