@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import org.apache.commons.collections4.CollectionUtils;
 import org.shared.mapped_entity.VoiceChatEvent;
 
@@ -18,7 +19,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class CalendarComponent {
-    private static final int CELL_WIDTH = 240;
+    private static final double CELL_WIDTH = Screen.getPrimary().getVisualBounds().getWidth() / 7.;
+    private static final int CELL_WIDTH_PADDING = 20;
     private static final int CELL_HEIGHT = 120;
 
     private Map<Point2D, Pane> cellMap = new HashMap<>();
@@ -49,7 +51,7 @@ public class CalendarComponent {
 
                 for (int col = 0; col < days.length; col++) {
                     // Background rectangle
-                    Rectangle bgRect = new Rectangle(CELL_WIDTH, CELL_HEIGHT);
+                    Rectangle bgRect = new Rectangle(CELL_WIDTH + CELL_WIDTH_PADDING, CELL_HEIGHT);
                     bgRect.setFill(Color.LIGHTGRAY);
                     bgRect.setStroke(Color.DARKGRAY);
                     bgRect.setArcWidth(10);
@@ -79,12 +81,6 @@ public class CalendarComponent {
             for (VoiceChatEvent event : events) {
                 LocalDateTime localDateTimeStart = DateHandler.toLocalDateTime(event.getStart());
                 LocalDateTime localDateTimeEnd = DateHandler.toLocalDateTime(event.getEnd());
-                int col = localDateTimeStart.getDayOfWeek().getValue();
-                int startEventHour = localDateTimeStart.getHour();
-                int endEventHour = localDateTimeEnd.getHour();
-                int differenceHour = endEventHour - startEventHour;
-                int startEventMinute = localDateTimeStart.getMinute();
-                int endEventMinute = localDateTimeEnd.getMinute();
                 List<VoiceChatEvent> overlapEvents = overlapEvents(localDateTimeStart, localDateTimeEnd, events);
                 if (CollectionUtils.isNotEmpty(overlapEventsAll)) {
                     if (overlapEventsAll.contains(event)) {
@@ -97,23 +93,25 @@ public class CalendarComponent {
                     double xAxis = 0.;
                     double fraction = (double) (1. / (double) size);
                     for (VoiceChatEvent overlapEvent : overlapEvents) {
-                        if (differenceHour == 1) {
-                            oneHourMeeting(fraction, xAxis, startEventMinute, endEventMinute, col, startEventHour, overlapEvent);
+                        LocalDateTime eventStart = DateHandler.toLocalDateTime(overlapEvent.getStart());
+                        LocalDateTime eventEnd = DateHandler.toLocalDateTime(overlapEvent.getEnd());
+                        int ovCol = eventStart.getDayOfWeek().getValue();
+                        int ovStartEventHour = eventStart.getHour() + 1;
+                        int ovEndEventHour = eventEnd.getHour() + 1;
+                        int ovDifferenceHour = ovEndEventHour - ovStartEventHour;
+                        int ovStartEventMinute = eventStart.getMinute();
+                        int ovEndEventMinute = eventEnd.getMinute();
+                        if (ovDifferenceHour == 1) {
+                            oneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, overlapEvent);
                         }
-                        else if (differenceHour == 0) {
-                            lessOneHourMeeting(fraction, xAxis, startEventMinute, endEventMinute, col, startEventHour, overlapEvent);
+                        else if (ovDifferenceHour == 0) {
+                            lessOneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, overlapEvent);
+                        }
+                        else if (ovDifferenceHour > 1) {
+                            moreOnHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, ovEndEventHour, overlapEvent);
                         }
                         xAxis += fraction;
                     }
-                } else {
-                    if (differenceHour == 1) {
-                        oneHourMeeting(1, 0, startEventMinute, endEventMinute, col, startEventHour, event);
-                    }
-                    // Less than 1 hour, fraction needed
-                    else if (differenceHour == 0) {
-                        lessOneHourMeeting(1, 0, startEventMinute, endEventMinute, col, startEventHour, event);
-                    }
-                    //fillCellFraction(col, 3, 0.5, 0.5, new Color(0.27, 0.51, 0.70, 1));
                 }
                 overlapEventsAll.add(event);
             }
@@ -178,30 +176,42 @@ public class CalendarComponent {
 
     public void lessOneHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
                                    int startEventHour, VoiceChatEvent event) {
-        Platform.runLater(() -> {
-            double yAxis = (double) ((double) startEventMinute / 60.);
-            int differenceMinutes = endEventMinute - startEventMinute;
-            double yFraction = (double) ((double) differenceMinutes / 60.);
-            fillCellFraction(col, startEventHour + 1, xFraction, xAxis, yFraction, yAxis, event.getSubject(), event.getOrganizer(),
-                    new Color(0.27, 0.51, 0.70, 1));
-        });
+        double yAxis = (double) ((double) startEventMinute / 60.);
+        int differenceMinutes = endEventMinute - startEventMinute;
+        double yFraction = (double) ((double) differenceMinutes / 60.);
+        fillCellFraction(col, startEventHour + 1, xFraction, xAxis, yFraction, yAxis, event.getSubject(), event.getOrganizer(),
+                new Color(0.27, 0.51, 0.70, 1));
     }
 
     public void oneHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
                                int startEventHour, VoiceChatEvent event) {
-        Platform.runLater(() -> {
-            double yAxis = (double) ((double) startEventMinute / 60.);
-            if (startEventMinute == 0 && endEventMinute == 0) {
-                fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1, yAxis, event.getSubject(), event.getOrganizer(),
-                        new Color(0.27, 0.51, 0.70, 1));
-            } else if (endEventMinute > 0) {
-                double endFraction = (double) ((double) endEventMinute / 60.);
-                fillCellFraction(col, startEventHour + 1, xFraction, xAxis,1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
-                        new Color(0.27, 0.51, 0.70, 1));
-                fillCellFraction(col, startEventHour + 2, xFraction, xAxis, endFraction, 0, null, null,
-                        new Color(0.27, 0.51, 0.70, 1));
-            }
-        });
+        double yAxis = (double) ((double) startEventMinute / 60.);
+        if (startEventMinute == 0 && endEventMinute == 0) {
+            fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1, yAxis, event.getSubject(), event.getOrganizer(),
+                    new Color(0.27, 0.51, 0.70, 1));
+        } else if (endEventMinute > 0) {
+            double endFraction = (double) ((double) endEventMinute / 60.);
+            fillCellFraction(col, startEventHour + 1, xFraction, xAxis,1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
+                    new Color(0.27, 0.51, 0.70, 1));
+            fillCellFraction(col, startEventHour + 2, xFraction, xAxis, endFraction, 0, null, null,
+                    new Color(0.27, 0.51, 0.70, 1));
+        }
+    }
+
+    public void moreOnHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
+                                  int startEventHour, int endEventHour, VoiceChatEvent event) {
+        double yAxis = (double) ((double) startEventMinute / 60.);
+        fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
+                new Color(0.27, 0.51, 0.70, 1));
+        for (int i = startEventHour + 2; i < endEventHour + 1; i++) {
+            fillCellFraction(col, i, xFraction, xAxis, 1, 0, null, null,
+                    new Color(0.27, 0.51, 0.70, 1));
+        }
+        if (endEventMinute > 0) {
+            double endFraction = (double) ((double) endEventMinute / 60.);
+            fillCellFraction(col, endEventHour + 1, xFraction, xAxis, endFraction, 0, null, null,
+                    new Color(0.27, 0.51, 0.70, 1));
+        }
     }
 
     public List<VoiceChatEvent> overlapEvents(LocalDateTime startA, LocalDateTime endA, List<VoiceChatEvent> events) {
