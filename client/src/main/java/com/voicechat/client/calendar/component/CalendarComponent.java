@@ -30,6 +30,8 @@ public class CalendarComponent {
 
     private final DatePickerComponent datePickerComponent = new DatePickerComponent();
 
+    private final TooltipComponent tooltipComponent = new TooltipComponent();
+
     public void setCalendar(GridPane rootPane, List<VoiceChatEvent> events, String currentDate, CalendarController calendarController) {
         ScrollPane scrollPaneGrid = new ScrollPane();
         Platform.runLater(() -> {
@@ -80,6 +82,11 @@ public class CalendarComponent {
                     bgRect.setArcWidth(10);
                     bgRect.setArcHeight(10);
                     bgRect.setStrokeWidth(0.5);
+
+                    var currentDay = daysOfWeek.get(col);
+                    String currentDayDate = currentDay.getYear() + "-" + DateHandler.formattedTime(currentDay.getMonthValue())
+                            + "-" + DateHandler.formattedTime(currentDay.getDayOfMonth());
+                    tooltipComponent.initCreateMeetingTooltip(bgRect, currentDayDate, row);
 
                     Pane pane = new Pane();
                     // Overlay rectangle
@@ -225,7 +232,7 @@ public class CalendarComponent {
         int differenceMinutes = endEventMinute - startEventMinute;
         double yFraction = (double) ((double) differenceMinutes / 60.);
         fillCellFraction(col, startEventHour + 1, xFraction, xAxis, yFraction, yAxis, event.getSubject(), event.getOrganizer(),
-                new Color(0.27, 0.51, 0.70, 1));
+                new Color(0.27, 0.51, 0.70, 0.8));
     }
 
     public void oneHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
@@ -233,13 +240,13 @@ public class CalendarComponent {
         double yAxis = (double) ((double) startEventMinute / 60.);
         if (startEventMinute == 0 && endEventMinute == 0) {
             fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1, yAxis, event.getSubject(), event.getOrganizer(),
-                    new Color(0.27, 0.51, 0.70, 1));
+                    new Color(0.27, 0.51, 0.70, 0.8));
         } else if (endEventMinute > 0) {
             double endFraction = (double) ((double) endEventMinute / 60.);
             fillCellFraction(col, startEventHour + 1, xFraction, xAxis,1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
-                    new Color(0.27, 0.51, 0.70, 1));
+                    new Color(0.27, 0.51, 0.70, 0.8));
             fillCellFraction(col, startEventHour + 2, xFraction, xAxis, endFraction, 0, null, null,
-                    new Color(0.27, 0.51, 0.70, 1));
+                    new Color(0.27, 0.51, 0.70, 0.8));
         }
     }
 
@@ -247,15 +254,15 @@ public class CalendarComponent {
                                   int startEventHour, int endEventHour, VoiceChatEvent event) {
         double yAxis = (double) ((double) startEventMinute / 60.);
         fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
-                new Color(0.27, 0.51, 0.70, 1));
+                new Color(0.27, 0.51, 0.70, 0.8));
         for (int i = startEventHour + 2; i < endEventHour + 1; i++) {
             fillCellFraction(col, i, xFraction, xAxis, 1, 0, null, null,
-                    new Color(0.27, 0.51, 0.70, 1));
+                    new Color(0.27, 0.51, 0.70, 0.8));
         }
         if (endEventMinute > 0) {
             double endFraction = (double) ((double) endEventMinute / 60.);
             fillCellFraction(col, endEventHour + 1, xFraction, xAxis, endFraction, 0, null, null,
-                    new Color(0.27, 0.51, 0.70, 1));
+                    new Color(0.27, 0.51, 0.70, 0.8));
         }
     }
 

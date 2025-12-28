@@ -54,11 +54,9 @@ public class DateHandler {
 
     public static List<LocalDate> getDaysOfWeek(LocalDateTime dateTime, int weekLength) {
         LocalDate localDate = dateTime.toLocalDate();
-        // Define week fields (locale-dependent)
-        WeekFields weekFields = WeekFields.of(Locale.getDefault());
 
         // Get the first day of the week
-        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(weekFields.getFirstDayOfWeek()));
+        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
         // Generate all days of the week
         List<LocalDate> daysOfWeek = new ArrayList<>();
