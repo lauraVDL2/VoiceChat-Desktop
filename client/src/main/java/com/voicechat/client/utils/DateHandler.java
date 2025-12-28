@@ -1,7 +1,13 @@
 package com.voicechat.client.utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class DateHandler {
 
@@ -35,5 +41,22 @@ public class DateHandler {
 
         // Parse the string into a LocalDateTime
         return LocalDateTime.parse(date, formatter);
+    }
+
+    public static List<LocalDate> getDaysOfWeek(LocalDateTime dateTime, int weekLength) {
+        LocalDate localDate = dateTime.toLocalDate();
+        // Define week fields (locale-dependent)
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+
+        // Get the first day of the week
+        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(weekFields.getFirstDayOfWeek()));
+
+        // Generate all days of the week
+        List<LocalDate> daysOfWeek = new ArrayList<>();
+        for (int i = 0; i < weekLength; i++) {
+            daysOfWeek.add(startOfWeek.plusDays(i));
+        }
+
+        return daysOfWeek;
     }
 }

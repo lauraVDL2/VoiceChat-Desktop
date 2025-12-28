@@ -64,7 +64,7 @@ public class CalendarController {
                             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                             List<VoiceChatEvent> events = objectMapper.readValue(serverResponse.getBinaryPayload(),
                                     new TypeReference<List<VoiceChatEvent>>(){});
-                            calendarComponent.setCalendar(gridCalendarPane, events);
+                            calendarComponent.setCalendar(gridCalendarPane, events, "2025-12-22T13:00:00.0000000");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -1,0 +1,18 @@
+.dayLabel {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-font-family: "Helvetica";
+}
+
+.scrollPaneCalendar {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.scrollPaneCalendar .thumb {
+    -fx-background-color: "#006abc";
+    -fx-background-insets: 2;
+    -fx-pref-width: 1;
+    -fx-background-radius: 5;
+}

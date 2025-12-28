@@ -2,11 +2,13 @@ package com.voicechat.client.calendar.component;
 
 import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -25,29 +27,45 @@ public class CalendarComponent {
 
     private Map<Point2D, Pane> cellMap = new HashMap<>();
 
-    public void setCalendar(GridPane rootPane, List<VoiceChatEvent> events) {
+    private final DatePickerComponent datePickerComponent = new DatePickerComponent();
+
+    public void setCalendar(GridPane rootPane, List<VoiceChatEvent> events, String currentDate) {
+        ScrollPane scrollPaneGrid = new ScrollPane();
         Platform.runLater(() -> {
-            ScrollPane scrollPane = new ScrollPane();
-            scrollPane.setFitToWidth(true);
             GridPane grid = new GridPane();
 
             String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
             int startHour = 0;
             int endHour = 24;
 
+            var daysOfWeek = DateHandler.getDaysOfWeek(DateHandler.toLocalDateTime(currentDate), days.length);
+
+            scrollPaneGrid.setFitToWidth(true);
+            scrollPaneGrid.setPrefWidth(Screen.getPrimary().getVisualBounds().getWidth());
+            scrollPaneGrid.getStyleClass().add("scrollPaneCalendar");
+            GridPane gridCalendar = new GridPane();
+            gridCalendar.setAlignment(Pos.CENTER);
+            GridPane gridDays = new GridPane();
+            gridDays.setAlignment(Pos.CENTER);
+
             // Add day labels
             for (int col = 0; col < days.length; col++) {
                 // Add day headers
-                Label dayLabel = new Label(days[col]);
-                dayLabel.setAlignment(Pos.CENTER);
-                grid.add(dayLabel, col + 1, 0);
+                VBox box = new VBox();
+                box.setPrefWidth(CELL_WIDTH + CELL_WIDTH_PADDING);
+                Label dayLabel = new Label(days[col] + " " + daysOfWeek.get(col).getDayOfMonth());
+                dayLabel.getStyleClass().add("dayLabel");
+                box.setAlignment(Pos.CENTER);
+                box.getChildren().add(dayLabel);
+                gridDays.add(box, col + 1, 0);
             }
 
             // Add time labels and cells
             for (int row = 1; row <= endHour - startHour; row++) {
                 // Time labels
+
                 Label timeLabel = new Label((startHour + row - 1) + ":00");
-                grid.add(timeLabel, 0, row);
+                gridCalendar.add(timeLabel, 0, row);
 
                 for (int col = 0; col < days.length; col++) {
                     // Background rectangle
@@ -70,7 +88,7 @@ public class CalendarComponent {
                     Pane cellPane = new Pane();
                     cellPane.getChildren().addAll(bgRect, pane);
 
-                    grid.add(cellPane, col + 1, row);
+                    gridCalendar.add(cellPane, col + 1, row);
 
                     // Store overlayRect for later
                     Point2D coord = getCellCoordinate(col + 1, row);
@@ -102,13 +120,16 @@ public class CalendarComponent {
                         int ovStartEventMinute = eventStart.getMinute();
                         int ovEndEventMinute = eventEnd.getMinute();
                         if (ovDifferenceHour == 1) {
-                            oneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, overlapEvent);
+                            oneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
+                                    ovStartEventHour, overlapEvent);
                         }
                         else if (ovDifferenceHour == 0) {
-                            lessOneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, overlapEvent);
+                            lessOneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
+                                    ovStartEventHour, overlapEvent);
                         }
                         else if (ovDifferenceHour > 1) {
-                            moreOnHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol, ovStartEventHour, ovEndEventHour, overlapEvent);
+                            moreOnHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
+                                    ovStartEventHour, ovEndEventHour, overlapEvent);
                         }
                         xAxis += fraction;
                     }
@@ -117,12 +138,32 @@ public class CalendarComponent {
             }
 
             grid.setAlignment(Pos.CENTER);
-            scrollPane.setContent(grid);
-            rootPane.add(scrollPane, 1, 0);
+            VBox vBox = new VBox();
+            vBox.setAlignment(Pos.CENTER);
+            datePickerComponent.setDatePicker(vBox);
+            scrollPaneGrid.setContent(gridCalendar);
+            grid.add(scrollPaneGrid, 0, 0);
+            vBox.getChildren().addAll(gridDays, grid);
+            rootPane.add(vBox, 1, 0);
+        });
+
+        // Example: scroll to 14:00 (2 PM)
+        int targetHour = LocalDateTime.now().getHour();
+
+        Platform.runLater(() -> {
+            // Optional: small delay to ensure layout is ready
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // Call the method to scroll to the desired hour
+            scrollToHour(scrollPaneGrid, targetHour);
         });
     }
 
-    public void fillCellFraction(int col, int row, double xFraction, double xAxis, double yFraction, double yAxis, String eventText, String organizer, Color color) {
+    public void fillCellFraction(int col, int row, double xFraction, double xAxis, double yFraction, double yAxis,
+                                 String eventText, String organizer, Color color) {
         Platform.runLater(() -> {
             Point2D coord = getCellCoordinate(col, row);
             Pane pane = cellMap.get(coord);
@@ -224,4 +265,37 @@ public class CalendarComponent {
             return false;
         }).toList();
     }
+
+    public void scrollToPane(ScrollPane scrollPane, Pane targetPane) {
+        Platform.runLater(() -> {
+            // Ensure layout is updated
+            scrollPane.getContent().applyCss();
+            scrollPane.getContent().layoutYProperty();
+
+            // Convert target pane's bounds to scene coordinates
+            Bounds boundsInScene = targetPane.localToScene(targetPane.getBoundsInLocal());
+            // Convert scene coordinates to content coordinates
+            Bounds contentBounds = scrollPane.getContent().localToScene(scrollPane.getContent().getBoundsInLocal());
+
+            double yInContent = boundsInScene.getMinY() - contentBounds.getMinY();
+
+            double contentHeight = scrollPane.getContent().getBoundsInLocal().getHeight();
+            double viewportHeight = scrollPane.getViewportBounds().getHeight();
+
+            double vvalue = yInContent / (contentHeight - viewportHeight);
+            vvalue = Math.max(0, Math.min(vvalue, 1));
+
+            scrollPane.setVvalue(vvalue);
+        });
+    }
+
+    public void scrollToHour(ScrollPane scrollPane, int targetHour) {
+        int row = targetHour + 1; // since rows start at 1 for 0:00
+        Point2D coord = getCellCoordinate(1, row);
+        Pane targetPane = cellMap.get(coord);
+        if (targetPane != null) {
+            scrollToPane(scrollPane, targetPane);
+        }
+    }
+
 }
