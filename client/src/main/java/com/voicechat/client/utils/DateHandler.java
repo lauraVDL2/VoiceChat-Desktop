@@ -1,5 +1,6 @@
 package com.voicechat.client.utils;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +42,14 @@ public class DateHandler {
 
         // Parse the string into a LocalDateTime
         return LocalDateTime.parse(date, formatter);
+    }
+
+    public static LocalDate getBeginningOfTheWeek(LocalDate localDate) {
+        return localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    public static LocalDate getEndOfTheWeek(LocalDate localDate) {
+        return localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
     }
 
     public static List<LocalDate> getDaysOfWeek(LocalDateTime dateTime, int weekLength) {

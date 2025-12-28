@@ -1,5 +1,6 @@
 package com.voicechat.client.calendar.component;
 
+import com.voicechat.client.calendar.controller.CalendarController;
 import com.voicechat.client.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -29,9 +30,10 @@ public class CalendarComponent {
 
     private final DatePickerComponent datePickerComponent = new DatePickerComponent();
 
-    public void setCalendar(GridPane rootPane, List<VoiceChatEvent> events, String currentDate) {
+    public void setCalendar(GridPane rootPane, List<VoiceChatEvent> events, String currentDate, CalendarController calendarController) {
         ScrollPane scrollPaneGrid = new ScrollPane();
         Platform.runLater(() -> {
+            rootPane.getChildren().subList(1, rootPane.getChildren().size()).clear();
             GridPane grid = new GridPane();
 
             String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
@@ -64,8 +66,11 @@ public class CalendarComponent {
             for (int row = 1; row <= endHour - startHour; row++) {
                 // Time labels
 
+                HBox hBoxTime = new HBox();
+                hBoxTime.setAlignment(Pos.TOP_CENTER);
                 Label timeLabel = new Label((startHour + row - 1) + ":00");
-                gridCalendar.add(timeLabel, 0, row);
+                hBoxTime.getChildren().add(timeLabel);
+                gridCalendar.add(hBoxTime, 0, row);
 
                 for (int col = 0; col < days.length; col++) {
                     // Background rectangle
@@ -140,14 +145,13 @@ public class CalendarComponent {
             grid.setAlignment(Pos.CENTER);
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.CENTER);
-            datePickerComponent.setDatePicker(vBox);
+            datePickerComponent.setDatePicker(vBox, calendarController);
             scrollPaneGrid.setContent(gridCalendar);
             grid.add(scrollPaneGrid, 0, 0);
             vBox.getChildren().addAll(gridDays, grid);
             rootPane.add(vBox, 1, 0);
         });
 
-        // Example: scroll to 14:00 (2 PM)
         int targetHour = LocalDateTime.now().getHour();
 
         Platform.runLater(() -> {

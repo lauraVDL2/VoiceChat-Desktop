@@ -1,5 +1,6 @@
 package com.voicechat.client.calendar.component;
 
+import com.voicechat.client.calendar.controller.CalendarController;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -11,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class DatePickerComponent {
     private static final String PATTERN = "dd/MM/yyyy";
 
-    public void setDatePicker(VBox vBox) {
+    public void setDatePicker(VBox vBox, CalendarController calendarController) {
         DatePicker datePicker = new DatePicker();
         // Set prompt text
         datePicker.setPromptText("Select a date");
@@ -40,20 +41,15 @@ public class DatePickerComponent {
             }
         });
 
-        // Label to display selected date
-        Label selectedDateLabel = new Label("No date selected");
-
         // Add listener for date changes
         datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate != null) {
-                selectedDateLabel.setText("Selected date: " + formatter.format(newDate));
-            } else {
-                selectedDateLabel.setText("No date selected");
+                calendarController.getEventsInWeek(newDate);
             }
         });
 
         // Layout
-        VBox root = new VBox(10, datePicker, selectedDateLabel);
+        VBox root = new VBox(10, datePicker);
         root.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         vBox.getChildren().add(root);

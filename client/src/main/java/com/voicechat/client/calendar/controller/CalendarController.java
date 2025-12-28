@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.calendar.component.CalendarComponent;
 import com.voicechat.client.calendar.service.CalendarService;
 import com.voicechat.client.login.UserSession;
+import com.voicechat.client.utils.DateHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -14,6 +15,11 @@ import org.shared.ServerResponseStatus;
 import org.shared.mapped_entity.VoiceChatCalendar;
 import org.shared.mapped_entity.VoiceChatEvent;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,7 +38,7 @@ public class CalendarController {
     @FXML
     public void initialize() {
         initializeLeftPaneButton();
-        getEventsInWeek();
+        getEventsInCurrentWeek(this);
     }
 
     public void initializeLeftPaneButton() {
@@ -44,12 +50,18 @@ public class CalendarController {
         calendarVBox.getStyleClass().add("leftPaneButtonClicked");
     }
 
-    public void getEventsInWeek() {
+    public void getEventsInWeek(LocalDate date) {
         CompletableFuture.supplyAsync(() -> {
             try {
+                LocalDate localBegin = DateHandler.getBeginningOfTheWeek(date);
+                LocalDate localEnd = DateHandler.getEndOfTheWeek(date);
+                String beginOffsetTime = localBegin.atStartOfDay().atZone(ZoneOffset.systemDefault())
+                        .toOffsetDateTime().toString();
+                String endOffsetTime = localEnd.atTime(LocalTime.MAX).atZone(ZoneOffset.systemDefault())
+                        .toOffsetDateTime().toString();
                 VoiceChatCalendar voiceChatCalendar = new VoiceChatCalendar();
-                voiceChatCalendar.setStartWeekTime("2025-12-22T00:00:00-08:00");
-                voiceChatCalendar.setEndWeekTime("2025-12-26T23:59:00-08:00");
+                voiceChatCalendar.setStartWeekTime(beginOffsetTime);
+                voiceChatCalendar.setEndWeekTime(endOffsetTime);
                 voiceChatCalendar.setOwnerEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
                 return calendarService.getEvents(voiceChatCalendar);
             } catch (Exception e) {
@@ -64,7 +76,50 @@ public class CalendarController {
                             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                             List<VoiceChatEvent> events = objectMapper.readValue(serverResponse.getBinaryPayload(),
                                     new TypeReference<List<VoiceChatEvent>>(){});
-                            calendarComponent.setCalendar(gridCalendarPane, events, "2025-12-22T13:00:00.0000000");
+                            OffsetDateTime now = date.atStartOfDay().atZone(ZoneOffset.systemDefault())
+                                    .toOffsetDateTime();
+                            String formattedNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"));
+                            calendarComponent.setCalendar(gridCalendarPane, events, formattedNow, this);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void getEventsInCurrentWeek(CalendarController calendarController) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                LocalDate localBegin = DateHandler.getBeginningOfTheWeek(LocalDate.now());
+                LocalDate localEnd = DateHandler.getEndOfTheWeek(LocalDate.now());
+                String beginOffsetTime = localBegin.atStartOfDay().atZone(ZoneOffset.systemDefault())
+                        .toOffsetDateTime().toString();
+                String endOffsetTime = localEnd.atTime(LocalTime.MAX).atZone(ZoneOffset.systemDefault())
+                        .toOffsetDateTime().toString();
+                VoiceChatCalendar voiceChatCalendar = new VoiceChatCalendar();
+                voiceChatCalendar.setStartWeekTime(beginOffsetTime);
+                voiceChatCalendar.setEndWeekTime(endOffsetTime);
+                //voiceChatCalendar.setStartWeekTime("2025-12-22T00:00:00-08:00");
+                //voiceChatCalendar.setEndWeekTime("2025-12-26T23:59:00-08:00");
+                voiceChatCalendar.setOwnerEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
+                return calendarService.getEvents(voiceChatCalendar);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).thenAcceptAsync(serverResponse -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.EVENTS_GET) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        try {
+                            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                            List<VoiceChatEvent> events = objectMapper.readValue(serverResponse.getBinaryPayload(),
+                                    new TypeReference<List<VoiceChatEvent>>(){});
+                            OffsetDateTime now = OffsetDateTime.now();
+                            String formattedNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"));
+                            calendarComponent.setCalendar(gridCalendarPane, events, formattedNow, calendarController);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
