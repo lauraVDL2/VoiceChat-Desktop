@@ -86,7 +86,7 @@ public class CalendarComponent {
                     var currentDay = daysOfWeek.get(col);
                     String currentDayDate = currentDay.getYear() + "-" + DateHandler.formattedTime(currentDay.getMonthValue())
                             + "-" + DateHandler.formattedTime(currentDay.getDayOfMonth());
-                    tooltipComponent.initCreateMeetingTooltip(bgRect, currentDayDate, row);
+                    tooltipComponent.initCreateMeetingTooltip(bgRect, currentDayDate, row, calendarController);
 
                     Pane pane = new Pane();
                     // Overlay rectangle

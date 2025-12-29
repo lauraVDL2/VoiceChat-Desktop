@@ -3,8 +3,8 @@ package org.server.action;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.graph.requests.GraphServiceClient;
-import org.server.calendar.mapper.EventMapper;
-import org.server.calendar.requester.CalendarRequester;
+import org.server.microsoft_graph.mapper.EventMapper;
+import org.server.microsoft_graph.requester.CalendarRequester;
 import org.shared.Message;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
@@ -31,6 +31,26 @@ public class CalendarAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.EVENTS_GET);
             serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(events));
+            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
+        }
+    }
+
+    public void createEvent(ObjectMapper objectMapper, Message messageObj,
+                            ServerResponse serverResponse, Socket socket,
+                            GraphServiceClient  graphServiceClient, VoiceChatEvent event) throws IOException {
+        if (event != null) {
+            CalendarRequester calendarRequester = new CalendarRequester();
+            VoiceChatEvent voiceChatEvent = calendarRequester.createEventInCalendar(graphServiceClient, event);
+            byte[] bytes = null;
+            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+            serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_CREATED);
+            serverResponse.setCorrelationId(messageObj.getCorrelationId());
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(voiceChatEvent));
             bytes = objectMapper.writeValueAsBytes(serverResponse);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");

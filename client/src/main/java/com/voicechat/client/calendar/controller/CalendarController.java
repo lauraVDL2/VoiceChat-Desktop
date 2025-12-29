@@ -6,6 +6,7 @@ import com.voicechat.client.calendar.component.CalendarComponent;
 import com.voicechat.client.calendar.service.CalendarService;
 import com.voicechat.client.login.UserSession;
 import com.voicechat.client.utils.DateHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -15,10 +16,7 @@ import org.shared.ServerResponseStatus;
 import org.shared.mapped_entity.VoiceChatCalendar;
 import org.shared.mapped_entity.VoiceChatEvent;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -48,6 +46,31 @@ public class CalendarController {
             node.getStyleClass().remove("leftPaneButtonClicked");
         }
         calendarVBox.getStyleClass().add("leftPaneButtonClicked");
+    }
+
+    public void createEvent(VoiceChatEvent voiceChatEvent) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return calendarService.createEvent(voiceChatEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).thenAcceptAsync(serverResponse -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.EVENT_CREATED) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        Platform.runLater(() -> {
+                            LocalDateTime dateTime = LocalDateTime.parse(voiceChatEvent.getStart());
+                            LocalDate date = dateTime.toLocalDate();
+                            String formattedDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                            this.getEventsInWeek(LocalDate.parse(formattedDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public void getEventsInWeek(LocalDate date) {

@@ -21,7 +21,24 @@ public class DatePickerComponent {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
 
         // Set converter for custom display format
-        datePicker.setConverter(new StringConverter<LocalDate>() {
+        datePicker.setConverter(initConverter(formatter));
+
+        // Add listener for date changes
+        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
+            if (newDate != null) {
+                calendarController.getEventsInWeek(newDate);
+            }
+        });
+
+        // Layout
+        VBox root = new VBox(10, datePicker);
+        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        vBox.getChildren().add(root);
+    }
+
+    public StringConverter<LocalDate> initConverter(DateTimeFormatter formatter) {
+        return new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate date) {
                 if (date != null) {
@@ -39,19 +56,6 @@ public class DatePickerComponent {
                     return null;
                 }
             }
-        });
-
-        // Add listener for date changes
-        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate != null) {
-                calendarController.getEventsInWeek(newDate);
-            }
-        });
-
-        // Layout
-        VBox root = new VBox(10, datePicker);
-        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
-
-        vBox.getChildren().add(root);
+        };
     }
 }

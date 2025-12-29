@@ -1,10 +1,8 @@
-package org.server.calendar;
+package org.server.microsoft_graph;
 
 import com.azure.identity.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
-import com.microsoft.graph.models.Calendar;
 import com.microsoft.graph.requests.GraphServiceClient;
 import org.shared.*;
 

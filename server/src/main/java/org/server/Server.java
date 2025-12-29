@@ -3,13 +3,15 @@ package org.server;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.graph.requests.GraphServiceClient;
 import org.server.action.*;
-import org.server.calendar.requester.CalendarRequester;
-import org.server.calendar.GraphClient;
-import org.server.calendar.requester.UserRequester;
+import org.server.microsoft_graph.pojo.MicrosoftUser;
+import org.server.microsoft_graph.requester.CalendarRequester;
+import org.server.microsoft_graph.GraphClient;
+import org.server.microsoft_graph.requester.UserRequester;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.shared.*;
 import org.shared.mapped_entity.VoiceChatCalendar;
+import org.shared.mapped_entity.VoiceChatEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +29,7 @@ public class Server {
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
     private final static ConcurrentHashMap<String, UserSessionStatus> onlineUsers = new ConcurrentHashMap<>();
     private final static ConcurrentHashMap<String, Socket> userSockets = new ConcurrentHashMap<>();
-    private final static ConcurrentHashMap<String, GraphServiceClient> microsoftUsers = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, MicrosoftUser> microsoftUsers = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
@@ -58,6 +60,7 @@ public class Server {
                     CalendarRequester calendarRequester = null;
                     User user = null;
                     GraphServiceClient graphServiceClient = null;
+                    MicrosoftUser microsoftUser = null;
                     CalendarAction calendarAction = new CalendarAction();
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
@@ -81,16 +84,23 @@ public class Server {
                             user = objectMapper.readValue(messageObj.getPayload(), User.class);
                             userRequester = new UserRequester();
                             System.out.println(user.getEmailAddress());
-                            var microsoftUser = userRequester.getUser(serviceClient);
-                            microsoftUsers.computeIfAbsent(user.getEmailAddress(), client -> serviceClient);
+                            var msUser = userRequester.getUser(serviceClient);
+                            microsoftUsers.computeIfAbsent(user.getEmailAddress(), client ->
+                                    new MicrosoftUser(serviceClient, msUser));
                             break;
                         case EVENTS_GET:
                             VoiceChatCalendar voiceChatCalendar = objectMapper.readValue(messageObj.getPayload(), VoiceChatCalendar.class);
-                            graphServiceClient = microsoftUsers.get(voiceChatCalendar.getOwnerEmailAddress());
-                            System.out.
-                                    println("apres users");
+                            microsoftUser = microsoftUsers.get(voiceChatCalendar.getOwnerEmailAddress());
+                            graphServiceClient = microsoftUser.getGraphServiceClient();
                             calendarAction.getEvents(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatCalendar);
-                            System.out.println("apres events");
+                            break;
+                        case EVENT_CREATE:
+                            VoiceChatEvent voiceChatEvent = objectMapper.readValue(messageObj.getPayload(), VoiceChatEvent.class);
+                            microsoftUser = microsoftUsers.get(voiceChatEvent.getOrganizer());
+                            graphServiceClient = microsoftUser.getGraphServiceClient();
+                            System.out.println("apres ms user" + microsoftUser.getUser().mail);
+                            calendarAction.createEvent(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatEvent);
+                            System.out.println("apres create event");
                             break;
                         case USER_EXIT:
                             User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);

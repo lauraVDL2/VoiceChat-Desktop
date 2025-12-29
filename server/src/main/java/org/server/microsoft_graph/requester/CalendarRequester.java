@@ -1,9 +1,13 @@
-package org.server.calendar.requester;
+package org.server.microsoft_graph.requester;
 
 import com.microsoft.graph.models.Calendar;
+import com.microsoft.graph.models.DateTimeTimeZone;
+import com.microsoft.graph.models.Event;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.EventCollectionPage;
 import com.microsoft.graph.requests.GraphServiceClient;
+import org.server.microsoft_graph.mapper.EventMapper;
+import org.shared.mapped_entity.VoiceChatEvent;
 
 public class CalendarRequester {
 
@@ -36,5 +40,16 @@ public class CalendarRequester {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public VoiceChatEvent createEventInCalendar(GraphServiceClient graphServiceClient, VoiceChatEvent voiceChatEvent) {
+        Event event = EventMapper.createEventMap(voiceChatEvent);
+        var result = graphServiceClient
+                .me()
+                .calendar()
+                .events()
+                .buildRequest()
+                .post(event);
+        return EventMapper.eventCreatedMap(result);
     }
 }

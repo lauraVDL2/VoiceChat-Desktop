@@ -46,3 +46,14 @@
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
 }
+
+.eventButton {
+    -fx-background-color: #006abc;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-family: "Helvetica";
+    -fx-padding: 8 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
