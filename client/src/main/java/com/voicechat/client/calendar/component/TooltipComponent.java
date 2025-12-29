@@ -1,6 +1,7 @@
 package com.voicechat.client.calendar.component;
 
 import com.voicechat.client.calendar.controller.CalendarController;
+import com.voicechat.client.call.CallWindow;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
@@ -27,6 +28,8 @@ public class TooltipComponent {
     private Popup previousTooltip = null;
 
     private static final String PATTERN = "yyyy-MM-dd";
+
+    private final CallWindow callWindow = new CallWindow();
 
     public void initCreateMeetingTooltip(Rectangle rectangle, String currentDay, int row, CalendarController calendarController) {
         Platform.runLater(() -> {
@@ -110,12 +113,22 @@ public class TooltipComponent {
         Platform.runLater(() -> {
             rectangle.setOnMouseClicked(e -> {
                 Popup tooltip = new Popup();
-                if (previousRectangle != null && previousTooltip != null) {
-                    previousRectangle.setFill(Color.LIGHTGRAY);
+                if (previousTooltip != null) {
                     previousTooltip.hide();
                 }
                 VBox vBox = new VBox();
                 vBox.getStyleClass().add("calendarTooltip");
+                if (event.getOnlineMeeting()) {
+                    Button join = new Button();
+                    join.setText("Join");
+                    join.getStyleClass().add("eventButton");
+                    vBox.getChildren().add(join);
+
+                    join.setOnMouseClicked(eventJoin -> {
+                        tooltip.hide();
+                        callWindow.setWindow(event);
+                    });
+                }
                 if (StringUtils.equalsIgnoreCase(event.getOrganizer(), UserSession.INSTANCE.getMicrosoftAccount().getEmailAddress())) {
                     Button button = new Button();
                     button.setText("Delete");
@@ -128,6 +141,7 @@ public class TooltipComponent {
                 }
                 tooltip.getContent().add(vBox);
                 tooltip.show(rectangle, e.getScreenX(), e.getScreenY() + 10);
+                previousTooltip = tooltip;
             });
         });
     }

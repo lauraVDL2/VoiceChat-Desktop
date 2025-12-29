@@ -1,0 +1,29 @@
+/*
+.cameraViewTest {
+    -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 3;
+    -fx-border-radius: 10;
+}
+*/
+
+.callComboBox {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.callTestLabel {
+    -fx-text-fill: black;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+.voiceTestBox {
+    -fx-background-color: #D3D3D3;
+    -fx-border-color: #A9A9A9;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}

@@ -54,6 +54,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.openjfx:javafx-fxml:17")
+    implementation("org.openpnp:opencv:4.5.1-2")
     implementation("com.dlsc.formsfx:formsfx-core:11.6.0") {
         exclude(group = "org.openjfx")
     }

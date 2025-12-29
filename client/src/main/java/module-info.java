@@ -19,6 +19,7 @@ module com.voicechat.client {
     requires com.fasterxml.jackson.datatype.jsr310;
     requires javafx.swing;
     requires javafx.base;
+    requires opencv;
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;
