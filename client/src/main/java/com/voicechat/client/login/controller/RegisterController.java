@@ -1,10 +1,9 @@
 package com.voicechat.client.login.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
-import com.voicechat.client.login.UserSession;
+import com.voicechat.client.common.UserSession;
 import com.voicechat.client.login.service.RegisterService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -19,13 +18,8 @@ import javafx.stage.Stage;
 import org.shared.*;
 import org.shared.entity.User;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterController {
 

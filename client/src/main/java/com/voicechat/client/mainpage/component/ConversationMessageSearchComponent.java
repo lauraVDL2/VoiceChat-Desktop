@@ -1,7 +1,7 @@
 package com.voicechat.client.mainpage.component;
 
 import com.voicechat.client.mainpage.controller.MainPageController;
-import com.voicechat.client.utils.DateHandler;
+import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

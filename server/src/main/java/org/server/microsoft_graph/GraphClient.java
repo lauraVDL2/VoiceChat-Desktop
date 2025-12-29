@@ -67,7 +67,7 @@ public class GraphClient {
         Authenticate authenticate = new Authenticate(deviceCodeInfo.getVerificationUrl(), deviceCodeInfo.getUserCode());
         serverResponse.setCorrelationId(correlationId);
         serverResponse.setServerResponseMessage(ServerResponseMessage.MICROSOFT_AUTHENTICATED);
-        serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+        serverResponse.setServerResponseStatus(ServerResponseStatus.INFO);
         serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(authenticate));
         byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());

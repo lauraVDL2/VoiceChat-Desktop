@@ -1,12 +1,10 @@
 package com.voicechat.client.mainpage.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voicechat.client.ServerReader;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
-import com.voicechat.client.login.UserSession;
+import com.voicechat.client.common.UserSession;
 import com.voicechat.client.mainpage.component.AvatarComponent;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
@@ -43,7 +41,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
 
 public class MainPageController {
 

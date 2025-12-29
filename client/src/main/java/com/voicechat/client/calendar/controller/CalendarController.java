@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.calendar.component.CalendarComponent;
 import com.voicechat.client.calendar.service.CalendarService;
-import com.voicechat.client.login.UserSession;
-import com.voicechat.client.utils.DateHandler;
+import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
@@ -13,8 +13,8 @@ import javafx.scene.layout.VBox;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
-import org.shared.mapped_entity.VoiceChatCalendar;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatCalendar;
+import org.shared.pojo.VoiceChatEvent;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -46,6 +46,32 @@ public class CalendarController {
             node.getStyleClass().remove("leftPaneButtonClicked");
         }
         calendarVBox.getStyleClass().add("leftPaneButtonClicked");
+    }
+
+    public void deleteEvent(VoiceChatEvent voiceChatEvent) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                voiceChatEvent.setOrganizer(UserSession.INSTANCE.getUser().getEmailAddress());
+                return calendarService.deleteEvent(voiceChatEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).thenAcceptAsync(serverResponse -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.EVENT_DELETED) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                        Platform.runLater(() -> {
+                            LocalDateTime dateTime = LocalDateTime.parse(voiceChatEvent.getStart());
+                            LocalDate date = dateTime.toLocalDate();
+                            String formattedDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                            this.getEventsInWeek(LocalDate.parse(formattedDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public void createEvent(VoiceChatEvent voiceChatEvent) {

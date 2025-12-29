@@ -8,8 +8,8 @@ import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
-import org.shared.mapped_entity.VoiceChatCalendar;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatCalendar;
+import org.shared.pojo.VoiceChatEvent;
 
 import java.io.PrintWriter;
 import java.util.UUID;
@@ -41,4 +41,18 @@ public class CalendarService {
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
+
+    public ServerResponse deleteEvent(VoiceChatEvent voiceChatEvent) throws JsonProcessingException, InterruptedException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(voiceChatEvent);
+        Message message = new Message(MessageType.EVENT_DELETE, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        serverOut.println(objectMapper.writeValueAsString(message));
+
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
+
 }

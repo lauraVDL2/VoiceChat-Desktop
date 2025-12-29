@@ -2,7 +2,7 @@ package com.voicechat.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voicechat.client.login.UserSession;
+import com.voicechat.client.common.UserSession;
 import com.voicechat.client.login.controller.ConnectController;
 import com.voicechat.client.login.controller.LoginController;
 import javafx.application.Application;

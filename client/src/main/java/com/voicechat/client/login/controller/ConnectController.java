@@ -2,25 +2,20 @@ package com.voicechat.client.login.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
-import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
-import com.voicechat.client.login.UserSession;
+import com.voicechat.client.common.UserSession;
 import com.voicechat.client.login.component.AuthenticatePopupComponent;
 import com.voicechat.client.login.service.ConnectService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.shared.*;
 import org.shared.entity.User;
+import org.shared.pojo.MicrosoftAccount;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class ConnectController {
@@ -59,7 +54,7 @@ public class ConnectController {
         }
     }
 
-    public static void microsoftAuthenticate(Stage stage) {
+    public void microsoftAuthenticate(Stage stage) {
         CompletableFuture.supplyAsync(() -> {
             try {
                 return connectService.getMicrosoftAuthentication();
@@ -70,20 +65,37 @@ public class ConnectController {
         }).thenAcceptAsync((serverResponse) -> {
             if (serverResponse != null) {
                 if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MICROSOFT_AUTHENTICATED) {
-                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {
                         ObjectMapper mapper = JsonMapper.getJsonMapper();
                         Authenticate authenticate = null;
                         try {
                             authenticate = mapper.readValue(serverResponse.getBinaryPayload(), Authenticate.class);
                             AuthenticatePopupComponent.showPopup(stage, authenticate.getCode());
                             VoiceChatApplication.getBrowserServices().showDocument(authenticate.getUrl());
+                            setMicrosoftUserSession(serverResponse, mapper);
                         } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
         });
+    }
+
+    public void setMicrosoftUserSession(ServerResponse serverResponse, ObjectMapper objectMapper) throws InterruptedException, IOException {
+        ServerResponse response = Listener.getServerReader()
+                .getServerResponseByCorrelationId("msa-" + serverResponse.getCorrelationId());
+        if (response != null) {
+            if (response.getServerResponseMessage() == ServerResponseMessage.MICROSOFT_AUTHENTICATED) {
+                if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    MicrosoftAccount account = objectMapper.readValue(response.getBinaryPayload(), MicrosoftAccount.class);
+                    UserSession.INSTANCE.setMicrosoftAccount(account);
+                    System.out.println("account = " + account.getEmailAddress());
+                }
+            }
+        }
     }
 
 }

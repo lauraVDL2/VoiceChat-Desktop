@@ -3,7 +3,7 @@ package org.server.microsoft_graph.mapper;
 import com.microsoft.graph.models.*;
 import org.server.Server;
 import org.server.microsoft_graph.pojo.MicrosoftUser;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatEvent;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,20 +14,7 @@ public class EventMapper {
     public static List<VoiceChatEvent> eventListMap(List<Event> events) {
         List<VoiceChatEvent> voiceChatEvents = new ArrayList<>();
         for (Event event : events) {
-            VoiceChatEvent voiceChatEvent = new VoiceChatEvent();
-            if (event.end != null) {
-                voiceChatEvent.setEnd(event.end.dateTime);
-            }
-            if (event.start != null) {
-                voiceChatEvent.setStart(event.start.dateTime);
-            }
-            if (event.organizer != null) {
-                if (event.organizer.emailAddress != null) {
-                    voiceChatEvent.setOrganizer(event.organizer.emailAddress.address);
-                }
-            }
-            voiceChatEvent.setSubject(event.subject);
-            voiceChatEvent.setOnlineMeeting(event.isOnlineMeeting);
+            VoiceChatEvent voiceChatEvent = eventMap(event);
             voiceChatEvents.add(voiceChatEvent);
         }
         return voiceChatEvents;
@@ -56,8 +43,9 @@ public class EventMapper {
         return event;
     }
 
-    public static VoiceChatEvent eventCreatedMap(Event event) {
+    public static VoiceChatEvent eventMap(Event event) {
         VoiceChatEvent voiceChatEvent = new VoiceChatEvent();
+        voiceChatEvent.setId(event.id);
         if (event.end != null) {
             voiceChatEvent.setEnd(event.end.dateTime);
         }

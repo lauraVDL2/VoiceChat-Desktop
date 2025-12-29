@@ -1,4 +1,4 @@
-package com.voicechat.client.utils;
+package com.voicechat.client.common.utils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

@@ -1,8 +1,8 @@
 package com.voicechat.client.calendar.component;
 
 import com.voicechat.client.calendar.controller.CalendarController;
-import com.voicechat.client.login.UserSession;
-import com.voicechat.client.utils.DateHandler;
+import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -13,9 +13,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.ToggleSwitch;
-import org.shared.entity.User;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatEvent;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -102,6 +102,32 @@ public class TooltipComponent {
                         calendarController);
                 previousRectangle = rectangle;
                 previousTooltip = tooltip;
+            });
+        });
+    }
+
+    public void initActionMeetingsTooltip(Rectangle rectangle, VoiceChatEvent event, CalendarController calendarController) {
+        Platform.runLater(() -> {
+            rectangle.setOnMouseClicked(e -> {
+                Popup tooltip = new Popup();
+                if (previousRectangle != null && previousTooltip != null) {
+                    previousRectangle.setFill(Color.LIGHTGRAY);
+                    previousTooltip.hide();
+                }
+                VBox vBox = new VBox();
+                vBox.getStyleClass().add("calendarTooltip");
+                if (StringUtils.equalsIgnoreCase(event.getOrganizer(), UserSession.INSTANCE.getMicrosoftAccount().getEmailAddress())) {
+                    Button button = new Button();
+                    button.setText("Delete");
+                    button.getStyleClass().add("eventDeleteButton");
+                    vBox.getChildren().add(button);
+
+                    button.setOnMouseClicked(e2 -> {
+                        calendarController.deleteEvent(event);
+                    });
+                }
+                tooltip.getContent().add(vBox);
+                tooltip.show(rectangle, e.getScreenX(), e.getScreenY() + 10);
             });
         });
     }

@@ -10,8 +10,8 @@ import org.server.microsoft_graph.requester.UserRequester;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.shared.*;
-import org.shared.mapped_entity.VoiceChatCalendar;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatCalendar;
+import org.shared.pojo.VoiceChatEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,11 +57,13 @@ public class Server {
                     MessageAction messageAction = null;
                     UserNotificationAction userNotificationAction = null;
                     UserRequester userRequester = null;
+                    MicrosoftUserAction microsoftUserAction = null;
                     CalendarRequester calendarRequester = null;
                     User user = null;
                     GraphServiceClient graphServiceClient = null;
                     MicrosoftUser microsoftUser = null;
                     CalendarAction calendarAction = new CalendarAction();
+                    VoiceChatEvent voiceChatEvent = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -83,10 +85,11 @@ public class Server {
                             var serviceClient = GraphClient.getClient(objectMapper, socket, messageObj, serverResponse);
                             user = objectMapper.readValue(messageObj.getPayload(), User.class);
                             userRequester = new UserRequester();
-                            System.out.println(user.getEmailAddress());
                             var msUser = userRequester.getUser(serviceClient);
                             microsoftUsers.computeIfAbsent(user.getEmailAddress(), client ->
                                     new MicrosoftUser(serviceClient, msUser));
+                            microsoftUserAction = new MicrosoftUserAction();
+                            microsoftUserAction.getMicrosoftUser(objectMapper, messageObj, serverResponse, socket, msUser);
                             break;
                         case EVENTS_GET:
                             VoiceChatCalendar voiceChatCalendar = objectMapper.readValue(messageObj.getPayload(), VoiceChatCalendar.class);
@@ -95,12 +98,16 @@ public class Server {
                             calendarAction.getEvents(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatCalendar);
                             break;
                         case EVENT_CREATE:
-                            VoiceChatEvent voiceChatEvent = objectMapper.readValue(messageObj.getPayload(), VoiceChatEvent.class);
+                            voiceChatEvent = objectMapper.readValue(messageObj.getPayload(), VoiceChatEvent.class);
                             microsoftUser = microsoftUsers.get(voiceChatEvent.getOrganizer());
                             graphServiceClient = microsoftUser.getGraphServiceClient();
-                            System.out.println("apres ms user" + microsoftUser.getUser().mail);
                             calendarAction.createEvent(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatEvent);
-                            System.out.println("apres create event");
+                            break;
+                        case EVENT_DELETE:
+                            voiceChatEvent = objectMapper.readValue(messageObj.getPayload(), VoiceChatEvent.class);
+                            microsoftUser = microsoftUsers.get(voiceChatEvent.getOrganizer());
+                            graphServiceClient = microsoftUser.getGraphServiceClient();
+                            calendarAction.deleteEvent(objectMapper, messageObj, serverResponse, socket, graphServiceClient, voiceChatEvent);
                             break;
                         case USER_EXIT:
                             User userExit = objectMapper.readValue(messageObj.getPayload(), User.class);

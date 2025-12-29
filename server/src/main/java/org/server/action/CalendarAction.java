@@ -9,8 +9,8 @@ import org.shared.Message;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
-import org.shared.mapped_entity.VoiceChatCalendar;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatCalendar;
+import org.shared.pojo.VoiceChatEvent;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -57,6 +57,40 @@ public class CalendarAction {
             outputStream.writeInt(bytes.length);
             outputStream.write(bytes);
             outputStream.flush();
+        }
+    }
+
+    public void deleteEvent(ObjectMapper objectMapper, Message messageObj,
+                            ServerResponse serverResponse, Socket socket,
+                            GraphServiceClient  graphServiceClient, VoiceChatEvent event) throws IOException {
+        if (event != null) {
+            CalendarRequester calendarRequester = new CalendarRequester();
+            boolean isDeleted = calendarRequester.deleteEventInCalendar(graphServiceClient, event);
+            if (isDeleted) {
+                byte[] bytes = null;
+                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_DELETED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+            else {
+                byte[] bytes = null;
+                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
+                serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_DELETED);
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                serverResponse.setMessage("Could not delete this event !");
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
         }
     }
 }

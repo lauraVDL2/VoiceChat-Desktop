@@ -7,7 +7,7 @@ import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.EventCollectionPage;
 import com.microsoft.graph.requests.GraphServiceClient;
 import org.server.microsoft_graph.mapper.EventMapper;
-import org.shared.mapped_entity.VoiceChatEvent;
+import org.shared.pojo.VoiceChatEvent;
 
 public class CalendarRequester {
 
@@ -50,6 +50,15 @@ public class CalendarRequester {
                 .events()
                 .buildRequest()
                 .post(event);
-        return EventMapper.eventCreatedMap(result);
+        return EventMapper.eventMap(result);
+    }
+
+    public boolean deleteEventInCalendar(GraphServiceClient graphServiceClient, VoiceChatEvent voiceChatEvent) {
+        var result = graphServiceClient
+                .me()
+                .events(voiceChatEvent.getId())
+                .buildRequest()
+                .delete();
+        return result != null;
     }
 }
