@@ -1,7 +1,7 @@
 package com.voicechat.client.calendar.component;
 
 import com.voicechat.client.calendar.controller.CalendarController;
-import com.voicechat.client.call.CallWindow;
+import com.voicechat.client.call.CallParametersWindow;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
@@ -29,7 +29,7 @@ public class TooltipComponent {
 
     private static final String PATTERN = "yyyy-MM-dd";
 
-    private final CallWindow callWindow = new CallWindow();
+    private final CallParametersWindow callParametersWindow = new CallParametersWindow();
 
     public void initCreateMeetingTooltip(Rectangle rectangle, String currentDay, int row, CalendarController calendarController) {
         Platform.runLater(() -> {
@@ -126,7 +126,7 @@ public class TooltipComponent {
 
                     join.setOnMouseClicked(eventJoin -> {
                         tooltip.hide();
-                        callWindow.setWindow(event);
+                        callParametersWindow.setWindow(event);
                     });
                 }
                 if (StringUtils.equalsIgnoreCase(event.getOrganizer(), UserSession.INSTANCE.getMicrosoftAccount().getEmailAddress())) {

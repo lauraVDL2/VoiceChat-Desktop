@@ -7,6 +7,14 @@
 }
 */
 
+.callTestSwitch .thumb-area, callTestSwitch.selected .thumb-area {
+    -fx-pref-width: 400;
+}
+
+.microphoneTestCall {
+    -fx-cursor: hand;
+}
+
 .callComboBox {
     -fx-background-color: #f0f0f0;
     -fx-border-color: #ccc;
@@ -26,4 +34,15 @@
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.volumeSlider .thumb {
+    -fx-background-color: #2196F3; /* Blue color for thumb */
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.volumeSlider .thumb:hover {
+    -fx-background-color: #1976D2; /* Darker blue on hover */
 }

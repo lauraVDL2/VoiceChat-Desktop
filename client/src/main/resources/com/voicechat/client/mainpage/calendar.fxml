@@ -6,7 +6,7 @@
           fx:controller="com.voicechat.client.calendar.controller.CalendarController"
           fx:id="gridCalendarPane" styleClass="gridCalendarPane">
     <columnConstraints>
-        <ColumnConstraints prefWidth="100"/>
+        <ColumnConstraints prefWidth="100" minWidth="100"/>
         <ColumnConstraints hgrow="ALWAYS"/>
     </columnConstraints>
     <rowConstraints>

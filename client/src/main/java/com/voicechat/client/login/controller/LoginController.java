@@ -2,16 +2,21 @@ package com.voicechat.client.login.controller;
 
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
+import com.voicechat.client.common.component.TopRightWindowComponent;
 import com.voicechat.client.login.service.LoginService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.User;
@@ -37,15 +42,28 @@ public class LoginController {
     private Label switchRegisterLabel;
     @FXML
     private Label errorMessageLog;
+    @FXML
+    private StackPane rootPane;
 
     private final LoginService loginService = new LoginService();
 
     private final ConnectController connectController = new ConnectController();
 
+    private final TopRightWindowComponent topRightWindowComponent = new TopRightWindowComponent();
+
     @FXML
     public void initialize() {
         switchRegisterView();
+        addTopRightComponent();
         logUserIn();
+    }
+
+
+    private void addTopRightComponent() {
+        BorderPane borderPane = topRightWindowComponent.initWindowComponent(new BorderPane());
+        StackPane.setAlignment(borderPane, Pos.TOP_RIGHT);
+        StackPane.setMargin(borderPane, new Insets(10));
+        rootPane.getChildren().addFirst(borderPane);
     }
 
     // Call this method when connected

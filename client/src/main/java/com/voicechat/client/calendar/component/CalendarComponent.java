@@ -1,5 +1,6 @@
 package com.voicechat.client.calendar.component;
 
+import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.calendar.controller.CalendarController;
 import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
@@ -8,6 +9,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -217,6 +220,18 @@ public class CalendarComponent {
                     vBox.setMaxWidth(CELL_WIDTH * xFraction - 4);
                     pane.getChildren().add(vBox);
                 }
+
+                if (event.getOnlineMeeting()) {
+                    ImageView imageView = new ImageView();
+                    Image image = new Image(VoiceChatApplication.class.getResourceAsStream("/com/voicechat/client/images/voiceCallIcon.png"));
+                    imageView.setImage(image);
+                    imageView.setFitHeight(18);
+                    imageView.setFitWidth(18);
+                    imageView.setLayoutX(xPosition + (CELL_WIDTH * xFraction) - imageView.getFitWidth() - 4);
+                    imageView.setLayoutY(yPosition + 4);
+                    pane.getChildren().add(imageView);
+                }
+
                 tooltipComponent.initActionMeetingsTooltip(overlayRect, event, calendarController);
             }
         });

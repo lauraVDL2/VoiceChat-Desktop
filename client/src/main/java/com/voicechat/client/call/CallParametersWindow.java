@@ -3,7 +3,6 @@ package com.voicechat.client.call;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.call.component.AudioDeviceSelectorComponent;
 import com.voicechat.client.call.component.CameraComponent;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -14,7 +13,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.ToggleSwitch;
 import org.shared.pojo.VoiceChatEvent;
 
-public class CallWindow {
+public class CallParametersWindow {
 
     private final AudioDeviceSelectorComponent audioDeviceSelectorComponent = new AudioDeviceSelectorComponent();
 
@@ -30,14 +29,15 @@ public class CallWindow {
         cameraLabel.getStyleClass().add("callTestLabel");
         VBox cameraBox = new VBox();
         cameraBox.setAlignment(Pos.CENTER);
-        //cameraBox.getStyleClass().add("voiceTestBox");
+
         ImageView cameraView = new ImageView();
         cameraView.getStyleClass().add("cameraViewTest");
         cameraView.setFitHeight(300);
         cameraView.setFitWidth(400);
         ToggleSwitch toggleSwitch = new ToggleSwitch();
         toggleSwitch.setSelected(false);
-        toggleSwitch.setPrefWidth(150);
+        toggleSwitch.getStyleClass().add("callTestSwitch");
+        toggleSwitch.setPrefWidth(400);
         Region cameraVerticalMargin1 = new Region();
         Region cameraVerticalMargin2 = new Region();
         cameraVerticalMargin1.setPrefHeight(15);
@@ -49,12 +49,13 @@ public class CallWindow {
             }
             else {
                 cameraComponent.stop();
+                cameraView.setImage(null);
             }
         });
 
         VBox audioBox = new VBox();
         audioBox.setAlignment(Pos.CENTER);
-        //audioBox.getStyleClass().add("voiceTestBox");
+
         audioDeviceSelectorComponent.setAudioDeviceChoice(audioBox);
         Region horizontalMargin = new Region();
         horizontalMargin.setPrefWidth(15);
