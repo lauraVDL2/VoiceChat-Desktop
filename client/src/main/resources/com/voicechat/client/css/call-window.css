@@ -46,3 +46,9 @@
 .volumeSlider .thumb:hover {
     -fx-background-color: #1976D2; /* Darker blue on hover */
 }
+
+.progressMicTest {
+    -fx-accent: #006abc;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}

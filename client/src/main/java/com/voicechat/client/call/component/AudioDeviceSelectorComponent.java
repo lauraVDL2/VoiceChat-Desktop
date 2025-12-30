@@ -20,6 +20,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import javax.sound.sampled.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class AudioDeviceSelectorComponent {
 
@@ -30,8 +32,14 @@ public class AudioDeviceSelectorComponent {
     private Timeline volumeMonitorTimeline;
     private Line currentLine; // Keep track of the current line to close/dispose
 
+    private volatile boolean capturing = false;
+    private Thread captureThread;
+
+    private ProgressBar progressBar;
+    private ComboBox<String> micComboBox;
+
     public void setAudioDeviceChoice(VBox vBox) {
-        ComboBox<String> micComboBox = new ComboBox<>();
+        micComboBox = new ComboBox<>();
         ComboBox<String> headphonesComboBox = new ComboBox<>();
         micComboBox.setPrefWidth(250);
         headphonesComboBox.setPrefWidth(250);
@@ -71,9 +79,13 @@ public class AudioDeviceSelectorComponent {
         volumeSlider.setPrefWidth(200);
         volumeSlider.setPrefHeight(20);
         volumeSlider.getStyleClass().add("volumeSlider");
-        boxVolume.getChildren().addAll(initAllowedMicrophone(), marginComponent.initHorizontalMargin(15), volumeSlider);
-        vBox.getChildren().addAll(microphoneLabel, marginComponent.initVerticalMargin(10), micComboBox, marginComponent.initVerticalMargin(10),
-                headphoneLabel, marginComponent.initVerticalMargin(10), headphonesComboBox, marginComponent.initVerticalMargin(10), boxVolume);
+        progressBar = new ProgressBar(0);
+        progressBar.getStyleClass().add("progressMicTest");
+        progressBar.setPrefWidth(200);
+        boxVolume.getChildren().addAll(initAllowedMicrophone(), marginComponent.initHorizontalMargin(15), progressBar);
+        vBox.getChildren().addAll(headphoneLabel, marginComponent.initVerticalMargin(10),
+                headphonesComboBox, marginComponent.initVerticalMargin(10), volumeSlider, marginComponent.initVerticalMargin(10),
+                microphoneLabel, marginComponent.initVerticalMargin(10), micComboBox, marginComponent.initVerticalMargin(10), boxVolume);
 
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -104,6 +116,157 @@ public class AudioDeviceSelectorComponent {
         }
     }
 
+    public TargetDataLine getTargetDataLineForPort(Port.Info portInfo) throws LineUnavailableException {
+        // Find a mixer that supports the port
+        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+        for (Mixer.Info info : mixerInfos) {
+            Mixer mixer = AudioSystem.getMixer(info);
+            // Check if this mixer supports the port info
+            Line.Info[] lineInfos = mixer.getTargetLineInfo();
+            for (Line.Info lineInfo : lineInfos) {
+                if (lineInfo instanceof Port.Info) {
+                    if (lineInfo.equals(portInfo)) {
+                        // Found the mixer supporting that port
+                        // Now, get the TargetDataLine from this mixer
+                        DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, null);
+                        if (mixer.isLineSupported(dataLineInfo)) {
+                            TargetDataLine line = (TargetDataLine) mixer.getLine(dataLineInfo);
+                            line.open();
+                            return line;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public TargetDataLine getDefaultMicrophone() throws LineUnavailableException {
+        // Define an audio format (sample rate, sample size, channels, etc.)
+        AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
+        // Create info object for TargetDataLine
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+        // Get the line (default microphone)
+        TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
+        line.open(format);
+        return line;
+    }
+
+    private void startAudioCapture() {
+        // Stop previous capture if any
+        stopAudioCapture();
+
+        int selectedIndex = micComboBox.getSelectionModel().getSelectedIndex();
+        if (selectedIndex < 0 || selectedIndex >= AudioSystem.getMixerInfo().length) {
+            System.out.println("Invalid microphone selection");
+            return;
+        }
+
+        Mixer.Info selectedMixerInfo = AudioSystem.getMixerInfo()[selectedIndex];
+
+        capturing = true;
+
+        captureThread = new Thread(() -> {
+            try {
+                // Define audio format
+                AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
+
+                // Get the selected mixer
+                Mixer selectedMixer = AudioSystem.getMixer(selectedMixerInfo);
+                TargetDataLine line = null;
+
+                // Find TargetDataLine for this mixer
+                Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
+
+                for (Line.Info info : targetLineInfos) {
+                    if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
+                        line = (TargetDataLine) selectedMixer.getLine(info);
+                        break;
+                    }
+                }
+
+                if (line == null) {
+                    for (var sourceLine : selectedMixer.getSourceLineInfo()) {
+                        if (sourceLine instanceof Port.Info) {
+                            // Cast sourceLine to Port.Info
+                            Port.Info portInfo = (Port.Info) sourceLine;
+                            // Get the port from the mixer
+                            line = getTargetDataLineForPort(portInfo);
+                            if (line == null) {
+                                line = getDefaultMicrophone();
+                                if (line != null) {
+                                    format = line.getFormat();
+                                }
+                            }
+                            else {
+                                format = line.getFormat();
+                            }
+                        }
+                    }
+                }
+                if (line != null) {
+                    line.open(format);
+                    line.start();
+
+                    byte[] buffer = new byte[1024];
+
+                    while (capturing) {
+                        int bytesRead = line.read(buffer, 0, buffer.length);
+                        double rms = calculateRMS(buffer, bytesRead);
+                        double normalizedVolume = rmsToProgress(rms);
+
+                        // Update UI
+                        Platform.runLater(() -> progressBar.setProgress(normalizedVolume));
+                    }
+
+                    line.stop();
+                    line.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        captureThread.setDaemon(true);
+        captureThread.start();
+    }
+
+    private void stopAudioCapture() {
+        capturing = false;
+        if (captureThread != null) {
+            try {
+                captureThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private double calculateRMS(byte[] buffer, int bytesRead) {
+        ByteBuffer bb = ByteBuffer.wrap(buffer, 0, bytesRead);
+        bb.order(ByteOrder.BIG_ENDIAN); // or LITTLE_ENDIAN depending on your format
+        long sum = 0;
+        int sampleCount = bytesRead / 2;
+
+        for (int i = 0; i < sampleCount; i++) {
+            short sample = bb.getShort(i * 2);
+            sum += sample * sample;
+        }
+
+        double mean = sum / (double) sampleCount;
+        return Math.sqrt(mean);
+    }
+
+    // Convert RMS to a 0-1 range for ProgressBar
+    private double rmsToProgress(double rms) {
+        // Adjust the denominator based on your environment
+        double maxRMS = 32768; // Max for 16-bit audio
+        double normalized = rms / maxRMS;
+        // Optional: add smoothing or thresholding
+        return Math.min(normalized, 1.0);
+    }
+
     public ImageView initAllowedMicrophone() {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(26);
@@ -115,9 +278,11 @@ public class AudioDeviceSelectorComponent {
             imageView.setOnMouseClicked(e -> {
                 microphoneCut = !microphoneCut;
                 if (microphoneCut) {
+                    stopAudioCapture();
                     imageView.setImage(new Image(VoiceChatApplication.class.getResourceAsStream("/com/voicechat/client/images/microphone-cut.png")));
                 }
                 else {
+                    startAudioCapture();
                     imageView.setImage(new Image(VoiceChatApplication.class.getResourceAsStream("/com/voicechat/client/images/microphone.png")));
                 }
             });
