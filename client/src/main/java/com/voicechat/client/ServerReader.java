@@ -3,6 +3,7 @@ package com.voicechat.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
@@ -10,6 +11,8 @@ import org.shared.ServerResponse;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ServerReader {
@@ -17,16 +20,27 @@ public class ServerReader {
     private final ConcurrentMap<String, BlockingQueue<ImageView>> avatarQueues = new ConcurrentHashMap<>();
     // Map correlationId -> queue of server responses
     private final ConcurrentMap<String, BlockingQueue<ServerResponse>> serverResponseQueues = new ConcurrentHashMap<>();
+    // Map correlationId -> list of email notifications
+    private final ConcurrentMap<String, List<String>> notifications = new ConcurrentHashMap<>();
+    // Map correlationId -> avatar URL or ID (if needed)
+    private final ConcurrentMap<String, String> avatars = new ConcurrentHashMap<>();
+    // Map correlationId -> queue of server responses for processMessage
+    private final ConcurrentMap<String, ConcurrentLinkedQueue<ServerResponse>> messageQueues = new ConcurrentHashMap<>();
 
     private final DataInputStream dataInputStream;
-    private volatile boolean running = true; // Flag to control thread execution
-    private Thread readerThread; // Reference to the thread for stopping
-
-    private final ConcurrentMap<String, String> notifications = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, String> avatars = new ConcurrentHashMap<>();
+    private volatile boolean running = true;
+    private Thread readerThread;
 
     public ServerReader(DataInputStream dataInputStream) {
         this.dataInputStream = dataInputStream;
+    }
+
+    private final ConcurrentHashMap<String, ThreadLocal<List<ServerResponse>>> correlationIdMap = new ConcurrentHashMap<>();
+
+    public void processMessage(ServerResponse response) {
+        String correlationId = response.getCorrelationId();
+        ThreadLocal<List<ServerResponse>> queue = correlationIdMap.computeIfAbsent(correlationId, k -> new ThreadLocal<>());
+        queue.get().add(response);
     }
 
     /**
@@ -51,13 +65,22 @@ public class ServerReader {
         return queue.take();
     }
 
-    public ServerResponse getServerResponseByEmail(String emailAddress) throws InterruptedException {
-        String correlationId = notifications.get(emailAddress);
-        if (StringUtils.isNotBlank(correlationId)) {
-            BlockingQueue<ServerResponse> queue = serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>());
-            return queue.take();
+
+    public List<ServerResponse> getServerResponseByEmail(String emailAddress) {
+        List<ServerResponse> responses = new ArrayList<>();
+        synchronized (notifications) {
+            List<String> correlationIds = notifications.get(emailAddress);
+            if (correlationIds != null) {
+                for (String correlationId : correlationIds) {
+                    if (StringUtils.isNotBlank(correlationId)) {
+                        BlockingQueue<ServerResponse> queue = serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>());
+                        // Retrieve all available responses without blocking
+                        queue.drainTo(responses);
+                    }
+                }
+            }
         }
-        return null;
+        return responses;
     }
 
     /**
@@ -113,14 +136,26 @@ public class ServerReader {
                 System.out.println("No avatar data received.");
                 return null;
             }
-        } else {
+        } else if (StringUtils.equals(responseType, "AUDIO_RESPONSE")) {
+            // Read the size of the audio data
+            int size = dataInputStream.readInt();
+            if (size > 0) {
+                byte[] audioBytes = new byte[size];
+                dataInputStream.readFully(audioBytes);
+                // Deserialize the audio bytes into ServerResponse
+                ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                ServerResponse response = objectMapper.readValue(audioBytes, ServerResponse.class);
+                String correlationId = response.getCorrelationId();
+                return new ResponseWrapper(correlationId, response);
+            }
+        }
+        else {
             int size = dataInputStream.readInt();
             if (size > 0) {
                 byte[] bytes = new byte[size];
                 dataInputStream.readFully(bytes);
                 ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                 ServerResponse response = objectMapper.readValue(bytes, ServerResponse.class);
-                System.out.println(response.getServerResponseMessage() + " correlation id " + response.getCorrelationId());
                 return new ResponseWrapper(response.getCorrelationId(), response);
             }
         }
@@ -136,7 +171,7 @@ public class ServerReader {
                 while (running) {
                     if (dataInputStream == null) {
                         System.err.println("Data Input Stream is null. Exiting reader thread.");
-                        return; // Exit the thread if the stream is null
+                        return;
                     }
                     ResponseWrapper wrapper = readTargetResponseWrapper();
                     if (wrapper == null) {
@@ -144,34 +179,41 @@ public class ServerReader {
                         continue;
                     }
                     String correlationId = wrapper.correlationId;
-                    if (correlationId == null) {
-                        System.err.println("Received response with null correlationId.");
-                        continue;
-                    }
                     Object payload = wrapper.payload;
+
                     if (payload instanceof ImageView) {
                         avatarQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ImageView) payload);
                     } else if (payload instanceof ServerResponse) {
-                        ServerResponse serverResponse = (ServerResponse) payload;
-                        for (var entry : serverResponse.getUserMessageMap().entrySet()) {
-                            if (entry.getValue().equals(correlationId)) {
-                                notifications.computeIfAbsent(entry.getKey(), k -> correlationId);
-                                System.out.
-                                        println("va dans notifications");
+                        // Distribute responses to the proper queues
+                        // For processMessage, responses are added to messageQueues
+                        processResponse(correlationId, (ServerResponse) payload);
+                        // Also, add to serverResponseQueues for retrieval
+                        serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ServerResponse) payload);
+                        // Optionally, update notifications if needed
+                        synchronized (notifications) {
+                            for (var entry : ((ServerResponse) payload).getUserMessageMap().entrySet()) {
+                                if (entry.getValue().equals(correlationId)) {
+                                    notifications.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).add(correlationId);
+                                }
                             }
                         }
-                        serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ServerResponse) payload);
                     } else {
                         System.err.println("Unknown payload type received.");
                     }
                 }
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Preserve interrupt status
+                Thread.currentThread().interrupt();
                 System.err.println("Reader thread interrupted: " + e.getMessage());
             } catch (IOException e) {
                 System.err.println("Error reading avatar data: " + e.getMessage());
             }
         });
-        readerThread.start();
+        this.readerThread.start();
     }
+
+    private void processResponse(String correlationId, ServerResponse response) {
+        // Add response to the message queue for concurrent processing
+        messageQueues.computeIfAbsent(correlationId, k -> new ConcurrentLinkedQueue<>()).add(response);
+    }
+
 }

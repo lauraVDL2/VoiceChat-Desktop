@@ -35,19 +35,22 @@ public class MessagesNotificationScheduler {
                 try {
                     onlineUsersScheduler.waitOnlineScheduleToBeDone();
                     onlineUsersScheduler.fetchLoggedUsers(UUID.randomUUID().toString(), gridMainPane, OnlineFetch.MESSAGES);
-                    ServerResponse serverResponse = Listener.getServerReader().getServerResponseByEmail("notif-" + emailAddress);
-                    if (serverResponse != null) {
-                        System.out.println("server response apres" + serverResponse.getCorrelationId() + " " + serverResponse.getServerResponseMessage());
-                        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.NEW_MESSAGE_NOTIFIED
-                                && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                            Platform.runLater(() -> {
-                                try {
-                                    conversationComponent.addMessagesReceivedComponents(mainPageController, serverResponse, borderPane, conversation);
-                                    conversationListComponent.setLastMessageOnSchedule(leftPane, serverResponse);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                    List<ServerResponse> serverResponses = Listener.getServerReader().getServerResponseByEmail("notif-" + emailAddress);
+                    if (CollectionUtils.isNotEmpty(serverResponses)) {
+                        for (ServerResponse serverResponse : serverResponses) {
+                            if (serverResponse != null) {
+                                if (serverResponse.getServerResponseMessage() == ServerResponseMessage.NEW_MESSAGE_NOTIFIED
+                                        && serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                                    Platform.runLater(() -> {
+                                        try {
+                                            conversationComponent.addMessagesReceivedComponents(mainPageController, serverResponse, borderPane, conversation);
+                                            conversationListComponent.setLastMessageOnSchedule(leftPane, serverResponse);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    });
                                 }
-                            });
+                            }
                         }
                     }
                 } catch (Exception e) {

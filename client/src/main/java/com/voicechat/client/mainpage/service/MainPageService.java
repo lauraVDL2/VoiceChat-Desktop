@@ -20,7 +20,10 @@ public class MainPageService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -34,7 +37,10 @@ public class MainPageService {
         message.setOffset(offset);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -46,7 +52,10 @@ public class MainPageService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         /*InputStream inputStream = Listener.getSocket().getInputStream();
         BufferedReader reader = Listener.getServerIn();
@@ -97,7 +106,10 @@ public class MainPageService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         //System.out.println(Listener.getServerIn().readLine());
 
@@ -113,9 +125,10 @@ public class MainPageService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
-
-        System.out.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -127,7 +140,10 @@ public class MainPageService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -141,7 +157,10 @@ public class MainPageService {
 
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -155,7 +174,10 @@ public class MainPageService {
 
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        };
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }

@@ -20,20 +20,24 @@ module com.voicechat.client {
     requires javafx.swing;
     requires javafx.base;
     requires opencv;
+    requires opus4j;
 
     opens com.voicechat.client to javafx.fxml;
     opens com.voicechat.client.login to javafx.fxml;
+    opens com.voicechat.client.call to javafx.fxml;
 
     exports com.voicechat.client;
     exports com.voicechat.client.common;
     exports com.voicechat.client.login.controller;
     exports com.voicechat.client.mainpage.controller;
     exports com.voicechat.client.calendar.controller;
+    exports com.voicechat.client.call.controller;
+    exports com.voicechat.client.common.component;
 
     opens com.voicechat.client.login.controller to javafx.fxml;
     opens com.voicechat.client.mainpage.controller to javafx.fxml;
+    opens com.voicechat.client.call.controller to javafx.fxml;
     opens com.voicechat.client.calendar.controller to javafx.fxml;
     opens com.voicechat.client.common to javafx.fxml;
-    exports com.voicechat.client.common.component;
     opens com.voicechat.client.common.component to javafx.fxml;
 }

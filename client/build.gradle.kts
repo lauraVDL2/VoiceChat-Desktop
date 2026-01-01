@@ -9,6 +9,11 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    // Custom repository
+    maven {
+        name = "henkelmax.public"
+        url = uri("https://maven.maxhenkel.de/repository/public")
+    }
 }
 
 val junitVersion = "5.12.1"
@@ -46,7 +51,8 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.64")
+    implementation("shared-lib:voicechat-common:1.0.68")
+    implementation("de.maxhenkel.opus4j:opus4j:2.1.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("io.github.resilience4j:resilience4j-all:1.7.0")

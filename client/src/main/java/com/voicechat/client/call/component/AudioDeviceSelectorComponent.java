@@ -18,12 +18,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sound.sampled.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
-public class AudioDeviceSelectorComponent {
+public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
 
     private final MarginComponent marginComponent = new MarginComponent();
 
@@ -37,6 +36,10 @@ public class AudioDeviceSelectorComponent {
 
     private ProgressBar progressBar;
     private ComboBox<String> micComboBox;
+
+    private Mixer.Info selectedHeadMixerInfo;
+    private Mixer.Info selectedMicMixerInfo;
+    private AudioFormat audioFormat;
 
     public void setAudioDeviceChoice(VBox vBox) {
         micComboBox = new ComboBox<>();
@@ -54,7 +57,7 @@ public class AudioDeviceSelectorComponent {
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
             Line.Info[] targetLines = mixer.getTargetLineInfo(); // input lines
             if (targetLines != null && targetLines.length > 0) {
-                micComboBox.getItems().add(mixerInfo.getName() + "-" + mixerInfo.getDescription());
+                micComboBox.getItems().add(mixerInfo.getDescription());
             }
         }
         micComboBox.getSelectionModel().selectFirst();
@@ -67,7 +70,7 @@ public class AudioDeviceSelectorComponent {
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
             Line.Info[] sourceLines = mixer.getSourceLineInfo(); // output lines
             if (sourceLines != null && sourceLines.length > 0) {
-                headphonesComboBox.getItems().add(mixerInfo.getName() + "-" + mixerInfo.getDescription());
+                headphonesComboBox.getItems().add(mixerInfo.getDescription());
             }
         }
         headphonesComboBox.getSelectionModel().selectFirst();
@@ -101,10 +104,51 @@ public class AudioDeviceSelectorComponent {
         // Add listener to start monitoring volume when a device is selected
         headphonesComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                int index = headphonesComboBox.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < AudioSystem.getMixerInfo().length) {
-                    Mixer.Info selectedMixerInfo = AudioSystem.getMixerInfo()[index];
-                    startVolumeMonitoring(selectedMixerInfo);
+                // ComboBox contains String descriptions
+                String description = (String) newVal;
+                // find the corresponding MixerInfo
+                for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+                    if (StringUtils.equalsIgnoreCase(info.getDescription(), description)) {
+                        selectedHeadMixerInfo = info;
+                        startVolumeMonitoring(selectedHeadMixerInfo);
+                        break;
+                    }
+                }
+            }
+            else {
+                String description = (String) newVal;
+                // find the corresponding MixerInfo
+                for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+                    if (StringUtils.equalsIgnoreCase(info.getDescription(), description)) {
+                        selectedHeadMixerInfo = info;
+                        startVolumeMonitoring(selectedHeadMixerInfo);
+                        break;
+                    }
+                }
+            }
+        });
+
+        micComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                // ComboBox contains String descriptions
+                String description = (String) newVal;
+                // find the corresponding MixerInfo
+                for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+                    if (StringUtils.equalsIgnoreCase(info.getDescription(), description)) {
+                        selectedMicMixerInfo = info;
+                        break;
+                    }
+                }
+            }
+            else {
+                // ComboBox contains String descriptions
+                String description = (String) oldVal;
+                // find the corresponding MixerInfo
+                for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+                    if (StringUtils.equalsIgnoreCase(info.getDescription(), description)) {
+                        selectedMicMixerInfo = info;
+                        break;
+                    }
                 }
             }
         });
@@ -116,63 +160,28 @@ public class AudioDeviceSelectorComponent {
         }
     }
 
-    public TargetDataLine getTargetDataLineForPort(Port.Info portInfo) throws LineUnavailableException {
-        // Find a mixer that supports the port
-        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
-        for (Mixer.Info info : mixerInfos) {
-            Mixer mixer = AudioSystem.getMixer(info);
-            // Check if this mixer supports the port info
-            Line.Info[] lineInfos = mixer.getTargetLineInfo();
-            for (Line.Info lineInfo : lineInfos) {
-                if (lineInfo instanceof Port.Info) {
-                    if (lineInfo.equals(portInfo)) {
-                        // Found the mixer supporting that port
-                        // Now, get the TargetDataLine from this mixer
-                        DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, null);
-                        if (mixer.isLineSupported(dataLineInfo)) {
-                            TargetDataLine line = (TargetDataLine) mixer.getLine(dataLineInfo);
-                            line.open();
-                            return line;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public TargetDataLine getDefaultMicrophone() throws LineUnavailableException {
-        // Define an audio format (sample rate, sample size, channels, etc.)
-        AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
-        // Create info object for TargetDataLine
-        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-        // Get the line (default microphone)
-        TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
-        line.open(format);
-        return line;
-    }
-
     private void startAudioCapture() {
         // Stop previous capture if any
         stopAudioCapture();
 
-        int selectedIndex = micComboBox.getSelectionModel().getSelectedIndex();
+        /*int selectedIndex = micComboBox.getSelectionModel().getSelectedIndex();
         if (selectedIndex < 0 || selectedIndex >= AudioSystem.getMixerInfo().length) {
             System.out.println("Invalid microphone selection");
             return;
         }
 
-        Mixer.Info selectedMixerInfo = AudioSystem.getMixerInfo()[selectedIndex];
+        selectedMicMixerInfo = AudioSystem.getMixerInfo()[selectedIndex];*/
+        System.out.println("descr = " + selectedMicMixerInfo.getDescription() + " mic name = " + selectedMicMixerInfo.getName());
 
         capturing = true;
 
         captureThread = new Thread(() -> {
             try {
                 // Define audio format
-                AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
+                audioFormat = new AudioFormat(44100.0f, 16, 1, true, true);
 
                 // Get the selected mixer
-                Mixer selectedMixer = AudioSystem.getMixer(selectedMixerInfo);
+                Mixer selectedMixer = AudioSystem.getMixer(selectedMicMixerInfo);
                 TargetDataLine line = null;
 
                 // Find TargetDataLine for this mixer
@@ -195,18 +204,23 @@ public class AudioDeviceSelectorComponent {
                             if (line == null) {
                                 line = getDefaultMicrophone();
                                 if (line != null) {
-                                    format = line.getFormat();
+                                    audioFormat = line.getFormat();
                                 }
                             }
                             else {
-                                format = line.getFormat();
+                                audioFormat = line.getFormat();
                             }
                         }
                     }
                 }
                 if (line != null) {
-                    line.open(format);
+                    line.open(audioFormat);
                     line.start();
+                    SourceDataLine speakersLine;
+                    speakersLine = AudioSystem.getSourceDataLine(audioFormat);
+                    speakersLine.open(audioFormat);
+                    speakersLine.start();
+
 
                     byte[] buffer = new byte[1024];
 
@@ -214,7 +228,10 @@ public class AudioDeviceSelectorComponent {
                         int bytesRead = line.read(buffer, 0, buffer.length);
                         double rms = calculateRMS(buffer, bytesRead);
                         double normalizedVolume = rmsToProgress(rms);
-
+                        /*// Send data to speakers (monitoring)
+                        if (speakersLine != null && bytesRead > 0) {
+                            speakersLine.write(buffer, 0, bytesRead);
+                        }*/
                         // Update UI
                         Platform.runLater(() -> progressBar.setProgress(normalizedVolume));
                     }
@@ -232,7 +249,7 @@ public class AudioDeviceSelectorComponent {
         captureThread.start();
     }
 
-    private void stopAudioCapture() {
+    public void stopAudioCapture() {
         capturing = false;
         if (captureThread != null) {
             try {
@@ -241,30 +258,6 @@ public class AudioDeviceSelectorComponent {
                 e.printStackTrace();
             }
         }
-    }
-
-    private double calculateRMS(byte[] buffer, int bytesRead) {
-        ByteBuffer bb = ByteBuffer.wrap(buffer, 0, bytesRead);
-        bb.order(ByteOrder.BIG_ENDIAN); // or LITTLE_ENDIAN depending on your format
-        long sum = 0;
-        int sampleCount = bytesRead / 2;
-
-        for (int i = 0; i < sampleCount; i++) {
-            short sample = bb.getShort(i * 2);
-            sum += sample * sample;
-        }
-
-        double mean = sum / (double) sampleCount;
-        return Math.sqrt(mean);
-    }
-
-    // Convert RMS to a 0-1 range for ProgressBar
-    private double rmsToProgress(double rms) {
-        // Adjust the denominator based on your environment
-        double maxRMS = 32768; // Max for 16-bit audio
-        double normalized = rms / maxRMS;
-        // Optional: add smoothing or thresholding
-        return Math.min(normalized, 1.0);
     }
 
     public ImageView initAllowedMicrophone() {
@@ -384,6 +377,22 @@ public class AudioDeviceSelectorComponent {
             volumeMonitorTimeline.setCycleCount(Timeline.INDEFINITE);
             volumeMonitorTimeline.play();
         }
+    }
+
+    public Mixer.Info getSelectedHeadMixerInfo() {
+        return selectedHeadMixerInfo;
+    }
+
+    public Mixer.Info getSelectedMicMixerInfo() {
+        return selectedMicMixerInfo;
+    }
+
+    public boolean isMicrophoneCut() {
+        return microphoneCut;
+    }
+
+    public AudioFormat getAudioFormat() {
+        return audioFormat;
     }
 
 }

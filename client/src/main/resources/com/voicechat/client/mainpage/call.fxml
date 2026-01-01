@@ -1,0 +1,22 @@
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+
+<GridPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.voicechat.client.call.controller.CallController"
+          fx:id="gridCallPane" styleClass="gridCallPane">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints prefWidth="150" minWidth="150"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="ALWAYS"/>
+    </rowConstraints>
+    <VBox>
+    </VBox>
+    <VBox fx:id="callUsers">
+        <Label text="CECI EST UN TEST"/>
+    </VBox>
+</GridPane>

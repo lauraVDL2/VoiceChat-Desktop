@@ -41,7 +41,9 @@ public class OnlineUsersScheduler {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+        }
 
         var serverResponse = Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
             if (serverResponse.getServerResponseMessage() == ServerResponseMessage.ONLINE_USERS_FETCHED) {

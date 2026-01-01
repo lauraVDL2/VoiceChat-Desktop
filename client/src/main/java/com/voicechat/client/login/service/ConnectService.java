@@ -21,7 +21,10 @@ public class ConnectService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }

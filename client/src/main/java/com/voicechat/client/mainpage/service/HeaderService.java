@@ -26,7 +26,10 @@ public class HeaderService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
@@ -38,7 +41,10 @@ public class HeaderService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(objectMapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
     }
 
     public ServerResponse searchConversationIfExists(List<User> users) throws Exception {
@@ -50,7 +56,10 @@ public class HeaderService {
 
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }

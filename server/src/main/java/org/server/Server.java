@@ -1,5 +1,6 @@
 package org.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.graph.requests.GraphServiceClient;
 import org.server.action.*;
@@ -10,6 +11,7 @@ import org.server.microsoft_graph.requester.UserRequester;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
 import org.shared.*;
+import org.shared.pojo.Voice;
 import org.shared.pojo.VoiceChatCalendar;
 import org.shared.pojo.VoiceChatEvent;
 import org.slf4j.Logger;
@@ -18,6 +20,11 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -28,22 +35,24 @@ public class Server {
     private final static ExecutorService executor = Executors.newCachedThreadPool();
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
     private final static ConcurrentHashMap<String, UserSessionStatus> onlineUsers = new ConcurrentHashMap<>();
-    private final static ConcurrentHashMap<String, Socket> userSockets = new ConcurrentHashMap<>();
+    public final static ConcurrentHashMap<String, Socket> userSockets = new ConcurrentHashMap<>();
     private final static ConcurrentHashMap<String, MicrosoftUser> microsoftUsers = new ConcurrentHashMap<>();
+    public final static ConcurrentHashMap<String, Set<String>> meetingParticipants = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             logger.info("Server started, waiting for clients...");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                handleClientAsync(clientSocket);
+                var inputStream = clientSocket.getInputStream();
+                handleClientAsync(clientSocket, inputStream);
             }
         }
     }
 
-    public static void handleClientAsync(Socket socket) {
+    public static void handleClientAsync(Socket socket, InputStream inputStream) {
         CompletableFuture.runAsync(() -> {
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
                 String message;
                 while ((message = in.readLine()) != null) {
@@ -64,6 +73,7 @@ public class Server {
                     MicrosoftUser microsoftUser = null;
                     CalendarAction calendarAction = new CalendarAction();
                     VoiceChatEvent voiceChatEvent = null;
+                    MeetingAction meetingAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
                             userAction = new UserAction();
@@ -114,6 +124,13 @@ public class Server {
                             String emailAddress = userExit.getEmailAddress();
                             onlineUsers.remove(emailAddress);
                             microsoftUsers.remove(emailAddress);
+                            for (var meeting : meetingParticipants.entrySet()) {
+                                var usersInMeeting = meeting.getValue();
+                                if (usersInMeeting.contains(emailAddress)) {
+                                    meeting.getValue().remove(emailAddress);
+                                    System.out.println("USER REMOVED");
+                                }
+                            }
                             userSockets.get(emailAddress).close();
                             userSockets.remove(emailAddress);
                             break;
@@ -160,10 +177,29 @@ public class Server {
                             conversationAction = new ConversationAction();
                             conversationAction.goToMessage(objectMapper, messageObj, serverResponse, socket);
                             break;
+                        case MEETING_CONNECT:
+                            meetingAction = new MeetingAction();
+                            VoiceChatEvent event = meetingAction.connect(objectMapper, messageObj, serverResponse, socket);
+                            meetingParticipants.computeIfPresent(event.getId(), (key, participants) -> {
+                                participants.add(event.getUserEmailAddress());
+                                return participants;
+                            });
+                            // If you are starting the meeting
+                            meetingParticipants.computeIfAbsent(event.getId(), (e) -> {
+                                Set<String> list = new HashSet<>();
+                                list.add(event.getUserEmailAddress());
+                                return list;
+                            });
+
+                            break;
+                        case IS_TALKING:
+                            meetingAction = new MeetingAction();
+                            meetingAction.captureAudio(objectMapper, messageObj, serverResponse, socket);
+                            break;
                     }
                 }
             }
-            catch (IOException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }, executor);

@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +71,9 @@ public class Listener {
             try {
                 userInput = new BufferedReader(new InputStreamReader(System.in));
                 serverIn = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-                serverOut = new PrintWriter(sock.getOutputStream(), true);
+                //PrintWriter
+                        serverOut = new PrintWriter(new OutputStreamWriter(Listener.getSocket().getOutputStream(), StandardCharsets.UTF_8), true);
+                //serverOut = new PrintWriter(sock.getOutputStream(), true);
                 dataInputStream = new DataInputStream(sock.getInputStream());
 
                 // Initialize ServerReader with a broadcast handler if needed

@@ -35,7 +35,10 @@ public class RegisterService {
         PrintWriter serverOut = Listener.getServerOut();
 
         // Send the request
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         // Read response directly
         /*String serverInLine = Listener.getServerIn().readLine();

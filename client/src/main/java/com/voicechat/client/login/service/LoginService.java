@@ -20,7 +20,10 @@ public class LoginService {
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();
 
-        serverOut.println(mapper.writeValueAsString(message));
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
 
         /*String serverInLine = Listener.getServerIn().readLine();
         System.out.println(serverInLine);
