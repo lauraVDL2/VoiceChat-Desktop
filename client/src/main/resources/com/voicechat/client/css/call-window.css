@@ -7,6 +7,10 @@
 }
 */
 
+#topMenuBox {
+    -fx-background-color: #3581bc;
+}
+
 .callTestSwitch .thumb-area, callTestSwitch.selected .thumb-area {
     -fx-pref-width: 400;
 }

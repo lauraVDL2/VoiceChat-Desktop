@@ -6,8 +6,12 @@ import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import org.shared.pojo.Camera;
@@ -80,7 +84,7 @@ public class CameraComponent extends AbstractCamera {
             try {
                 receive = true;
                 while (receive) {
-                    callController.readCamera(meetingId, imageView);
+                    callController.readCamera();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -88,6 +92,38 @@ public class CameraComponent extends AbstractCamera {
         });
         captureThread.setDaemon(true);
         captureThread.start();
+    }
+
+    public void setCameraOnNode(Camera camera, GridPane callUsersGrid, byte[] cameraData) {
+        var nodes = callUsersGrid.lookupAll(".callUserImage");
+        Image image = byteArrayToImage(cameraData);
+        if (CollectionUtils.isNotEmpty(nodes)) {
+            Node node = nodes.stream()
+                    .filter(n -> n.getUserData() instanceof String)
+                    .filter(n ->
+                            StringUtils.equalsIgnoreCase((String) n.getUserData(), camera.getUserEmailAddress()))
+                    .findFirst().orElse(null);
+            if (node != null) {
+                ImageView imageView = (ImageView) node;
+                Platform.runLater(() -> { imageView.setImage(image); });
+            } else {
+                addNewCameraUser(camera, callUsersGrid, image);
+            }
+        } else {
+            addNewCameraUser(camera, callUsersGrid, image);
+        }
+    }
+
+    public void addNewCameraUser(Camera camera, GridPane callUsersGrid, Image image) {
+        ImageView imageView = new ImageView();
+        Platform.runLater(() -> {
+            imageView.getStyleClass().add(".callUserImage");
+            imageView.setFitWidth(90);
+            imageView.setFitHeight(80);
+            imageView.setUserData(camera.getUserEmailAddress());
+            imageView.setImage(image);
+            callUsersGrid.getChildren().add(imageView);
+        });
     }
 
     public void stopSend() {

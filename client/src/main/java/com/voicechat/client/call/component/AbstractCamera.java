@@ -9,7 +9,7 @@ import org.opencv.videoio.VideoCapture;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
-public class AbstractCamera {
+public abstract class AbstractCamera {
     static { OpenCV.loadShared(); }
 
     protected VideoCapture capture;

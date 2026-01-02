@@ -13,11 +13,26 @@
         <ColumnConstraints prefWidth="200" minWidth="200"/>
     </columnConstraints>
     <rowConstraints>
+        <RowConstraints vgrow="ALWAYS" minHeight="50" prefHeight="50" maxHeight="50" />
         <RowConstraints vgrow="ALWAYS"/>
     </rowConstraints>
-    <StackPane fx:id="imageStackPane" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <HBox GridPane.vgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"
+        fx:id="topMenuBox">
+        <ImageView pickOnBounds="true" preserveRatio="true" fx:id="shareScreen">
+            <image>
+                <Image url="@../images/share_screen.png" />
+            </image>
+        </ImageView>
+    </HBox>
+    <StackPane fx:id="imageStackPane" GridPane.columnIndex="0" GridPane.rowIndex="1">
     </StackPane>
-    <VBox fx:id="callUsers" GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <ImageView fx:id="cameraImageView" fitWidth="75" fitHeight="75" />
+    <VBox fx:id="callUsers" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <GridPane fx:id="callUsersGrid">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="95" minWidth="95"/>
+                <ColumnConstraints prefWidth="95" minWidth="95"/>
+            </columnConstraints>
+        </GridPane>
+        <!--<ImageView fx:id="cameraImageView" fitWidth="75" fitHeight="75" />-->
     </VBox>
 </GridPane>

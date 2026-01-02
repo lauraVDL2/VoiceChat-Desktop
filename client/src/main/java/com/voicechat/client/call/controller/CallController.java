@@ -4,15 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.call.component.AudioDeviceComponent;
 import com.voicechat.client.call.component.CameraComponent;
+import com.voicechat.client.call.component.ScreenShareComponent;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
@@ -33,11 +37,18 @@ public class CallController {
 
     private final CallService callService = new CallService();
 
-    @FXML
-    private ImageView cameraImageView;
+    private final ScreenShareComponent screenShareComponent = new ScreenShareComponent();
 
     @FXML
+    private ImageView cameraImageView;
+    @FXML
     private VBox callUsers;
+    @FXML
+    private GridPane callUsersGrid;
+    @FXML
+    private ImageView shareScreen;
+    @FXML
+    private StackPane imageStackPane;
 
     @FXML
     public void initialize() {
@@ -51,10 +62,11 @@ public class CallController {
                 audioFormat, meetingId, this);
         cameraComponent.sendFrames(meetingId, isCameraActive);
         cameraComponent.receiveAndDisplay(cameraImageView, meetingId, this);
+        screenShareComponent.setScreenShareButton(shareScreen, imageStackPane);
         exit(stage);
     }
 
-    public void readCamera(String meetingId, ImageView imageView) throws IOException {
+    public void readCamera() throws IOException {
         var responses = Listener.getServerReader()
                 .getServerResponseBySpecificField("camera-" + UserSession.INSTANCE.getUser().getEmailAddress());
         if (CollectionUtils.isNotEmpty(responses)) {
@@ -65,10 +77,7 @@ public class CallController {
                             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                             Camera camera = objectMapper.readValue(response.getBinaryPayload(), Camera.class);
                             byte[] cameraData = callService.decompress(camera.getFrames());
-                            //imageView.setFitHeight(60);
-                            //imageView.setFitWidth(60);
-                            Image image = cameraComponent.byteArrayToImage(cameraData);
-                            Platform.runLater(() -> { imageView.setImage(image); });
+                            cameraComponent.setCameraOnNode(camera, callUsersGrid, cameraData);
                         }
                     }
                 }

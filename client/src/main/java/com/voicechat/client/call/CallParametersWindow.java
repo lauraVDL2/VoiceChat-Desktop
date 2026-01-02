@@ -129,6 +129,7 @@ public class CallParametersWindow {
                                             voiceChatEvent.getId(), stage);
                                     audioDeviceSelectorComponent.stopAudioCapture();
                                     Scene scene = new Scene(parent);
+                                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/call-window.css").toExternalForm());
                                     stage.setScene(scene);
                                     stage.setMaximized(true);
                                     stage.show();
