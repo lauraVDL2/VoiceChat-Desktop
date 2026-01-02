@@ -196,6 +196,10 @@ public class Server {
                             meetingAction = new MeetingAction();
                             meetingAction.captureAudio(objectMapper, messageObj, serverResponse, socket);
                             break;
+                        case HAS_CAMERA:
+                            meetingAction = new MeetingAction();
+                            meetingAction.captureVideo(objectMapper, messageObj, serverResponse);
+                            break;
                     }
                 }
             }

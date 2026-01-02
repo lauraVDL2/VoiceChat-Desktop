@@ -7,6 +7,7 @@ import org.shared.Message;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
+import org.shared.pojo.Camera;
 import org.shared.pojo.Voice;
 import org.shared.pojo.VoiceChatEvent;
 
@@ -18,11 +19,32 @@ import java.util.*;
 
 public class MeetingAction {
 
+    public void captureVideo(ObjectMapper objectMapper, Message messageObj,
+                             ServerResponse serverResponse) throws IOException {
+        Camera camera = objectMapper.readValue(messageObj.getBinaryPayload(), Camera.class);
+        Set<String> participants = Server.meetingParticipants.get(camera.getMeetingId());
+        for (String participant : participants) {
+            Socket targetSocket = Server.userSockets.get(participant);
+            if (targetSocket == null || targetSocket.isClosed()) continue;
+            DataOutputStream dos = new DataOutputStream(targetSocket.getOutputStream());
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(camera));
+            serverResponse.getUserMessageMap().computeIfAbsent("camera-" + participant, k -> "camera-" + messageObj.getCorrelationId());
+            serverResponse.setCorrelationId("camera-" + messageObj.getCorrelationId());
+            serverResponse.setServerResponseMessage(ServerResponseMessage.HAS_CAMERA);
+            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+            byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
+            //System.out.println("RESPONSE" + objectMapper.writeValueAsString(serverResponse));
+            dos.writeUTF("JSON_RESPONSE");
+            dos.writeInt(bytes.length);
+            dos.write(bytes);
+            dos.flush();
+        }
+    }
+
     public void captureAudio(ObjectMapper objectMapper, Message messageObj,
                              ServerResponse serverResponse, Socket socket) throws IOException {
         // Deserialize the Voice object
         Voice voice = objectMapper.readValue(messageObj.getBinaryPayload(), Voice.class);
-        System.out.println(voice.getMeetingId());
         Set<String> participants = Server.meetingParticipants.get(voice.getMeetingId());
 
         for (String participant : participants) {

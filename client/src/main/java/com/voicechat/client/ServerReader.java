@@ -3,7 +3,6 @@ package com.voicechat.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
@@ -66,10 +65,10 @@ public class ServerReader {
     }
 
 
-    public List<ServerResponse> getServerResponseByEmail(String emailAddress) {
+    public List<ServerResponse> getServerResponseBySpecificField(String field) {
         List<ServerResponse> responses = new ArrayList<>();
         synchronized (notifications) {
-            List<String> correlationIds = notifications.get(emailAddress);
+            List<String> correlationIds = notifications.get(field);
             if (correlationIds != null) {
                 for (String correlationId : correlationIds) {
                     if (StringUtils.isNotBlank(correlationId)) {

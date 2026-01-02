@@ -1,9 +1,8 @@
 package com.voicechat.client.call;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.call.component.AudioDeviceSelectorComponent;
-import com.voicechat.client.call.component.CameraComponent;
+import com.voicechat.client.call.component.CameraSelectorComponent;
 import com.voicechat.client.call.controller.CallController;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
@@ -31,7 +30,7 @@ public class CallParametersWindow {
 
     private final AudioDeviceSelectorComponent audioDeviceSelectorComponent = new AudioDeviceSelectorComponent();
 
-    private final CameraComponent cameraComponent = new CameraComponent();
+    private final CameraSelectorComponent cameraSelectorComponent = new CameraSelectorComponent();
 
     private final MarginComponent marginComponent = new MarginComponent();
 
@@ -65,10 +64,10 @@ public class CallParametersWindow {
         cameraBox.getChildren().addAll(cameraLabel, cameraVerticalMargin1, cameraView, cameraVerticalMargin2, toggleSwitch);
         toggleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                cameraComponent.startCamera(cameraView);
+                cameraSelectorComponent.startCamera(cameraView);
             }
             else {
-                cameraComponent.stop();
+                cameraSelectorComponent.stop();
                 cameraView.setImage(null);
             }
         });
@@ -93,6 +92,14 @@ public class CallParametersWindow {
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
+        exit(stage);
+    }
+
+    public void exit(Stage stage) {
+        stage.setOnCloseRequest(windowEvent -> {
+            audioDeviceSelectorComponent.stopAudioCapture();
+            cameraSelectorComponent.stop();
+        });
     }
 
     public void joinCall(Button join, VoiceChatEvent voiceChatEvent, Stage stage) {
@@ -114,10 +121,12 @@ public class CallParametersWindow {
                                 try {
                                     Parent parent = loader.load();
                                     CallController callController = loader.getController();
-                                    callController.initData(audioDeviceSelectorComponent.isMicrophoneCut(),
+                                    boolean isCameraActive = cameraSelectorComponent.isCameraActive();
+                                    cameraSelectorComponent.stop();
+                                    callController.initData(audioDeviceSelectorComponent.isMicrophoneCut(), isCameraActive,
                                             audioDeviceSelectorComponent.getSelectedHeadMixerInfo(),
                                             audioDeviceSelectorComponent.getSelectedMicMixerInfo(), audioDeviceSelectorComponent.getAudioFormat(),
-                                            voiceChatEvent.getId());
+                                            voiceChatEvent.getId(), stage);
                                     audioDeviceSelectorComponent.stopAudioCapture();
                                     Scene scene = new Scene(parent);
                                     stage.setScene(scene);

@@ -11,6 +11,7 @@ import org.shared.JsonMapper;
 import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
+import org.shared.pojo.Camera;
 import org.shared.pojo.Voice;
 import org.shared.pojo.VoiceChatEvent;
 
@@ -46,7 +47,19 @@ public class CallService {
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
 
-    // Inside your method
+    public void sendCamera(Camera camera) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        Message message = new Message();
+        message.setMessageType(MessageType.HAS_CAMERA);
+        byte[] cameraData = camera.getFrames();
+        camera.setFrames(compress(cameraData));
+        message.setBinaryPayload(objectMapper.writeValueAsBytes(camera));
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+        PrintWriter serverOut = Listener.getServerOut();
+        serverOut.println(objectMapper.writeValueAsString(message));
+    }
+
     public void talk(Voice voice) throws IOException, InterruptedException, UnknownPlatformException {
         /*OpusEncoder encoder = new OpusEncoder(16000, 1, OpusEncoder.Application.VOIP);
 
@@ -61,6 +74,8 @@ public class CallService {
         Message message = new Message();
         message.setMessageType(MessageType.IS_TALKING);
         //byte[] bytes = compress(chunk);
+        byte[] bytes = voice.getAudio();
+        voice.setAudio(compress(bytes));
         message.setBinaryPayload(objectMapper.writeValueAsBytes(voice));
         String correlationId = UUID.randomUUID().toString();
         message.setCorrelationId(correlationId);
@@ -95,9 +110,7 @@ public class CallService {
         //encoder.close();
     }
 
-
-
-    public byte[] encodeOpus(byte[] pcmData, OpusEncoder encoder) throws IOException {
+    /*public byte[] encodeOpus(byte[] pcmData, OpusEncoder encoder) throws IOException {
         int frameSize = 160; // 20ms frame at 16kHz
         int samples = pcmData.length / 2; // total samples
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -114,41 +127,6 @@ public class CallService {
         }
 
         return outputStream.toByteArray();
-    }
-
-    public byte[] decodeOpus(byte[] encodedData, OpusDecoder decoder) throws IOException {
-        int frameSizeBytes = 160;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        int offset = 0;
-        while (offset < encodedData.length) {
-            // Read one frame at a time based on known frame size
-            if (offset + frameSizeBytes > encodedData.length) {
-                break; // Incomplete frame at end
-            }
-            byte[] frame = Arrays.copyOfRange(encodedData, offset, offset + frameSizeBytes);
-            offset += frameSizeBytes;
-
-            short[] decodedPcm = decoder.decode(frame, false);
-            // Convert short[] to byte[] (little endian)
-            ByteBuffer pcmBuffer = ByteBuffer.allocate(decodedPcm.length * 2).order(ByteOrder.LITTLE_ENDIAN);
-            pcmBuffer.asShortBuffer().put(decodedPcm);
-            outputStream.write(pcmBuffer.array());
-        }
-
-        return outputStream.toByteArray();
-    }
-
-    /*public byte[] decodeOpus(byte[] data, OpusDecoder decoder) throws IOException, UnknownPlatformException {
-        decoder.setFrameSize(960);
-        short[] decoded = decoder.decode(data);
-        byte[] byteBuffer = new byte[decoded.length * 2]; // 2 bytes per short
-        for (int i = 0; i < decoded.length; i++) {
-            // Little-endian byte order
-            byteBuffer[2 * i] = (byte) (decoded[i] & 0xff);
-            byteBuffer[2 * i + 1] = (byte) ((decoded[i] >> 8) & 0xff);
-        }
-        return byteBuffer;
     }*/
 
     // Compress byte array

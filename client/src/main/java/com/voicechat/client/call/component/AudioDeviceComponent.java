@@ -3,6 +3,7 @@ package com.voicechat.client.call.component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.ServerReader;
+import com.voicechat.client.call.controller.CallController;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
 import de.maxhenkel.opus4j.OpusDecoder;
@@ -26,26 +27,30 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class AudioDeviceComponent extends AbstractAudioDevice {
-    private boolean microphoneCut;
+    private boolean microphoneCut = true;
     private Timeline volumeMonitorTimeline;
     private Line currentLine; // Keep track of the current line to close/dispose
     private SourceDataLine speakerLine;
 
     private volatile boolean capturing = false;
+    private volatile boolean listening = false;
     private Thread captureThread;
+    private CompletableFuture<Void> listeningFuture;
 
     private final CallService callService = new CallService();
 
     public void setAudioDevice(boolean microphoneCut, Mixer.Info selectedHeadMixerInfo, Mixer.Info selectedMicMixerInfo,
-                               AudioFormat audioFormat, String meetingId) {
-        startVolumeMonitoring(selectedHeadMixerInfo);
+                               AudioFormat audioFormat, String meetingId, CallController callController) {
+        this.microphoneCut = microphoneCut;
+        startVolumeMonitoring(selectedHeadMixerInfo, callController);
         startAudioCapture(selectedMicMixerInfo, meetingId);
     }
 
 
-    public void receiveAndPlay(Mixer.Info selectedMixerInfo) throws IOException, LineUnavailableException {
+    public void receiveAndPlay(Mixer.Info selectedMixerInfo, CallController callController) throws IOException, LineUnavailableException {
+        listening = true;
         // Run the listening process asynchronously
-        CompletableFuture<Void> listeningFuture = CompletableFuture.runAsync(() -> {
+        listeningFuture = CompletableFuture.runAsync(() -> {
             try {
                 byte[] buffer = new byte[1024];
 
@@ -66,32 +71,8 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
                     speakerLine.open(audioFormat);
                     speakerLine.start();
                 }
-                while (true) {
-                    var responses = Listener.getServerReader()
-                            .getServerResponseByEmail("voice-" + UserSession.INSTANCE.getUser().getEmailAddress());
-                    if (CollectionUtils.isNotEmpty(responses)) {
-                    for (ServerResponse response : responses) {
-                        if (response != null) {
-                            if (response.getServerResponseMessage() == ServerResponseMessage.IS_TALKING) {
-                                if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                                    ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-                                    Voice voice = objectMapper.readValue(response.getBinaryPayload(), Voice.class);
-                                    //OpusDecoder decoder = new OpusDecoder(48000, 1);
-                                    byte[] audioBytes = voice.getAudio(); //callService.decompress(voice.getAudio());
-                                    if (speakerLine != null && speakerLine.isOpen()) {
-                                        // Write audio bytes to speaker line
-                                        speakerLine.write(audioBytes, 0, audioBytes.length);
-                                        speakerLine.drain();
-                                    }
-                                    //decoder.resetState();
-                                    //decoder.close();
-                                    // Optionally keep the line open or close after each response
-                                    // speakerLine.close(); // Uncomment if you want to close after each
-                                }
-                            }
-                        }
-                    }
-                    }
+                while (listening) {
+                    callController.listenVoice(speakerLine);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -234,7 +215,7 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         captureThread.start();
     }
 
-    private void stopAudioCapture() {
+    public void stopAudioCapture() {
         capturing = false;
         if (captureThread != null) {
             try {
@@ -245,7 +226,18 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         }
     }
 
-    private void supportedHeadPhone(Line line, Mixer.Info selectedMixerInfo) throws LineUnavailableException, IOException {
+    public void stopReceivingAndPlaying() {
+        listening = false;
+        if (listeningFuture != null) {
+            try {
+                listeningFuture.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void supportedHeadPhone(Line line, Mixer.Info selectedMixerInfo, CallController callController) throws LineUnavailableException, IOException {
         boolean controlSupported = false;
         FloatControl volumeControl = null;
 
@@ -285,7 +277,7 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
             float min = volumeControl.getMinimum();
             float max = volumeControl.getMaximum();
             float normalized = (currentValue - min) / (max - min);
-            receiveAndPlay(selectedMixerInfo);
+            receiveAndPlay(selectedMixerInfo, callController);
             /*javafx.application.Platform.runLater(() -> {
                 volumeSlider.setDisable(false);
                 volumeSlider.setValue(normalized);
@@ -298,7 +290,7 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         }
     }
 
-    private void startVolumeMonitoring(Mixer.Info mixerInfo) {
+    private void startVolumeMonitoring(Mixer.Info mixerInfo, CallController callController) {
         // Stop previous monitoring
         if (volumeMonitorTimeline != null) {
             volumeMonitorTimeline.stop();
@@ -331,7 +323,7 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
             volumeMonitorTimeline = new Timeline(new KeyFrame(Duration.millis(200), e -> {
                 try {
                     if (currentLine != null && currentLine.isOpen()) {
-                        supportedHeadPhone(currentLine, mixerInfo);
+                        supportedHeadPhone(currentLine, mixerInfo, callController);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

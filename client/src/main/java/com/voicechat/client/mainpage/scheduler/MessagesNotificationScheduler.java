@@ -1,8 +1,5 @@
 package com.voicechat.client.mainpage.scheduler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voicechat.client.ServerReader;
 import com.voicechat.client.Listener;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
@@ -12,11 +9,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.shared.*;
 import org.shared.entity.Conversation;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -35,7 +30,7 @@ public class MessagesNotificationScheduler {
                 try {
                     onlineUsersScheduler.waitOnlineScheduleToBeDone();
                     onlineUsersScheduler.fetchLoggedUsers(UUID.randomUUID().toString(), gridMainPane, OnlineFetch.MESSAGES);
-                    List<ServerResponse> serverResponses = Listener.getServerReader().getServerResponseByEmail("notif-" + emailAddress);
+                    List<ServerResponse> serverResponses = Listener.getServerReader().getServerResponseBySpecificField("notif-" + emailAddress);
                     if (CollectionUtils.isNotEmpty(serverResponses)) {
                         for (ServerResponse serverResponse : serverResponses) {
                             if (serverResponse != null) {
