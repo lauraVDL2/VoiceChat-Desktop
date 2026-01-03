@@ -12,6 +12,7 @@ import org.shared.Message;
 import org.shared.MessageType;
 import org.shared.ServerResponse;
 import org.shared.pojo.Camera;
+import org.shared.pojo.ScreenShare;
 import org.shared.pojo.Voice;
 import org.shared.pojo.VoiceChatEvent;
 
@@ -54,6 +55,19 @@ public class CallService {
         byte[] cameraData = camera.getFrames();
         camera.setFrames(compress(cameraData));
         message.setBinaryPayload(objectMapper.writeValueAsBytes(camera));
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+        PrintWriter serverOut = Listener.getServerOut();
+        serverOut.println(objectMapper.writeValueAsString(message));
+    }
+
+    public void screenShare(ScreenShare screenShare) throws IOException {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        Message message = new Message();
+        message.setMessageType(MessageType.IS_SCREEN_SHARING);
+        byte[] screenData = screenShare.getFrames();
+        screenShare.setFrames(compress(screenData));
+        message.setBinaryPayload(objectMapper.writeValueAsBytes(screenShare));
         String correlationId = UUID.randomUUID().toString();
         message.setCorrelationId(correlationId);
         PrintWriter serverOut = Listener.getServerOut();

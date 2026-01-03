@@ -8,6 +8,7 @@ import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.pojo.Camera;
+import org.shared.pojo.ScreenShare;
 import org.shared.pojo.Voice;
 import org.shared.pojo.VoiceChatEvent;
 
@@ -18,6 +19,28 @@ import java.net.Socket;
 import java.util.*;
 
 public class MeetingAction {
+
+    public void captureScreen(ObjectMapper objectMapper, Message messageObj,
+                              ServerResponse serverResponse) throws IOException {
+        ScreenShare screenShare = objectMapper.readValue(messageObj.getBinaryPayload(), ScreenShare.class);
+        Set<String> participants = Server.meetingParticipants.get(screenShare.getMeetingId());
+        for (String participant : participants) {
+            Socket targetSocket = Server.userSockets.get(participant);
+            if (targetSocket == null || targetSocket.isClosed()) continue;
+            DataOutputStream dos = new DataOutputStream(targetSocket.getOutputStream());
+            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(screenShare));
+            serverResponse.getUserMessageMap().computeIfAbsent("screen-" + participant, k -> "screen-" + messageObj.getCorrelationId());
+            serverResponse.setCorrelationId("screen-" + messageObj.getCorrelationId());
+            serverResponse.setServerResponseMessage(ServerResponseMessage.IS_SCREEN_SHARING);
+            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+            byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
+            //System.out.println("RESPONSE" + objectMapper.writeValueAsString(serverResponse));
+            dos.writeUTF("JSON_RESPONSE");
+            dos.writeInt(bytes.length);
+            dos.write(bytes);
+            dos.flush();
+        }
+    }
 
     public void captureVideo(ObjectMapper objectMapper, Message messageObj,
                              ServerResponse serverResponse) throws IOException {
@@ -57,7 +80,7 @@ public class MeetingAction {
             serverResponse.setServerResponseMessage(ServerResponseMessage.IS_TALKING);
             serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
             byte[] bytes = objectMapper.writeValueAsBytes(serverResponse);
-            System.out.println("RESPONSE" + objectMapper.writeValueAsString(serverResponse));
+            //System.out.println("RESPONSE" + objectMapper.writeValueAsString(serverResponse));
             dos.writeUTF("JSON_RESPONSE");
             dos.writeInt(bytes.length);
             dos.write(bytes);

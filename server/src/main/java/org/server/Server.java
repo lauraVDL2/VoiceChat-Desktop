@@ -56,7 +56,7 @@ public class Server {
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
                 String message;
                 while ((message = in.readLine()) != null) {
-                    logger.info(message);
+                    //logger.info(message);
                     ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                     Message messageObj = objectMapper.readValue(message, Message.class);
                     ServerResponse serverResponse = new ServerResponse();
@@ -199,6 +199,10 @@ public class Server {
                         case HAS_CAMERA:
                             meetingAction = new MeetingAction();
                             meetingAction.captureVideo(objectMapper, messageObj, serverResponse);
+                            break;
+                        case IS_SCREEN_SHARING:
+                            meetingAction = new MeetingAction();
+                            meetingAction.captureScreen(objectMapper, messageObj, serverResponse);
                             break;
                     }
                 }

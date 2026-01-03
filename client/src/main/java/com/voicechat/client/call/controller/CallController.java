@@ -22,6 +22,7 @@ import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.pojo.Camera;
+import org.shared.pojo.ScreenShare;
 import org.shared.pojo.Voice;
 
 import javax.sound.sampled.AudioFormat;
@@ -62,8 +63,30 @@ public class CallController {
                 audioFormat, meetingId, this);
         cameraComponent.sendFrames(meetingId, isCameraActive);
         cameraComponent.receiveAndDisplay(cameraImageView, meetingId, this);
-        screenShareComponent.setScreenShareButton(shareScreen, imageStackPane);
+        screenShareComponent.setScreenShareButton(shareScreen, imageStackPane, meetingId);
+        screenShareComponent.receiveAndDisplay(this);
         exit(stage);
+    }
+
+    public void readScreen() throws IOException {
+        var responses = Listener.getServerReader()
+                .getServerResponseBySpecificField("screen-" + UserSession.INSTANCE.getUser().getEmailAddress());
+        if (CollectionUtils.isNotEmpty(responses)) {
+            for (ServerResponse response : responses) {
+                if (response != null) {
+                    if (response.getServerResponseMessage() == ServerResponseMessage.IS_SCREEN_SHARING) {
+                        if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                            ScreenShare screenShare = objectMapper.readValue(response.getBinaryPayload(), ScreenShare.class);
+                            byte[] screenData = callService.decompress(screenShare.getFrames());
+                            screenShareComponent.addScreenToNode(imageStackPane, screenData);
+                            System.out.println("apres addScreenToNode");
+                            //screenShareComponent.addScreenToNode(imageStackPane, screenShare.getFrames());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void readCamera() throws IOException {
@@ -116,6 +139,8 @@ public class CallController {
             audioDeviceComponent.stopAudioCapture();
             cameraComponent.stopSend();
             cameraComponent.stopReceive();
+            screenShareComponent.stopSend();
+            screenShareComponent.stopReceive();
         });
     }
 }
