@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -175,76 +176,80 @@ public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
 
         capturing = true;
 
-        captureThread = new Thread(() -> {
-            try {
-                // Define audio format
-                audioFormat = new AudioFormat(44100.0f, 16, 1, true, true);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    // Define audio format
+                    audioFormat = new AudioFormat(44100.0f, 16, 1, true, true);
 
-                // Get the selected mixer
-                Mixer selectedMixer = AudioSystem.getMixer(selectedMicMixerInfo);
-                TargetDataLine line = null;
+                    // Get the selected mixer
+                    Mixer selectedMixer = AudioSystem.getMixer(selectedMicMixerInfo);
+                    TargetDataLine line = null;
 
-                // Find TargetDataLine for this mixer
-                Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
+                    // Find TargetDataLine for this mixer
+                    Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
 
-                for (Line.Info info : targetLineInfos) {
-                    if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
-                        line = (TargetDataLine) selectedMixer.getLine(info);
-                        break;
+                    for (Line.Info info : targetLineInfos) {
+                        if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
+                            line = (TargetDataLine) selectedMixer.getLine(info);
+                            break;
+                        }
                     }
-                }
 
-                if (line == null) {
-                    for (var sourceLine : selectedMixer.getSourceLineInfo()) {
-                        if (sourceLine instanceof Port.Info) {
-                            // Cast sourceLine to Port.Info
-                            Port.Info portInfo = (Port.Info) sourceLine;
-                            // Get the port from the mixer
-                            line = getTargetDataLineForPort(portInfo);
-                            if (line == null) {
-                                line = getDefaultMicrophone();
-                                if (line != null) {
+                    if (line == null) {
+                        for (var sourceLine : selectedMixer.getSourceLineInfo()) {
+                            if (sourceLine instanceof Port.Info) {
+                                // Cast sourceLine to Port.Info
+                                Port.Info portInfo = (Port.Info) sourceLine;
+                                // Get the port from the mixer
+                                line = getTargetDataLineForPort(portInfo);
+                                if (line == null) {
+                                    line = getDefaultMicrophone();
+                                    if (line != null) {
+                                        audioFormat = line.getFormat();
+                                    }
+                                } else {
                                     audioFormat = line.getFormat();
                                 }
                             }
-                            else {
-                                audioFormat = line.getFormat();
-                            }
                         }
                     }
-                }
-                if (line != null) {
-                    line.open(audioFormat);
-                    line.start();
-                    SourceDataLine speakersLine;
-                    speakersLine = AudioSystem.getSourceDataLine(audioFormat);
-                    speakersLine.open(audioFormat);
-                    speakersLine.start();
+                    if (line != null) {
+                        line.open(audioFormat);
+                        line.start();
+                        SourceDataLine speakersLine;
+                        speakersLine = AudioSystem.getSourceDataLine(audioFormat);
+                        speakersLine.open(audioFormat);
+                        speakersLine.start();
 
 
-                    byte[] buffer = new byte[1024];
+                        byte[] buffer = new byte[1024];
 
-                    while (capturing) {
-                        int bytesRead = line.read(buffer, 0, buffer.length);
-                        double rms = calculateRMS(buffer, bytesRead);
-                        double normalizedVolume = rmsToProgress(rms);
+                        while (capturing) {
+                            int bytesRead = line.read(buffer, 0, buffer.length);
+                            double rms = calculateRMS(buffer, bytesRead);
+                            double normalizedVolume = rmsToProgress(rms);
                         /*// Send data to speakers (monitoring)
                         if (speakersLine != null && bytesRead > 0) {
                             speakersLine.write(buffer, 0, bytesRead);
                         }*/
-                        // Update UI
-                        Platform.runLater(() -> progressBar.setProgress(normalizedVolume));
+                            // Update UI
+                            Platform.runLater(() -> progressBar.setProgress(normalizedVolume));
+                        }
+
+                        line.stop();
+                        line.close();
                     }
 
-                    line.stop();
-                    line.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                return null;
             }
-        });
+        };
 
+        captureThread = new Thread(task);
         captureThread.setDaemon(true);
         captureThread.start();
     }

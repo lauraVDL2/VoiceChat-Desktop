@@ -24,7 +24,7 @@ public class OnlineUsersScheduler {
     private List<ScheduledFuture<?>> onlineSchedules = new ArrayList<>();
 
     public void schedule(GridPane gridPane, OnlineFetch onlineFetch) {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        /*ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         onlineSchedules.add(scheduler.scheduleAtFixedRate(() -> {
             try {
                 String correlationId = UUID.randomUUID().toString();
@@ -32,7 +32,7 @@ public class OnlineUsersScheduler {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 3, 60, TimeUnit.SECONDS));
+        }, 3, 60, TimeUnit.SECONDS));*/
     }
 
     public void fetchLoggedUsers(String correlationId, GridPane gridPane, OnlineFetch onlineFetch) throws IOException, InterruptedException {

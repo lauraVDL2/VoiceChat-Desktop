@@ -1,6 +1,7 @@
 package com.voicechat.client.call.component;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.opencv.core.Mat;
@@ -16,16 +17,23 @@ public class CameraSelectorComponent extends AbstractCamera {
             cameraActive = true;
 
             // Thread to read frames
-            new Thread(() -> {
-                while (cameraActive) {
-                    Mat frame = new Mat();
-                    if (capture.read(frame)) {
-                        Image imageToShow = mat2Image(frame);
-                        Platform.runLater(() -> imageView.setImage(imageToShow));
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    while (cameraActive) {
+                        Mat frame = new Mat();
+                        if (capture.read(frame)) {
+                            Image imageToShow = mat2Image(frame);
+                            Platform.runLater(() -> imageView.setImage(imageToShow));
+                        }
                     }
+                    capture.release();
+                    return null;
                 }
-                capture.release();
-            }).start();
+            };
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         } else {
             System.out.println("Failed to open camera");
         }

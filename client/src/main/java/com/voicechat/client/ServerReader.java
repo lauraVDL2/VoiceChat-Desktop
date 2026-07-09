@@ -1,6 +1,8 @@
 package com.voicechat.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
@@ -165,49 +167,64 @@ public class ServerReader {
      * Modified startReading method to use readTargetResponseWrapper and distribute responses by correlationId.
      */
     public void startReadingWithCorrelationId() {
-        readerThread = new Thread(() -> {
-            try {
-                while (running) {
-                    if (dataInputStream == null) {
-                        System.err.println("Data Input Stream is null. Exiting reader thread.");
-                        return;
-                    }
-                    ResponseWrapper wrapper = readTargetResponseWrapper();
-                    if (wrapper == null) {
-                        System.err.println("Received null response wrapper.");
-                        continue;
-                    }
-                    String correlationId = wrapper.correlationId;
-                    Object payload = wrapper.payload;
+        // Create a Task for the background reading loop
+        Task<Void> readTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    while (running && !isCancelled()) {
+                        if (dataInputStream == null) {
+                            System.err.println("Data Input Stream is null. Exiting reader task.");
+                            break;
+                        }
+                        ResponseWrapper wrapper = readTargetResponseWrapper();
+                        if (wrapper == null) {
+                            System.err.println("Received null response wrapper.");
+                            continue;
+                        }
+                        String correlationId = wrapper.correlationId;
+                        Object payload = wrapper.payload;
 
-                    if (payload instanceof ImageView) {
-                        avatarQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ImageView) payload);
-                    } else if (payload instanceof ServerResponse) {
-                        // Distribute responses to the proper queues
-                        // For processMessage, responses are added to messageQueues
-                        processResponse(correlationId, (ServerResponse) payload);
-                        // Also, add to serverResponseQueues for retrieval
-                        serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ServerResponse) payload);
-                        // Optionally, update notifications if needed
-                        synchronized (notifications) {
-                            for (var entry : ((ServerResponse) payload).getUserMessageMap().entrySet()) {
-                                if (entry.getValue().equals(correlationId)) {
-                                    notifications.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).add(correlationId);
+                        if (payload instanceof ImageView) {
+                            avatarQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ImageView) payload);
+                        } else if (payload instanceof ServerResponse) {
+                            // Distribute responses to the proper queues
+                            processResponse(correlationId, (ServerResponse) payload);
+                            // Add to serverResponseQueues
+                            serverResponseQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>()).put((ServerResponse) payload);
+                            // Update notifications (run on UI thread if needed)
+                            synchronized (notifications) {
+                                for (var entry : ((ServerResponse) payload).getUserMessageMap().entrySet()) {
+                                    if (entry.getValue().equals(correlationId)) {
+                                        // If you need to update UI notifications, wrap in Platform.runLater()
+                                        Platform.runLater(() -> {
+                                            notifications.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).add(correlationId);
+                                        });
+                                    }
                                 }
                             }
+                        } else {
+                            System.err.println("Unknown payload type received.");
                         }
-                    } else {
-                        System.err.println("Unknown payload type received.");
                     }
+                } catch (InterruptedException e) {
+                    if (isCancelled()) {
+                        System.out.println("Reader task was cancelled");
+                    } else {
+                        System.err.println("Reader task interrupted: " + e.getMessage());
+                    }
+                    // Handle cleanup if needed
+                } catch (IOException e) {
+                    System.err.println("Error reading avatar data: " + e.getMessage());
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.err.println("Reader thread interrupted: " + e.getMessage());
-            } catch (IOException e) {
-                System.err.println("Error reading avatar data: " + e.getMessage());
+                return null;
             }
-        });
-        this.readerThread.start();
+        };
+
+        // Run the task in a background thread
+        readerThread = new Thread(readTask);
+        readerThread.setDaemon(true); // optional, makes JVM exit if only daemon threads remain
+        readerThread.start();
     }
 
     private void processResponse(String correlationId, ServerResponse response) {

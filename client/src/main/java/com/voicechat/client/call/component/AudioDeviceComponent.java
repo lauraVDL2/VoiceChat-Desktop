@@ -10,6 +10,7 @@ import de.maxhenkel.opus4j.OpusDecoder;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.util.Duration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.shared.JsonMapper;
@@ -130,7 +131,10 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
 
         capturing = true;
 
-        captureThread = new Thread(() -> {
+        // Create a Task for the background reading loop
+        Task<Void> readTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
             try {
                 AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
 
@@ -160,8 +164,7 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
                                 if (line != null) {
                                     format = line.getFormat();
                                 }
-                            }
-                            else {
+                            } else {
                                 format = line.getFormat();
                             }
                         }
@@ -209,8 +212,11 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+            return null;
+            }
+        };
 
+        captureThread = new Thread(readTask);
         captureThread.setDaemon(true);
         captureThread.start();
     }

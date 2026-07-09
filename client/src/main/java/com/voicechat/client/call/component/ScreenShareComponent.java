@@ -3,6 +3,7 @@ package com.voicechat.client.call.component;
 import com.voicechat.client.call.controller.CallController;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +29,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.scene.robot.Robot;
+import javafx.util.Duration;
 import org.opencv.core.Mat;
 import org.shared.pojo.ScreenShare;
 
@@ -37,6 +39,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ScreenShareComponent {
 
@@ -93,75 +98,67 @@ public class ScreenShareComponent {
         screenChoiceList.setOnMouseClicked(e -> {
             Screen selectedScreen = screenChoiceList.getSelectionModel().getSelectedItem();
             if (selectedScreen != null) {
-                System.out.println("Selected Screen: " + getScreenIndex(selectedScreen));
                 isSharing = true;
+                    Platform.runLater(() -> {
+                        PauseTransition pause = new PauseTransition(Duration.millis(33));
+                        pause.setOnFinished(event -> {
+                        try {
+                            Robot robot = new Robot();
+                            // Capture the primary screen's bounds
+                            Rectangle2D screenBounds = selectedScreen.getBounds();
 
-                // Start a new thread for the continuous capture/send loop
-                Thread sendLoopThread = new Thread(() -> {
-                    try {
-                        while (isSharing) {
-                            Platform.runLater(() -> {
-                                Robot robot = new Robot();
-                                javafx.geometry.Rectangle2D bounds = selectedScreen.getBounds();
-                                WritableImage screenCapture = new WritableImage((int) bounds.getWidth(), (int) bounds.getHeight());
-                                robot.getScreenCapture(screenCapture, bounds);
+                            // Create a WritableImage to store the screenshot
+                            WritableImage screenCapture = new WritableImage(
+                                    (int) screenBounds.getWidth(),
+                                    (int) screenBounds.getHeight());
 
-                                // Prepare image and data
-                                Image image = scaleImage(screenCapture, (int) bounds.getWidth(), (int) bounds.getHeight());
-                                byte[] imageBytes = imageToByteArray(image);
+                            // Capture the screen
+                            robot.getScreenCapture(screenCapture, screenBounds);
 
-                                // Create ScreenShare object
-                                ScreenShare screenShare = new ScreenShare();
-                                screenShare.setMeetingId(meetingId);
-                                screenShare.setFrames(imageBytes);
-                                screenShare.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
+                            Image image = scaleImage(screenCapture, (int) screenBounds.getWidth(), (int) screenBounds.getHeight());
 
-                                // Send the frame
-                                try {
-                                    callService.screenShare(screenShare);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-                            Thread.sleep(500);
+                            byte[] imageBytes = imageToByteArray(image);
+
+                            // Create ScreenShare object
+                            ScreenShare screenShare = new ScreenShare();
+                            screenShare.setMeetingId(meetingId);
+                            screenShare.setFrames(imageBytes);
+                            screenShare.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
+
+                            // Send the frame
+                            callService.screenShare(screenShare);
+
+                            if (isSharing) {
+                                pause.playFromStart();
+                            }
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
-                sendLoopThread.setDaemon(true);
-                sendLoopThread.start();
-            }
+                    });
+                        pause.play();
+                    });
+                }
         });
     }
 
     public void receiveAndDisplay(CallController callController) {
-        captureThread = new Thread(() -> {
+        // Create a PauseTransition for periodic execution
+        PauseTransition pause = new PauseTransition(Duration.millis(33));
+
+        pause.setOnFinished(event -> {
             try {
-                read = true;
-                while (read) {
-                    // Run UI update on JavaFX thread
-                    Platform.runLater(() -> {
-                        try {
-                            //System.out.println("test ici");
-                            callController.readScreen();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                    // Sleep in background thread, not on UI thread
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                callController.readScreen();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (read) {
+                // Restart the transition for the next cycle
+                pause.playFromStart();
             }
         });
-        captureThread.setDaemon(true);
-        captureThread.start();
+
+        // Start the periodic task
+        pause.play();
     }
 
     public void addScreenToNode(StackPane stackPane, byte[] bytes) {

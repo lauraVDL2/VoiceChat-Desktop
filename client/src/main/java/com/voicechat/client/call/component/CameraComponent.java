@@ -5,6 +5,7 @@ import com.voicechat.client.call.controller.CallController;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -38,25 +39,31 @@ public class CameraComponent extends AbstractCamera {
             cameraActive = isCameraActive;
 
             // Thread to read frames
-            sendThread = new Thread(() -> {
-                while (cameraActive) {
-                    Mat frame = new Mat();
-                    if (capture.read(frame)) {
-                        Image imageToShow = mat2Image(frame);
-                        byte[] frames = matToByteArray(frame);
-                        Camera camera = new Camera();
-                        camera.setMeetingId(meetingId);
-                        camera.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
-                        camera.setFrames(frames);
-                        try {
-                            callService.sendCamera(camera);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    while (cameraActive) {
+                        Mat frame = new Mat();
+                        if (capture.read(frame)) {
+                            Image imageToShow = mat2Image(frame);
+                            byte[] frames = matToByteArray(frame);
+                            Camera camera = new Camera();
+                            camera.setMeetingId(meetingId);
+                            camera.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
+                            camera.setFrames(frames);
+                            try {
+                                callService.sendCamera(camera);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
+                    capture.release();
+                    return null;
                 }
-                capture.release();
-            });
+            };
+
+            sendThread = new Thread(task);
             sendThread.setDaemon(true);
             sendThread.start();
         } else {
@@ -80,16 +87,21 @@ public class CameraComponent extends AbstractCamera {
     }
 
     public void receiveAndDisplay(ImageView imageView, String meetingId, CallController callController) {
-        captureThread = new Thread(() -> {
-            try {
-                receive = true;
-                while (receive) {
-                    callController.readCamera();
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    receive = true;
+                    while (receive) {
+                        callController.readCamera();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                return null;
             }
-        });
+        };
+        captureThread = new Thread(task);
         captureThread.setDaemon(true);
         captureThread.start();
     }

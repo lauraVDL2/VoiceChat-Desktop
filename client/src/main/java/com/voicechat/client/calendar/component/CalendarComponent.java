@@ -3,6 +3,7 @@ package com.voicechat.client.calendar.component;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.calendar.controller.CalendarController;
 import com.voicechat.client.common.utils.DateHandler;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.shared.pojo.VoiceChatEvent;
 
@@ -166,13 +168,12 @@ public class CalendarComponent {
 
         Platform.runLater(() -> {
             // Optional: small delay to ensure layout is ready
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            // Call the method to scroll to the desired hour
-            scrollToHour(scrollPaneGrid, targetHour);
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(33));
+            pauseTransition.setOnFinished(event -> {
+                // Call the method to scroll to the desired hour
+                scrollToHour(scrollPaneGrid, targetHour);
+            });
+            pauseTransition.play();
         });
     }
 

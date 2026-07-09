@@ -24,7 +24,7 @@ public class MessagesNotificationScheduler {
                          ConversationListComponent conversationListComponent, Conversation conversation,
                          GridPane gridMainPane, OnlineUsersScheduler onlineUsersScheduler) {
 
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        /*ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
         messageNotificationSchedule = scheduler.scheduleAtFixedRate(() -> {
                 try {
@@ -51,7 +51,7 @@ public class MessagesNotificationScheduler {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-        }, 5, 10, TimeUnit.SECONDS);
+        }, 5, 10, TimeUnit.SECONDS);*/
     }
 
     public void waitMessageScheduleToBeDone() {
