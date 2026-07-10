@@ -7,8 +7,9 @@ import org.neo4j.ogm.session.SessionFactory;
 import org.server.Server;
 import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDao;
+import org.server.dao.ConversationDaoImpl;
 import org.server.dao.UserDao;
-import org.shared.JsonMapper;
+import org.server.dao.UserDaoImpl;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -18,15 +19,10 @@ import org.shared.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserNotificationAction {
@@ -35,15 +31,23 @@ public class UserNotificationAction {
 
     private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
 
+    private final UserDao userDao;
+
+    private final ConversationDao conversationDao;
+
+    public UserNotificationAction(UserDao userDao, ConversationDao conversationDao) {
+        this.userDao = userDao;
+        this.conversationDao = conversationDao;
+    }
+
     public void sendMessageToUser(org.shared.Message messageObj, ConcurrentHashMap<String, Socket> userSockets,
                                   ObjectMapper objectMapper, ServerResponse serverResponse,
                                   Conversation conversation) throws IOException {
-        ConversationDao conversationDao = new ConversationDao(sessionFactory);
         List<String> emailAddresses = conversationDao.getConversationParticipants(conversation)
                 .stream().map(User::getEmailAddress).toList();
         List<Message> messages = conversation.getMessages();
         Message lastMessage = messages.get(messages.size() - 1);
-        User sender = new UserDao(sessionFactory).findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
+        User sender = userDao.findUserByEmailAddress(lastMessage.getSender().getEmailAddress());
         for (var userSocket : userSockets.entrySet()) {
             if (!CollectionUtils.isEmpty(emailAddresses)) {
                 String emailAddress = userSocket.getKey();
@@ -69,7 +73,17 @@ public class UserNotificationAction {
         }
     }
 
-    public void searchSentAvatar(String emailAddress, org.shared.Message messageObj, ObjectMapper objectMapper, User sender,
+    /**
+     * Avatar display of the user when a message is sent
+     * @param emailAddress
+     * @param messageObj
+     * @param objectMapper
+     * @param sender
+     * @param socket
+     * @param serverResponse
+     * @throws IOException
+     */
+    private void searchSentAvatar(String emailAddress, org.shared.Message messageObj, ObjectMapper objectMapper, User sender,
                                  Socket socket, ServerResponse serverResponse) throws IOException {
         if (sender != null) {
             if (StringUtils.isNotBlank(sender.getAvatar())) {

@@ -3,7 +3,12 @@ package org.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.graph.requests.GraphServiceClient;
+import org.neo4j.ogm.session.SessionFactory;
 import org.server.action.*;
+import org.server.config.Neo4jConfig;
+import org.server.dao.ConversationDaoImpl;
+import org.server.dao.MessageDaoImpl;
+import org.server.dao.UserDaoImpl;
 import org.server.microsoft_graph.pojo.MicrosoftUser;
 import org.server.microsoft_graph.requester.CalendarRequester;
 import org.server.microsoft_graph.GraphClient;
@@ -31,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
+    private final static SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
     public final static int SERVER_PORT = 8080;
     private final static ExecutorService executor = Executors.newCachedThreadPool();
     private final static Logger logger = LoggerFactory.getLogger(Server.class);
@@ -76,14 +82,14 @@ public class Server {
                     MeetingAction meetingAction = null;
                     switch (messageObj.getMessageType()) {
                         case USER_CREATE:
-                            userAction = new UserAction();
+                            userAction = new UserAction(new UserDaoImpl(sessionFactory));
                             User userCreated = userAction.userCreate(objectMapper, messageObj, serverResponse, socket);
                             if (userCreated != null) {
                                 userAction.searchUserAvatar(messageObj, objectMapper, userCreated, dataOutputStream, serverResponse);
                             }
                             break;
                         case USER_LOG_IN:
-                            userAction = new UserAction();
+                            userAction = new UserAction(new UserDaoImpl(sessionFactory));
                             User userLogged = userAction.userLogIn(objectMapper, messageObj, serverResponse, socket);
                             if (userLogged != null) {
                                 userAction.searchUserAvatar(messageObj, objectMapper, userLogged, dataOutputStream, serverResponse);
@@ -135,46 +141,46 @@ public class Server {
                             userSockets.remove(emailAddress);
                             break;
                         case USER_SEARCH:
-                            userAction = new UserAction();
+                            userAction = new UserAction(new UserDaoImpl(sessionFactory));
                             userAction.userSearch(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case ONLINE_USERS_FETCH:
-                            userAction = new UserAction();
+                            userAction = new UserAction(new UserDaoImpl(sessionFactory));
                             userAction.getOnlineUsers(messageObj, objectMapper, serverResponse, socket, onlineUsers);
                             break;
                         case CONVERSATION_SEARCH:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.conversationSearchIfExists(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_CREATE:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.createConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_DISPLAY:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out, socket);
                             break;
                         case CONVERSATION_SCROLL:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.scrollConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case READ_TARGET_AVATAR:
-                            userAction = new UserAction();
+                            userAction = new UserAction(new UserDaoImpl(sessionFactory));
                             userAction.searchTargetUser(objectMapper, messageObj, dataOutputStream, serverResponse);
                             break;
                         case CONVERSATION_GET:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.getConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MESSAGE_SEND:
                             sendMessageToUser(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MESSAGE_CONVERSATION_SEARCH:
-                            messageAction = new MessageAction();
+                            messageAction = new MessageAction(new MessageDaoImpl(sessionFactory));
                             messageAction.searchMessageInConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MESSAGE_CONVERSATION_GO:
-                            conversationAction = new ConversationAction();
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
                             conversationAction.goToMessage(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MEETING_CONNECT:
@@ -216,9 +222,10 @@ public class Server {
     public static void sendMessageToUser(ObjectMapper objectMapper, Message messageObj,
                                          ServerResponse serverResponse, Socket socket) {
         try {
-            MessageAction messageAction = new MessageAction();
+            MessageAction messageAction = new MessageAction(new MessageDaoImpl(sessionFactory));
             Conversation messageSentConversation = messageAction.sendMessage(objectMapper, messageObj, serverResponse, socket);
-            UserNotificationAction userNotificationAction = new UserNotificationAction();
+            UserNotificationAction userNotificationAction = new UserNotificationAction(new UserDaoImpl(sessionFactory),
+                    new ConversationDaoImpl(sessionFactory));
             userNotificationAction.sendMessageToUser(messageObj, userSockets, objectMapper, serverResponse,
                     messageSentConversation);
         } catch (Exception e) {

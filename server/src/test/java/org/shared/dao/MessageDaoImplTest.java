@@ -5,8 +5,9 @@ import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
-import org.server.dao.ConversationDao;
+import org.server.dao.ConversationDaoImpl;
 import org.server.dao.MessageDao;
+import org.server.dao.MessageDaoImpl;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
@@ -16,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
-public class MessageDaoTest {
+public class MessageDaoImplTest {
 
     private static MessageDao messageDao;
 
@@ -26,7 +27,7 @@ public class MessageDaoTest {
 
     private static Neo4j neo4j;
 
-    private static ConversationDao conversationDao;
+    private static ConversationDaoImpl conversationDao;
 
     @BeforeAll
     public static void setUp() {
@@ -40,8 +41,8 @@ public class MessageDaoTest {
         session = sessionFactory.openSession();
 
         // Embedded session to not flood with real data
-        messageDao = new MessageDao(sessionFactory);
-        conversationDao = new ConversationDao(sessionFactory);
+        messageDao = new MessageDaoImpl(sessionFactory);
+        conversationDao = new ConversationDaoImpl(sessionFactory);
     }
 
     @Test

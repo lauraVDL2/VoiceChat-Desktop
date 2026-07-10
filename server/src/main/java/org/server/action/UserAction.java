@@ -1,6 +1,5 @@
 package org.server.action;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +8,7 @@ import org.neo4j.ogm.session.SessionFactory;
 import org.server.Server;
 import org.server.config.Neo4jConfig;
 import org.server.dao.UserDao;
+import org.server.dao.UserDaoImpl;
 import org.shared.*;
 import org.shared.entity.User;
 import org.slf4j.Logger;
@@ -17,9 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,13 +27,18 @@ public class UserAction {
 
     private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
 
+    private UserDao userDao;
+
+    public UserAction(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
     public User userCreate(ObjectMapper objectMapper, Message messageObj,
                                   ServerResponse serverResponse, Socket socket) throws IOException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         user.setAvatar("/images/avatar/avatar_default.png");
-        UserDao userDao = new UserDao(sessionFactory);
         byte[] bytes = null;
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
@@ -55,7 +58,7 @@ public class UserAction {
             serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            serverResponse.setMessage(UserDao.errorMessage);
+            serverResponse.setMessage(UserDaoImpl.errorMessage);
             bytes = objectMapper.writeValueAsBytes(serverResponse);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
@@ -69,7 +72,6 @@ public class UserAction {
     public User userLogIn(ObjectMapper objectMapper, Message messageObj,
                                  ServerResponse serverResponse, Socket socket) throws IOException {
         User userLogged = objectMapper.readValue(messageObj.getPayload(), User.class);
-        UserDao userDao = new UserDao(sessionFactory);
         User resultUser = userDao.login(userLogged);
         byte[] bytes = null;
         if (resultUser != null) {
@@ -91,7 +93,7 @@ public class UserAction {
             serverResponse.setCorrelationId(messageObj.getCorrelationId());
             serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
             serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            serverResponse.setMessage(UserDao.errorMessage);
+            serverResponse.setMessage(UserDaoImpl.errorMessage);
             bytes = objectMapper.writeValueAsBytes(serverResponse);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
@@ -106,7 +108,6 @@ public class UserAction {
                                   ServerResponse serverResponse, Socket socket) throws IOException {
         User userSearch = objectMapper.readValue(messageObj.getPayload(), User.class);
         String displayNameSearch = userSearch.getDisplayName();
-        UserDao userDao = new UserDao(sessionFactory);
         List<User> users = userDao.searchUsers(displayNameSearch);
         byte[] bytes = null;
         if (!CollectionUtils.isEmpty(users)) {

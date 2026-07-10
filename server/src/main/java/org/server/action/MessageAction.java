@@ -1,11 +1,11 @@
 package org.server.action;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.neo4j.ogm.session.SessionFactory;
 import org.server.config.Neo4jConfig;
 import org.server.dao.MessageDao;
+import org.server.dao.MessageDaoImpl;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
@@ -25,10 +24,15 @@ public class MessageAction {
 
     private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
 
+    private final MessageDao messageDao;
+
+    public MessageAction(MessageDao messageDao) {
+        this.messageDao = messageDao;
+    }
+
     public Conversation sendMessage(ObjectMapper objectMapper, org.shared.Message messageObj,
                                     ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
-        MessageDao messageDao = new MessageDao(sessionFactory);
         Message message = messageDao.sendMessage(conversation);
         byte[] bytes = null;
         if (message != null) {
@@ -64,7 +68,6 @@ public class MessageAction {
     public void searchMessageInConversation(ObjectMapper objectMapper, org.shared.Message messageObj,
                                             ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
-        MessageDao messageDao = new MessageDao(sessionFactory);
         List<Message> messages = messageDao.searchMessageInConversation(conversation);
         byte[] bytes = null;
         if (CollectionUtils.isNotEmpty(messages)) {

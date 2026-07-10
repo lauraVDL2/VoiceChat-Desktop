@@ -1,0 +1,133 @@
+package org.server.dao;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
+import org.neo4j.ogm.transaction.Transaction;
+import org.shared.entity.Conversation;
+import org.shared.entity.Message;
+import org.shared.entity.ReadStatus;
+import org.shared.entity.User;
+
+import java.util.*;
+
+public class MessageDaoImpl implements MessageDao {
+
+    private SessionFactory sessionFactory;
+    public static String errorMessage = "";
+
+    public MessageDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public Message sendMessage(Conversation conversation) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            // Normally, we should insert only one message per request
+            Message lastMessage = conversation.getMessages().stream().findFirst().orElse(null);
+            if (lastMessage != null) {
+                try (Transaction tx = session.beginTransaction()) {
+                    String cypher = """
+                            MATCH (c:Conversation) WHERE id(c) = $conversationId
+                            MATCH (u:User {emailAddress: $emailAddress})
+                            CREATE (msg:Message {content: $content, time: $time})
+                            CREATE (c)-[:CONTAINS]->(msg)
+                            CREATE (msg)<-[:SENT_BY]-(u)
+                            RETURN msg,u
+                            """;
+                    var result = session.query(cypher, Map.of("conversationId", conversation.getId(),
+                            "emailAddress", lastMessage.getSender().getEmailAddress(), "content", lastMessage.getContent(),
+                            "time", lastMessage.getTime()));
+                    Message message = null;
+                    User user = null;
+                    for (var record : result) {
+                        message = (Message) record.get("msg");
+                        user = (User) record.get("u");
+                    }
+
+                    Set<User> participants = new LinkedHashSet<>();
+                    String cypherParticipants = """
+                            MATCH (c:Conversation)-[:HAS]->(u:User) WHERE id(c) = $id RETURN u
+                            """;
+                    Result usersRecord = session.query(cypherParticipants, Map.of("id", conversation.getId()));
+
+                    for (var userRecord : usersRecord) {
+                        User participant = (User) userRecord.get("u");
+                        participants.add(participant);
+                    }
+
+                    // Read status
+                    List<ReadStatus> readStatuses = readStatus(participants, user, message, session);
+
+                    tx.commit();
+                    message.setReadStatuses(readStatuses);
+                    message.setSender(user);
+                    if (sessionFactory != null) {
+                        sessionFactory.close();
+                    }
+                    return message;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
+    }
+
+    private List<ReadStatus> readStatus(Set<User> participants, User user, Message message, Session session) {
+        List<ReadStatus> readStatuses = new ArrayList<>();
+        for (var participant : participants) {
+            boolean isRead;
+            if (!StringUtils.equals(participant.getEmailAddress(), user.getEmailAddress())) {
+                isRead = false;
+            } else {
+                isRead = true;
+            }
+            String cypher2 = """
+                                MATCH (u:User {emailAddress: $emailAddress})
+                                MATCH (m:Message) WHERE id(m) = $messageId
+                                MERGE (m)<-[r:READ_BY {isRead: $isRead}]-(u)
+                                RETURN r
+                                """;
+            ReadStatus readStatus = session.queryForObject(ReadStatus.class, cypher2, Map.of("isRead", isRead, "emailAddress",
+                    participant.getEmailAddress(), "messageId", message.getId()));
+            readStatuses.add(readStatus);
+        }
+        return readStatuses;
+    }
+
+    public List<Message> searchMessageInConversation(Conversation conversation) {
+        try {
+            Session session = this.sessionFactory.openSession();
+            String cypher = """
+                    MATCH (c:Conversation)-[:CONTAINS]->(msg:Message)<-[:SENT_BY]-(u:User) WHERE id(c) = $id
+                    AND msg.content CONTAINS $messageContent
+                    RETURN msg AS messages, u AS sender LIMIT 20
+                    """;
+            Result records = session.query(cypher, Map.of("id", conversation.getId(),
+                    "messageContent", conversation.getMessages().getFirst().getContent()));
+            List<Message> messages = new ArrayList<>();
+            for (var record : records) {
+                Message message = (Message) record.get("messages");
+                User sender = (User) record.get("sender");
+                message.setSender(sender);
+                messages.add(message);
+            }
+            return messages;
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
+        }
+        return null;
+    }
+
+}
