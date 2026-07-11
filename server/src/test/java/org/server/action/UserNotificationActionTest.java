@@ -1,4 +1,4 @@
-package org.shared.action;
+package org.server.action;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

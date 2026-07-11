@@ -1,4 +1,4 @@
-package org.shared.dao;
+package org.server.dao;
 
 import org.junit.jupiter.api.*;
 import org.neo4j.harness.Neo4j;

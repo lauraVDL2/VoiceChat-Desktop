@@ -1,4 +1,4 @@
-package org.shared.calendar;
+package org.server.calendar;
 
 public class GraphClientTest {
 

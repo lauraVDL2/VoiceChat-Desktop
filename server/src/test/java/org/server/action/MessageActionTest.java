@@ -1,4 +1,4 @@
-package org.shared.action;
+package org.server.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -92,7 +92,6 @@ public class MessageActionTest {
         byte[] inner = payloadResponse.getBinaryPayload();
         Message writtenMessage = jsonMapper.readValue(inner, Message.class);
         assertEquals(persistedMessage.getContent(), writtenMessage.getContent());
-        // Verify interaction with the injected DAO mock (called with a Conversation instance)
     }
 
     @Test

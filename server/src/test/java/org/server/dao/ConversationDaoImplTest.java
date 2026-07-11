@@ -1,4 +1,4 @@
-package org.shared.dao;
+package org.server.dao;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.*;
