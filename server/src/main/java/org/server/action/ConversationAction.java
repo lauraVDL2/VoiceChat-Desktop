@@ -139,7 +139,7 @@ public class ConversationAction {
     }
 
     public void searchUserConversations(ObjectMapper objectMapper, Message messageObj,
-                                        ServerResponse serverResponse, PrintWriter out, Socket socket) throws IOException {
+                                        ServerResponse serverResponse, Socket socket) throws IOException {
         User user = objectMapper.readValue(messageObj.getPayload(), User.class);
         if (user != null) {
             List<Conversation> conversations = conversationDao.searchUserConversations(user);

@@ -158,7 +158,7 @@ public class Server {
                             break;
                         case CONVERSATION_DISPLAY:
                             conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
-                            conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, out, socket);
+                            conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_SCROLL:
                             conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
