@@ -47,43 +47,55 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         startAudioCapture(selectedMicMixerInfo, meetingId);
     }
 
-
     public void receiveAndPlay(Mixer.Info selectedMixerInfo, CallController callController) throws IOException, LineUnavailableException {
         listening = true;
-        // Run the listening process asynchronously
-        listeningFuture = CompletableFuture.runAsync(() -> {
-            try {
-                byte[] buffer = new byte[1024];
 
-                AudioFormat audioFormat = getAudioFormat(selectedMixerInfo);
-
-                //System.out.println("audio format = " + audioFormat.toString());
-
-                DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                speakerLine = (SourceDataLine) AudioSystem.getLine(info);
-                speakerLine.open(audioFormat);
-                speakerLine.start();
-
-                // Ensure speakerLine is initialized properly
-                if (speakerLine == null) {
-                    //AudioFormat format2 = new AudioFormat(44100.0f, 16, 1, true, true);
-                    DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat);
-                    speakerLine = (SourceDataLine) AudioSystem.getLine(info2);
+        Task<Void> listenTask = new Task<>() {
+            @Override
+            protected Void call() {
+                try {
+                    byte[] buffer = new byte[1024];
+                    AudioFormat audioFormat = getAudioFormat(selectedMixerInfo);
+                    DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+                    speakerLine = (SourceDataLine) AudioSystem.getLine(info);
                     speakerLine.open(audioFormat);
                     speakerLine.start();
+
+                    // Optional: Verify speakerLine is initialized
+                    if (speakerLine == null) {
+                        DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat);
+                        speakerLine = (SourceDataLine) AudioSystem.getLine(info2);
+                        speakerLine.open(audioFormat);
+                        speakerLine.start();
+                    }
+
+                    while (listening) {
+                        // Call your method for listening
+                        callController.listenVoice(speakerLine);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (speakerLine != null) {
+                        speakerLine.drain();
+                        speakerLine.close();
+                    }
                 }
-                while (listening) {
-                    callController.listenVoice(speakerLine);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (speakerLine != null) {
-                    speakerLine.drain();
-                    speakerLine.close();
-                }
+                return null;
             }
-        });
+
+            @Override
+            protected void failed() {
+                super.failed();
+                // Handle failure if needed
+                Throwable exc = getException();
+            }
+        };
+
+        // Run the task in a background thread
+        Thread thread = new Thread(listenTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public AudioFormat getAudioFormat(Mixer.Info selectedMixerInfo) throws LineUnavailableException {

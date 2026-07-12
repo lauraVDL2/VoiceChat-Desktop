@@ -1,9 +1,7 @@
 plugins {
     java
     application
-    id("org.javamodularity.moduleplugin") version "1.8.15"
     id("org.openjfx.javafxplugin") version "0.1.0"
-    id("org.beryx.jlink") version "2.25.0"
 }
 
 repositories {
@@ -19,24 +17,27 @@ repositories {
 val junitVersion = "5.12.1"
 
 java {
-    modularity.inferModulePath = true
+    modularity.inferModulePath = false
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
-application {
-    mainModule.set("com.voicechat.client")
-    mainClass.set("com.voicechat.client.VoiceChatApplication")
-}
-
 javafx {
     version = "21.0.6"
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-Xlint:unchecked")
+}
+
+application {
+    mainClass.set("com.voicechat.client.VoiceChatApplication")
+    applicationDefaultJvmArgs = listOf(
+        "--add-modules", "javafx.controls,javafx.fxml,javafx.web,javafx.swing"
+    )
 }
 
 repositories {
@@ -71,16 +72,32 @@ dependencies {
     }
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.testfx:testfx-junit5:4.0.18")
+    testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("org.hamcrest:hamcrest:2.1")
+    implementation("org.openjfx:javafx-controls:21.0.6")
+    implementation("org.openjfx:javafx-fxml:21.0.6")
+    implementation("org.openjfx:javafx-web:21.0.6")
+    implementation("org.openjfx:javafx-swing:21.0.6")
+    implementation("org.neo4j:neo4j-ogm-core:4.0.19")
+    implementation("org.neo4j:neo4j-ogm-bolt-driver:4.0.19")
+    testImplementation("org.neo4j.test:neo4j-harness:5.13.0")
 }
 
-tasks.withType<Test> {
+// Test setup
+tasks.test {
     useJUnitPlatform()
+    jvmArgs = listOf(
+        "--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED",
+        "--add-opens=javafx.controls/javafx.scene=ALL-UNNAMED",
+        "--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED",
+        "-Djava.awt.headless=true"
+    )
+    include("**/*Test.*")
 }
 
-jlink {
-    imageZip.set(layout.buildDirectory.file("/distributions/app-${javafx.platform.classifier}.zip"))
-    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-    launcher {
-        name = "app"
-    }
+tasks.withType<JavaCompile> {
+    options.compilerArgs.addAll(listOf(
+        "-Xlint:none" // disables all lint warnings
+    ))
 }

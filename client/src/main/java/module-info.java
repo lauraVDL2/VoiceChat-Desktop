@@ -1,43 +1,45 @@
-module com.voicechat.client {
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires javafx.web;
-
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
-    requires javafx.graphics;
-    requires io.github.resilience4j.retry;
-    requires voicechat.common;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.core;
-    requires org.apache.commons.collections4;
-    requires org.apache.commons.lang3;
-    requires java.desktop;
-    requires com.fasterxml.jackson.datatype.jsr310;
-    requires javafx.swing;
-    requires javafx.base;
-    requires opencv;
-    requires opus4j;
-
-    opens com.voicechat.client to javafx.fxml;
-    opens com.voicechat.client.login to javafx.fxml;
-    opens com.voicechat.client.call to javafx.fxml;
-
-    exports com.voicechat.client;
-    exports com.voicechat.client.common;
-    exports com.voicechat.client.login.controller;
-    exports com.voicechat.client.mainpage.controller;
-    exports com.voicechat.client.calendar.controller;
-    exports com.voicechat.client.call.controller;
-    exports com.voicechat.client.common.component;
-
-    opens com.voicechat.client.login.controller to javafx.fxml;
-    opens com.voicechat.client.mainpage.controller to javafx.fxml;
-    opens com.voicechat.client.call.controller to javafx.fxml;
-    opens com.voicechat.client.calendar.controller to javafx.fxml;
-    opens com.voicechat.client.common to javafx.fxml;
-    opens com.voicechat.client.common.component to javafx.fxml;
-}
+//module com.voicechat.client {
+//    requires javafx.controls;
+//    requires javafx.fxml;
+//    requires javafx.web;
+//
+//    requires org.controlsfx.controls;
+//    requires com.dlsc.formsfx;
+//    requires org.kordamp.ikonli.javafx;
+//    requires org.kordamp.bootstrapfx.core;
+//    requires eu.hansolo.tilesfx;
+//    requires javafx.graphics;
+//    requires io.github.resilience4j.retry;
+//    requires voicechat.common;
+//    requires com.fasterxml.jackson.databind;
+//    requires com.fasterxml.jackson.core;
+//    requires org.apache.commons.collections4;
+//    requires org.apache.commons.lang3;
+//    requires java.desktop;
+//    requires com.fasterxml.jackson.datatype.jsr310;
+//    requires javafx.swing;
+//    requires javafx.base;
+//    requires opencv;
+//    requires opus4j;
+//
+//    opens com.voicechat.client to javafx.fxml;
+//    opens com.voicechat.client.login to javafx.fxml;
+//    opens com.voicechat.client.call to javafx.fxml;
+//
+//    exports com.voicechat.client;
+//    exports com.voicechat.client.common;
+//    exports com.voicechat.client.login.controller;
+//    exports com.voicechat.client.mainpage.controller;
+//    exports com.voicechat.client.calendar.controller;
+//    exports com.voicechat.client.call.controller;
+//    exports com.voicechat.client.login.service;
+//    exports com.voicechat.client.call;
+//    exports com.voicechat.client.common.component;
+//
+//    opens com.voicechat.client.login.controller to javafx.fxml;
+//    opens com.voicechat.client.mainpage.controller to javafx.fxml;
+//    opens com.voicechat.client.call.controller to javafx.fxml;
+//    opens com.voicechat.client.calendar.controller to javafx.fxml;
+//    opens com.voicechat.client.common to javafx.fxml;
+//    opens com.voicechat.client.common.component to javafx.fxml;
+//}

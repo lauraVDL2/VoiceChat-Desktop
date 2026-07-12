@@ -177,6 +177,7 @@ public class CalendarComponent {
         });
     }
 
+    @SuppressWarnings("unchecked")
     public void fillCellFraction(int col, int row, double xFraction, double xAxis, double yFraction, double yAxis,
                                  String eventText, String organizer, VoiceChatEvent event, CalendarController calendarController, Color color) {
         Platform.runLater(() -> {
