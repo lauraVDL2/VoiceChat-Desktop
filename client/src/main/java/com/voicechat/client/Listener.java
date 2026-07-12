@@ -42,7 +42,7 @@ public class Listener {
 
     private static BufferedReader userInput;
 
-    private static ServerReader serverReader;
+    private static volatile ServerReader serverReader;
 
     private static int offset = 0;
 

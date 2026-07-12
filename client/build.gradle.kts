@@ -81,6 +81,7 @@ dependencies {
     implementation("org.openjfx:javafx-swing:21.0.6")
     implementation("org.neo4j:neo4j-ogm-core:4.0.19")
     implementation("org.neo4j:neo4j-ogm-bolt-driver:4.0.19")
+    testImplementation("org.mockito:mockito-inline:4.8.0")
     testImplementation("org.neo4j.test:neo4j-harness:5.13.0")
 }
 

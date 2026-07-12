@@ -51,6 +51,7 @@ public class ConversationMessageSearchComponent {
                 authorBox.getChildren().add(infoLabel);
                 HBox labelBox = new HBox();
                 Label label = new Label();
+                label.getStyleClass().add("contentMessage");
                 label.setText(message.getContent());
 
                 content.getStyleClass().add("messageConversationSearchedBox");

@@ -3,6 +3,7 @@ package com.voicechat.client.mainpage.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.ServerReader;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.mainpage.component.ConversationComponent;
@@ -45,6 +46,8 @@ public class HeaderController {
     @FXML
     private ImageView myAvatar;
 
+    private final ServerReader serverReader = Listener.getServerReader();
+
     private final HeaderService headerService = new HeaderService();
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -83,7 +86,7 @@ public class HeaderController {
             try {
                 String correlationId = UUID.randomUUID().toString();
                 headerService.sendAvatarInfo(correlationId, UserSession.INSTANCE.getUser());
-                myAvatar.setImage(Listener.getServerReader().getAvatarByCorrelationId(correlationId).getImage());
+                myAvatar.setImage(serverReader.getAvatarByCorrelationId(correlationId).getImage());
                 myAvatar.setFitWidth(40.);
                 myAvatar.setFitHeight(40.);
             } catch (Exception e) {

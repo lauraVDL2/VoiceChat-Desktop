@@ -91,33 +91,39 @@ public class RegisterController {
             // Synchronously call the registration service (blocking)
             ServerResponse serverResponse = null;
             try {
-                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
-                Parent root = mainPageLoader.load();
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root, 300, 300);
-                stage.setScene(scene);
-
                 User user = new User(email, displayedName, password);
                 String correlationId = UUID.randomUUID().toString();
                 registerService.register(user, correlationId);
                 serverResponse = serverReader.getServerResponseByCorrelationId(correlationId);
-                connectController.loadUserScreen(serverResponse, stage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // Handle the response directly on the JavaFX thread
+            // Handle the response FIRST, before switching scenes
             if (serverResponse != null) {
                 if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_CREATED) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.FAILURE) {
                         errorMessageLog.setText(serverResponse.getMessage());
                         errorMessageLog.setVisible(true);
+                        return;  // ← Exit early on failure, don't switch scenes
                     } else {
                         UserSession.INSTANCE.setUser(new User(email, displayedName, password));
+                        // Fall through to switch scene on success
                     }
                 }
             }
 
+            // Now switch scene (only for success or if needed)
+            try {
+                FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("login/connect-view.fxml"));
+                Parent root = mainPageLoader.load();
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root, 300, 300);
+                stage.setScene(scene);
+                connectController.loadUserScreen(serverResponse, stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

@@ -34,6 +34,7 @@ import org.shared.entity.User;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -59,7 +60,7 @@ public class ConversationComponent {
                 Label labelTime = new Label();
                 Message conversationMessage = conversation.getMessages().stream().findFirst().orElse(null);
                 Message message = user.getMessages().stream()
-                        .filter(userMessage -> userMessage.getId() == conversationMessage.getId())
+                        .filter(userMessage -> Objects.equals(userMessage.getId(), conversationMessage.getId()))
                         .findFirst().orElse(null);
                 labelTime.setText(" - " + message.getTime());
                 vBox1.getChildren().add(labelName);
@@ -358,6 +359,7 @@ public class ConversationComponent {
 
     public ScrollPane addMessagesScrollPane(MainPageController mainPageController, VBox vBox, Conversation conversation) {
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setId("conversationScrollPane");
         scrollPane.setContent(vBox);
         scrollPane.fitToHeightProperty().set(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
