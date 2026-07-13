@@ -148,7 +148,7 @@ public class ScreenShareComponent {
         pause.setOnFinished(event -> {
             try {
                 callController.readScreen();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             if (read) {

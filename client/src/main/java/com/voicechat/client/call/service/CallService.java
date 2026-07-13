@@ -89,7 +89,8 @@ public class CallService {
         message.setMessageType(MessageType.IS_TALKING);
         //byte[] bytes = compress(chunk);
         byte[] bytes = voice.getAudio();
-        voice.setAudio(compress(bytes));
+        // already Opus-encoded, do not deflate here
+        voice.setAudio(bytes);
         message.setBinaryPayload(objectMapper.writeValueAsBytes(voice));
         String correlationId = UUID.randomUUID().toString();
         message.setCorrelationId(correlationId);
@@ -161,6 +162,37 @@ public class CallService {
             deflater.end(); // Free resources
             return baos.toByteArray(); // Return compressed data
         }
+    }
+
+    public byte[] decompressVoice(byte[] compressedData) throws Exception {
+        // Initialize decoder once
+        OpusDecoder decoder = new OpusDecoder(48000, 1);
+
+        int frameSize = 960; // samples per frame, typical for 20ms at 48kHz
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int offset = 0;
+        while (offset < compressedData.length) {
+            int maxPacketSize = Math.min(1024, compressedData.length - offset);
+            byte[] packet = Arrays.copyOfRange(compressedData, offset, offset + maxPacketSize);
+            offset += maxPacketSize;
+
+            // Decode the packet into PCM samples
+            short[] decodedSamples = decoder.decode(packet); // returns short[]
+
+            // Convert short[] to byte[] with correct byte order
+            ByteBuffer buf = ByteBuffer.allocate(decodedSamples.length * 2);
+            buf.order(ByteOrder.BIG_ENDIAN); // match your AudioFormat
+            for (short s : decodedSamples) {
+                buf.putShort(s);
+            }
+
+            baos.write(buf.array());
+        }
+        decoder.close();
+
+        return baos.toByteArray();
     }
 
     // Decompress byte array

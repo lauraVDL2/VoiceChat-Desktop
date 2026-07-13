@@ -68,7 +68,7 @@ public class CallController {
         exit(stage);
     }
 
-    public void readScreen() throws IOException {
+    public void readScreen() throws Exception {
         var responses = Listener.getServerReader()
                 .getServerResponseBySpecificField("screen-" + UserSession.INSTANCE.getUser().getEmailAddress());
         if (CollectionUtils.isNotEmpty(responses)) {
@@ -89,7 +89,7 @@ public class CallController {
         }
     }
 
-    public void readCamera() throws IOException {
+    public void readCamera() throws Exception {
         var responses = Listener.getServerReader()
                 .getServerResponseBySpecificField("camera-" + UserSession.INSTANCE.getUser().getEmailAddress());
         if (CollectionUtils.isNotEmpty(responses)) {
@@ -108,7 +108,7 @@ public class CallController {
         }
     }
 
-    public void listenVoice(SourceDataLine speakerLine) throws IOException {
+    public void listenVoice(SourceDataLine speakerLine) throws Exception {
         var responses = Listener.getServerReader()
                 .getServerResponseBySpecificField("voice-" + UserSession.INSTANCE.getUser().getEmailAddress());
         if (CollectionUtils.isNotEmpty(responses)) {
@@ -118,7 +118,7 @@ public class CallController {
                         if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                             Voice voice = objectMapper.readValue(response.getBinaryPayload(), Voice.class);
-                            byte[] audioBytes = callService.decompress(voice.getAudio());
+                            byte[] audioBytes = callService.decompressVoice(voice.getAudio());
                             if (speakerLine != null && speakerLine.isOpen()) {
                                 // Write audio bytes to speaker line
                                 speakerLine.write(audioBytes, 0, audioBytes.length);

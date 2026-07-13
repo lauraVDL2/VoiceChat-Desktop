@@ -22,8 +22,7 @@ public class ServerReader {
     // Map correlationId -> queue of server responses
     private final ConcurrentMap<String, BlockingQueue<ServerResponse>> serverResponseQueues = new ConcurrentHashMap<>();
     // Map correlationId -> list of email notifications
-    private final ConcurrentMap<String, List<String>> notifications = new ConcurrentHashMap<>();
-    // Map correlationId -> avatar URL or ID (if needed)
+    private final ConcurrentMap<String, java.util.concurrent.CopyOnWriteArrayList<String>> notifications = new ConcurrentHashMap<>();    // Map correlationId -> avatar URL or ID (if needed)
     private final ConcurrentMap<String, String> avatars = new ConcurrentHashMap<>();
     // Map correlationId -> queue of server responses for processMessage
     private final ConcurrentMap<String, ConcurrentLinkedQueue<ServerResponse>> messageQueues = new ConcurrentHashMap<>();
@@ -40,7 +39,8 @@ public class ServerReader {
 
     public void processMessage(ServerResponse response) {
         String correlationId = response.getCorrelationId();
-        ThreadLocal<List<ServerResponse>> queue = correlationIdMap.computeIfAbsent(correlationId, k -> new ThreadLocal<>());
+        ThreadLocal<List<ServerResponse>> queue =
+                correlationIdMap.computeIfAbsent(correlationId, k -> ThreadLocal.withInitial(java.util.ArrayList::new));
         queue.get().add(response);
     }
 
@@ -198,8 +198,7 @@ public class ServerReader {
                                     if (entry.getValue().equals(correlationId)) {
                                         // If you need to update UI notifications, wrap in Platform.runLater()
                                         Platform.runLater(() -> {
-                                            notifications.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).add(correlationId);
-                                        });
+                                            notifications.computeIfAbsent(entry.getKey(), k -> new java.util.concurrent.CopyOnWriteArrayList<>()).add(correlationId);                                        });
                                     }
                                 }
                             }
