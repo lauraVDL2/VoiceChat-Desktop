@@ -3,11 +3,15 @@ package com.voicechat.client.call.component;
 import com.voicechat.client.call.controller.CallController;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
-import javafx.animation.PauseTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -33,11 +37,15 @@ import javafx.util.Duration;
 import org.opencv.core.Mat;
 import org.shared.pojo.ScreenShare;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,6 +58,20 @@ public class ScreenShareComponent {
     private Thread sendThread, captureThread;
 
     private final CallService callService = new CallService();
+    private AnimationTimer serviceSend, serviceReceive;
+    private WritableImage previousFrame = null;
+    private Robot robot;
+
+    public void setupScreenSharing() {
+        if (robot == null) {
+            try {
+                robot = new Robot();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+    }
 
     public void setScreenShareButton(ImageView shareScreenButton, StackPane stackPane, String meetingId) {
         shareScreenButton.setOnMouseClicked((event) -> {
@@ -95,24 +117,27 @@ public class ScreenShareComponent {
     }
 
     public void sendImage(ListView<Screen> screenChoiceList, StackPane stackPane, String meetingId) {
+        setupScreenSharing();
         screenChoiceList.setOnMouseClicked(e -> {
             Screen selectedScreen = screenChoiceList.getSelectionModel().getSelectedItem();
             if (selectedScreen != null) {
                 isSharing = true;
-                    Platform.runLater(() -> {
-                        PauseTransition pause = new PauseTransition(Duration.millis(33));
-                        pause.setOnFinished(event -> {
-                        try {
-                            Robot robot = new Robot();
-                            // Capture the primary screen's bounds
-                            Rectangle2D screenBounds = selectedScreen.getBounds();
 
-                            // Create a WritableImage to store the screenshot
+                // Cancel existing timer if running
+                if (serviceSend != null) {
+                    serviceSend.stop();
+                }
+
+                // Create and start new AnimationTimer
+                serviceSend = new AnimationTimer() {
+                    @Override
+                    public void handle(long now) {
+                        try {
+                            Rectangle2D screenBounds = selectedScreen.getBounds();
                             WritableImage screenCapture = new WritableImage(
                                     (int) screenBounds.getWidth(),
                                     (int) screenBounds.getHeight());
 
-                            // Capture the screen
                             robot.getScreenCapture(screenCapture, screenBounds);
 
                             Image image = scaleImage(screenCapture, (int) screenBounds.getWidth(), (int) screenBounds.getHeight());
@@ -127,38 +152,34 @@ public class ScreenShareComponent {
 
                             // Send the frame
                             callService.screenShare(screenShare);
-
-                            if (isSharing) {
-                                pause.playFromStart();
-                            }
                         } catch (Exception ex) {
-                            throw new RuntimeException(ex);
+                            ex.printStackTrace();
                         }
-                    });
-                        pause.play();
-                    });
-                }
+                    }
+                };
+                serviceSend.start();
+            }
         });
     }
 
     public void receiveAndDisplay(CallController callController) {
-        // Create a PauseTransition for periodic execution
-        PauseTransition pause = new PauseTransition(Duration.millis(33));
+        // Stop existing timer if running
+        if (serviceReceive != null) {
+            serviceReceive.stop();
+        }
 
-        pause.setOnFinished(event -> {
-            try {
-                callController.readScreen();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        // Create new AnimationTimer for receiving/displaying
+        serviceReceive = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    callController.readScreen();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            if (read) {
-                // Restart the transition for the next cycle
-                pause.playFromStart();
-            }
-        });
-
-        // Start the periodic task
-        pause.play();
+        };
+        serviceReceive.start();
     }
 
     public void addScreenToNode(StackPane stackPane, byte[] bytes) {
@@ -183,15 +204,42 @@ public class ScreenShareComponent {
         }
     }
 
-    public byte[] imageToByteArray(Image frame) {
+    public byte[] imageToByteArray(Image frame) throws IOException {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(frame, null);
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(bufferedImage, "png", baos);
-            return baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+
+
+        if (bufferedImage.getType() != BufferedImage.TYPE_INT_RGB) {
+            BufferedImage newBufferedImage = new BufferedImage(
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_RGB);
+            newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, null);
+            bufferedImage = newBufferedImage;
         }
+
+        byte[] result = new byte[0];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // Get a JPEG ImageWriter
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+        if (!writers.hasNext()) {
+            throw new RuntimeException("No JPG ImageWriter found");
+        }
+        ImageWriter writer = writers.next();
+        // Set up output
+        writer.setOutput(ImageIO.createImageOutputStream(baos));
+        // Configure compression quality
+        ImageWriteParam param = writer.getDefaultWriteParam();
+        if (param.canWriteCompressed()) {
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(0.5f); // Set compression quality here
+        }
+        // Write image
+        writer.write(null, new IIOImage(bufferedImage, null, null), param);
+        result = baos.toByteArray();
+        System.out.println(result.length);
+        writer.dispose();
+        baos.close();
+        return result;
     }
 
     public Image byteArrayToImage(byte[] imageBytes) {

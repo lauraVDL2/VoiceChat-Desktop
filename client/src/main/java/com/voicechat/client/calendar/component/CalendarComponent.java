@@ -168,12 +168,12 @@ public class CalendarComponent {
 
         Platform.runLater(() -> {
             // Optional: small delay to ensure layout is ready
-            PauseTransition pauseTransition = new PauseTransition(Duration.millis(33));
-            pauseTransition.setOnFinished(event -> {
+            //PauseTransition pauseTransition = new PauseTransition(Duration.millis(33));
+            //pauseTransition.setOnFinished(event -> {
                 // Call the method to scroll to the desired hour
                 scrollToHour(scrollPaneGrid, targetHour);
-            });
-            pauseTransition.play();
+            //});
+            //pauseTransition.play();
         });
     }
 

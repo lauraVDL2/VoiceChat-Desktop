@@ -9,6 +9,7 @@ import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
 import de.maxhenkel.opus4j.OpusDecoder;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,6 +32,7 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class CallController {
 
@@ -70,25 +72,42 @@ public class CallController {
         exit(stage);
     }
 
-    public void readScreen() throws Exception {
-        var responses = Listener.getServerReader()
-                .getServerResponseBySpecificField("screen-" + UserSession.INSTANCE.getUser().getEmailAddress());
-        if (CollectionUtils.isNotEmpty(responses)) {
-            for (ServerResponse response : responses) {
-                if (response != null) {
-                    if (response.getServerResponseMessage() == ServerResponseMessage.IS_SCREEN_SHARING) {
-                        if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-                            ScreenShare screenShare = objectMapper.readValue(response.getBinaryPayload(), ScreenShare.class);
-                            byte[] screenData = callService.decompress(screenShare.getFrames());
-                            screenShareComponent.addScreenToNode(imageStackPane, screenData);
-                            System.out.println("apres addScreenToNode");
-                            //screenShareComponent.addScreenToNode(imageStackPane, screenShare.getFrames());
-                        }
+    public void readScreen() {
+        //Task<Void> imageUpdateTask = new Task<>() {
+            //@Override
+           //protected Void call() throws Exception {
+        try {
+            var responses = Listener.getServerReader()
+                    .getServerResponseBySpecificField("screen-" + UserSession.INSTANCE.getUser().getEmailAddress());
+            if (CollectionUtils.isNotEmpty(responses)) {
+                for (ServerResponse response : responses) {
+                    if (response != null &&
+                            response.getServerResponseMessage() == ServerResponseMessage.IS_SCREEN_SHARING &&
+                            response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+
+                        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                        ScreenShare screenShare = objectMapper.readValue(response.getBinaryPayload(), ScreenShare.class);
+                        byte[] screenData = callService.decompress(screenShare.getFrames());
+                        Platform.runLater(() -> {
+                            try {
+                                screenShareComponent.addScreenToNode(imageStackPane, screenData);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+               // return null;
+//            }
+//        };
+//
+//        Thread thread = new Thread(imageUpdateTask);
+//        thread.setDaemon(true);
+//        thread.start();
     }
 
     public void readCamera() throws Exception {
@@ -134,6 +153,7 @@ public class CallController {
                 speakerLine.write(batchedData, 0, batchedData.length);
                 speakerLine.drain(); // Call drain once after batch
             }
+            batchBuffer.close();
         }
     }
 
