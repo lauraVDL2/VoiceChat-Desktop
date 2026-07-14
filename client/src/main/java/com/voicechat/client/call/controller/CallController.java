@@ -7,6 +7,7 @@ import com.voicechat.client.call.component.CameraComponent;
 import com.voicechat.client.call.component.ScreenShareComponent;
 import com.voicechat.client.call.service.CallService;
 import com.voicechat.client.common.UserSession;
+import de.maxhenkel.opus4j.OpusDecoder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -28,6 +29,7 @@ import org.shared.pojo.Voice;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class CallController {
@@ -108,9 +110,10 @@ public class CallController {
         }
     }
 
-    public void listenVoice(SourceDataLine speakerLine) throws Exception {
+    public void listenVoice(SourceDataLine speakerLine, OpusDecoder decoder) throws Exception {
         var responses = Listener.getServerReader()
                 .getServerResponseBySpecificField("voice-" + UserSession.INSTANCE.getUser().getEmailAddress());
+        ByteArrayOutputStream batchBuffer = new ByteArrayOutputStream();
         if (CollectionUtils.isNotEmpty(responses)) {
             for (ServerResponse response : responses) {
                 if (response != null) {
@@ -118,17 +121,18 @@ public class CallController {
                         if (response.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
                             Voice voice = objectMapper.readValue(response.getBinaryPayload(), Voice.class);
-                            byte[] audioBytes = callService.decompressVoice(voice.getAudio());
-                            if (speakerLine != null && speakerLine.isOpen()) {
-                                // Write audio bytes to speaker line
-                                speakerLine.write(audioBytes, 0, audioBytes.length);
-                                speakerLine.drain();
+                            byte[] audioBytes = callService.decompressVoice(voice.getAudio(), decoder);
+                            if (audioBytes != null && audioBytes.length > 0) {
+                                batchBuffer.write(audioBytes);
                             }
-                            // Optionally keep the line open or close after each response
-                            // speakerLine.close(); // Uncomment if you want to close after each
                         }
                     }
                 }
+            }
+            byte[] batchedData = batchBuffer.toByteArray();
+            if (batchedData.length > 0 && speakerLine != null && speakerLine.isOpen()) {
+                speakerLine.write(batchedData, 0, batchedData.length);
+                speakerLine.drain(); // Call drain once after batch
             }
         }
     }

@@ -164,9 +164,9 @@ public class CallService {
         }
     }
 
-    public byte[] decompressVoice(byte[] compressedData) throws Exception {
+    public byte[] decompressVoice(byte[] compressedData, OpusDecoder decoder) throws Exception {
         // Initialize decoder once
-        OpusDecoder decoder = new OpusDecoder(48000, 1);
+        //decoder = new OpusDecoder(48000, 1);
 
         int frameSize = 960; // samples per frame, typical for 20ms at 48kHz
 
@@ -183,14 +183,13 @@ public class CallService {
 
             // Convert short[] to byte[] with correct byte order
             ByteBuffer buf = ByteBuffer.allocate(decodedSamples.length * 2);
-            buf.order(ByteOrder.BIG_ENDIAN); // match your AudioFormat
+            buf.order(ByteOrder.LITTLE_ENDIAN); // match your AudioFormat
             for (short s : decodedSamples) {
                 buf.putShort(s);
             }
 
             baos.write(buf.array());
         }
-        decoder.close();
 
         return baos.toByteArray();
     }

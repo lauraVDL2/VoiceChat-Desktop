@@ -29,12 +29,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AudioDeviceComponent extends AbstractAudioDevice {
     private boolean microphoneCut = true;
-    private Timeline volumeMonitorTimeline;
-    private Line currentLine; // Keep track of the current line to close/dispose
-    private SourceDataLine speakerLine;
 
     private volatile boolean capturing = false;
     private volatile boolean listening = false;
@@ -42,56 +40,68 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
     private short[] leftoverSamples = new short[0];
     private CompletableFuture<Void> listeningFuture;
     private double rms = 0;
+    private AudioFormat supportedFormat;
+    //private final ReentrantLock lock = new ReentrantLock();
 
     private final CallService callService = new CallService();
 
     public void setAudioDevice(boolean microphoneCut, Mixer.Info selectedHeadMixerInfo, Mixer.Info selectedMicMixerInfo,
                                AudioFormat audioFormat, String meetingId, CallController callController) {
         this.microphoneCut = microphoneCut;
+        initializeOpus();
         startVolumeMonitoring(selectedHeadMixerInfo, callController);
         startAudioCapture(selectedMicMixerInfo, meetingId);
     }
 
-    public void receiveAndPlay(Mixer.Info selectedMixerInfo, CallController callController) throws IOException, LineUnavailableException {
+    public void receiveAndPlay(Mixer.Info selectedMixerInfo, CallController callController) throws LineUnavailableException {
         listening = true;
+        byte[] buffer = new byte[1024];
+        AudioFormat audioFormat = getAudioFormat(selectedMixerInfo);
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+        if (speakersLine == null) {
+            speakersLine = (SourceDataLine) AudioSystem.getLine(info);
+        }
+        synchronized (speakersLine) {
+            if (!speakersLine.isOpen()) {
+                speakersLine.open(audioFormat);
+            }
+            if (!speakersLine.isRunning()) {
+                speakersLine.start();
+            }
+        }
+
+        // Optional: Verify speakerLine is initialized
+        if (speakersLine == null) {
+            DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat);
+            speakersLine = (SourceDataLine) AudioSystem.getLine(info2);
+            speakersLine.open(audioFormat);
+            speakersLine.start();
+        }
 
         Task<Void> listenTask = new Task<>() {
             @Override
             protected Void call() {
-                try {
-                    byte[] buffer = new byte[1024];
-                    AudioFormat audioFormat = getAudioFormat(selectedMixerInfo);
-                    DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                    speakerLine = (SourceDataLine) AudioSystem.getLine(info);
-                    speakerLine.open(audioFormat);
-                    speakerLine.start();
-
-                    // Optional: Verify speakerLine is initialized
-                    if (speakerLine == null) {
-                        DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat);
-                        speakerLine = (SourceDataLine) AudioSystem.getLine(info2);
-                        speakerLine.open(audioFormat);
-                        speakerLine.start();
-                    }
-
-                    while (listening) {
-                        // Call your method for listening
-                        callController.listenVoice(speakerLine);
-                    }
-                    if (speakerLine != null) {
-                        speakerLine.drain();
-                        speakerLine.stop();
-                        speakerLine.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (speakerLine != null) {
-                        speakerLine.drain();
-                        speakerLine.stop();
-                        speakerLine.close();
-                    }
+            try {
+                while (listening) {
+                    // Call your method for listening
+                    callController.listenVoice(speakersLine, decoder);
                 }
+                if (speakersLine != null) {
+                    speakersLine.drain();
+                    speakersLine.stop();
+                    speakersLine.close();
+                }
+            } catch (Exception e) {
+                encoder.resetState();
+                decoder.resetState();
+                e.printStackTrace();
+            } finally {
+                if (speakersLine != null) {
+                    speakersLine.drain();
+                    speakersLine.stop();
+                    speakersLine.close();
+                }
+            }
                 return null;
             }
 
@@ -109,12 +119,29 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         thread.start();
     }
 
-    public AudioFormat getAudioFormat(Mixer.Info selectedMixerInfo) throws LineUnavailableException {
-        AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
+    private void tryAudioFormat(float sampleRate, int bits, int channels, boolean signed, boolean endian) {
+        AudioFormat format = new AudioFormat(sampleRate, bits, channels, signed, endian);
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+        if (AudioSystem.isLineSupported(info)) {
+            //System.out.println("Format supported" + format + " " + format.getChannels());
+            supportedFormat = format;
+        }
+    }
 
+    public AudioFormat getAudioFormat(Mixer.Info selectedMixerInfo) throws LineUnavailableException {
+        // Use little-endian (false) — many system mixers expect PCM little-endian
+        //AudioFormat format = new AudioFormat(16000.0f, 16, 1, true, false);
+
+        //tryAudioFormat(16000.0f, 16, 1, true, false); // 16 kHz, 16 bits, mono, signed, big-endian
+        //tryAudioFormat(16000.0f, 16, 1, true, false); // 16 kHz, 16 bits, mono, signed, little-endian
+        //tryAudioFormat(44100.0f, 16, 2, true, false); // 44.1 kHz, 16 bits, stereo, signed, big-endian
+        tryAudioFormat(44100.0f, 16, 2, true, false); // 44.1 kHz, 16 bits, stereo, signed, little-endian
         // Get the selected mixer
         Mixer selectedMixer = AudioSystem.getMixer(selectedMixerInfo);
-        TargetDataLine line = null;
+        if (line != null) {
+            line.start();
+            return line.getFormat();
+        }
 
         // Find TargetDataLine for this mixer
         Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
@@ -136,16 +163,16 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
                     if (line == null) {
                         line = getDefaultMicrophone();
                         if (line != null) {
-                            format = line.getFormat();
+                            supportedFormat = line.getFormat();
                         }
                     }
                     else {
-                        format = line.getFormat();
+                        supportedFormat = line.getFormat();
                     }
                 }
             }
         }
-        return format;
+        return supportedFormat;
     }
 
     private void startAudioCapture(Mixer.Info selectedMixerInfo, String meetingId) {
@@ -156,13 +183,17 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
         Task<Void> captureTask = new Task<>() {
             @Override
             protected Void call() {
-                TargetDataLine line = null;
-                SourceDataLine speakersLine = null;
-                try {
-                    AudioFormat format = new AudioFormat(44100.0f, 16, 1, true, true);
-                    Mixer selectedMixer = AudioSystem.getMixer(selectedMixerInfo);
-                    Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
+            try {
+                // Use little-endian here as well
+                AudioFormat format = new AudioFormat(16000.0f, 16, 1, true, false);
+                Mixer selectedMixer = AudioSystem.getMixer(selectedMixerInfo);
+                Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
 
+                if (line != null) {
+                    format = line.getFormat();
+                    line.start();
+                }
+                else {
                     // Find TargetDataLine
                     for (Line.Info info : targetLineInfos) {
                         if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
@@ -189,89 +220,83 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
                             }
                         }
                     }
-                    if (line != null) {
+                }
+                if (line != null) {
+                    if (!line.isOpen()) {
                         line.open(format);
                         line.start();
+                    }
 
+                    if (speakersLine == null) {
                         speakersLine = AudioSystem.getSourceDataLine(format);
                         speakersLine.open(format);
-                        speakersLine.start();
-
-                        OpusEncoder encoder = new OpusEncoder(48000, 1, OpusEncoder.Application.AUDIO);
-                        int frameSize = 960; // samples per frame
-                        byte[] readBuffer = new byte[frameSize * 2]; // 2 bytes per sample
-
-                        byte[][] leftoverBytes = { new byte[0] };
-
-                        while (!isCancelled() && capturing) {
-                            int bytesRead = line.read(readBuffer, 0, readBuffer.length);
-                            if (bytesRead == -1) break;
-
-                            // Concatenate leftover bytes with new read
-                            byte[] combinedBytes = new byte[leftoverBytes[0].length + bytesRead];
-                            System.arraycopy(leftoverBytes[0], 0, combinedBytes, 0, leftoverBytes[0].length);
-                            System.arraycopy(readBuffer, 0, combinedBytes, leftoverBytes[0].length, bytesRead);
-
-                            int totalBytes = combinedBytes.length;
-                            int processBytes = totalBytes - (totalBytes % 2);
-
-                            // Convert bytes to PCM samples
-                            short[] pcmSamples = new short[processBytes / 2];
-                            ByteBuffer bb = ByteBuffer.wrap(combinedBytes, 0, processBytes);
-                            bb.order(ByteOrder.BIG_ENDIAN);
-                            for (int i = 0; i < pcmSamples.length; i++) {
-                                pcmSamples[i] = bb.getShort();
-                            }
-
-                            int offset = 0;
-                            if (offset + frameSize <= pcmSamples.length) {
-                            //while (offset + frameSize <= pcmSamples.length) {
-                                short[] frame = Arrays.copyOfRange(pcmSamples, offset, offset + frameSize);
-                                byte[] compressed = encoder.encode(frame);
-
-                                byte[] finalBuffer = applyAGC(compressed, compressed.length);
-                                double normalizedVolume = rmsToProgress(rms);
-                                double loudThreshold = 0.01;
-                                if (normalizedVolume > loudThreshold) {
-                                    // Send voice
-                                    Voice voice = new Voice();
-                                    voice.setAudio(Arrays.copyOf(finalBuffer, finalBuffer.length));
-                                    voice.setMeetingId(meetingId);
-                                    voice.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
-                                    callService.talk(voice);
-                                    offset += frameSize;
-                                } else {
-                                    // Skip sending if below threshold
-                                    offset += frameSize;
-                                }
-                            }
-
-                            // Save remaining samples as leftover
-                            int remainingSamples = pcmSamples.length - offset;
-                            ByteBuffer buffer = ByteBuffer.allocate(remainingSamples * 2);
-                            buffer.order(ByteOrder.BIG_ENDIAN);
-                            for (int i = offset; i < pcmSamples.length; i++) {
-                                buffer.putShort(pcmSamples[i]);
-                            }
-                            leftoverBytes[0] = buffer.array();
-                        }
-
-                        encoder.close();
-
-                        if (line != null) {
-                            line.stop();
-                            line.close();
-                        }
-                        if (speakersLine != null) {
-                            speakersLine.drain();
-                            speakersLine.stop();
-                            speakersLine.close();
-                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                finally {
+                    if (!speakersLine.isRunning()) {
+                        speakersLine.start();
+                    }
+
+                    // OpusEncoder encoder = new OpusEncoder(48000, 1, OpusEncoder.Application.AUDIO);
+                    int frameSize = 960; // samples per frame
+                    byte[] readBuffer = new byte[frameSize * 2]; // 2 bytes per sample
+
+                    byte[][] leftoverBytes = { new byte[0] };
+
+                    while (!Thread.currentThread().isInterrupted() && capturing) {
+                        int bytesRead = line.read(readBuffer, 0, readBuffer.length);
+                        if (bytesRead == -1) break;
+
+                        // Concatenate leftover bytes with new read
+                        byte[] combinedBytes = new byte[leftoverBytes[0].length + bytesRead];
+                        System.arraycopy(leftoverBytes[0], 0, combinedBytes, 0, leftoverBytes[0].length);
+                        System.arraycopy(readBuffer, 0, combinedBytes, leftoverBytes[0].length, bytesRead);
+
+                        int totalBytes = combinedBytes.length;
+                        int processBytes = totalBytes - (totalBytes % 2);
+
+                        // Convert bytes to PCM samples
+                        short[] pcmSamples = new short[processBytes / 2];
+                        ByteBuffer bb = ByteBuffer.wrap(combinedBytes, 0, processBytes);
+                        bb.order(ByteOrder.LITTLE_ENDIAN);
+                        for (int i = 0; i < pcmSamples.length; i++) {
+                            pcmSamples[i] = bb.getShort();
+                        }
+
+                        int offset = 0;
+                        while (offset + frameSize <= pcmSamples.length) {
+                            short[] frame = Arrays.copyOfRange(pcmSamples, offset, offset + frameSize);
+                            byte[] compressed = encoder.encode(frame);
+
+                            byte[] finalBuffer = applyAGC(compressed, compressed.length);
+                            double normalizedVolume = rmsToProgress(rms);
+                            double loudThreshold = 0.01;
+                            if (normalizedVolume > loudThreshold) {
+                                //System.out.println("LOUD");
+                                // Send voice
+                                Voice voice = new Voice();
+                                voice.setAudio(Arrays.copyOf(finalBuffer, finalBuffer.length));
+                                voice.setMeetingId(meetingId);
+                                voice.setUserEmailAddress(UserSession.INSTANCE.getUser().getEmailAddress());
+                                callService.talk(voice);
+                                offset += frameSize;
+                            } else {
+                                // Skip sending if below threshold
+                                offset += frameSize;
+                            }
+                            // encoder.resetState();
+                        }
+
+                        // Save remaining samples as leftover
+                        int remainingSamples = pcmSamples.length - offset;
+                        ByteBuffer buffer = ByteBuffer.allocate(remainingSamples * 2);
+                        buffer.order(ByteOrder.LITTLE_ENDIAN);
+                        for (int i = offset; i < pcmSamples.length; i++) {
+                            buffer.putShort(pcmSamples[i]);
+                        }
+                        leftoverBytes[0] = buffer.array();
+                    }
+
+                    // encoder.close();
+
                     if (line != null) {
                         line.stop();
                         line.close();
@@ -282,6 +307,21 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
                         speakersLine.close();
                     }
                 }
+            } catch (Exception e) {
+                encoder.resetState();
+                decoder.resetState();
+                e.printStackTrace();
+            } finally {
+                if (line != null) {
+                    line.stop();
+                    line.close();
+                }
+                if (speakersLine != null) {
+                    speakersLine.drain();
+                    speakersLine.stop();
+                    speakersLine.close();
+                }
+            }
                 return null;
             }
         };
@@ -296,26 +336,29 @@ public class AudioDeviceComponent extends AbstractAudioDevice {
     }
 
     private byte[] applyAGC(byte[] buffer, int bytesRead) {
-        // Ensure bytesRead is even
         int length = bytesRead;
         if (length % 2 != 0) {
-            length -= 1; // ignore the last byte if odd
+            length -= 1; // ignore last byte if odd
         }
+
+        // Safety check
+        if (length < 2) {
+            return buffer; // Not enough data to process
+        }
+
         rms = calculateRMS(buffer, length);
 
-        double targetRMS = 0.02; // desired volume level
-        double gain = targetRMS / (rms + 1e-6); // avoid division by zero
+        double targetRMS = 0.02;
+        double gain = targetRMS / (rms + 1e-6);
+        gain = Math.min(gain, 10.0);
+        gain = Math.max(gain, 1.0);
 
-        // Clamp gain to prevent excessive amplification
-        gain = Math.min(gain, 10.0); // maximum gain factor
-        gain = Math.max(gain, 1.0);  // ensure gain is at least 1 for louder effect
-
-        // Apply gain to each sample
         for (int i = 0; i < length; i += 2) {
+            // Confirm indices are valid
+            if (i + 1 >= length) break;
+
             short sample = (short) ((buffer[i] & 0xff) | (buffer[i + 1] << 8));
             int amplifiedSample = (int) (sample * gain);
-
-            // Clamp to avoid overflow
             amplifiedSample = Math.min(Math.max(amplifiedSample, Short.MIN_VALUE), Short.MAX_VALUE);
 
             buffer[i] = (byte) (amplifiedSample & 0xff);

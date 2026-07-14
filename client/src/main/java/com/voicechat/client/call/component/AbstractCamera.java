@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
 public abstract class AbstractCamera {
-    static { OpenCV.loadShared(); }
+    static { OpenCV.loadLocally(); }
 
     protected VideoCapture capture;
     protected boolean cameraActive = false;

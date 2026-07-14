@@ -22,6 +22,8 @@ import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.sound.sampled.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
 
@@ -37,6 +39,9 @@ public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
 
     private ProgressBar progressBar;
     private ComboBox<String> micComboBox;
+    //private final ReentrantLock lock = new ReentrantLock();
+    private ConcurrentHashMap<String, TargetDataLine> audioLines = new ConcurrentHashMap<>();
+
 
     private Mixer.Info selectedHeadMixerInfo;
     private Mixer.Info selectedMicMixerInfo;
@@ -161,109 +166,137 @@ public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
         }
     }
 
-    private void startAudioCapture() {
-        // Stop previous capture if any
-        stopAudioCapture();
+    private void startAudioCapture() throws Exception {
+       // lock.lock();
+            stopAudioCapture(); // Ensure previous capture is stopped
 
-        /*int selectedIndex = micComboBox.getSelectionModel().getSelectedIndex();
-        if (selectedIndex < 0 || selectedIndex >= AudioSystem.getMixerInfo().length) {
-            System.out.println("Invalid microphone selection");
-            return;
-        }
+            System.out.println("descr = " + selectedMicMixerInfo.getDescription() + " mic name = " + selectedMicMixerInfo.getName());
 
-        selectedMicMixerInfo = AudioSystem.getMixerInfo()[selectedIndex];*/
-        System.out.println("descr = " + selectedMicMixerInfo.getDescription() + " mic name = " + selectedMicMixerInfo.getName());
+            capturing = true;
 
-        capturing = true;
+            // Define audio format (use little-endian — commonly supported)
+            audioFormat = new AudioFormat(16000.0f, 16, 1, true, false);
 
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    // Define audio format
-                    audioFormat = new AudioFormat(44100.0f, 16, 1, true, true);
+            // Get the selected mixer
+            Mixer selectedMixer = AudioSystem.getMixer(selectedMicMixerInfo);
+            line = null;
 
-                    // Get the selected mixer
-                    Mixer selectedMixer = AudioSystem.getMixer(selectedMicMixerInfo);
-                    TargetDataLine line = null;
+            // Find TargetDataLine for this mixer
+            Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
 
-                    // Find TargetDataLine for this mixer
-                    Line.Info[] targetLineInfos = selectedMixer.getTargetLineInfo();
+            for (Line.Info info : targetLineInfos) {
+                if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
+                    line = (TargetDataLine) selectedMixer.getLine(info);
+                    break;
+                }
+            }
 
-                    for (Line.Info info : targetLineInfos) {
-                        if (TargetDataLine.class.isAssignableFrom(info.getLineClass())) {
-                            line = (TargetDataLine) selectedMixer.getLine(info);
-                            break;
-                        }
-                    }
-
-                    if (line == null) {
-                        for (var sourceLine : selectedMixer.getSourceLineInfo()) {
-                            if (sourceLine instanceof Port.Info) {
-                                // Cast sourceLine to Port.Info
-                                Port.Info portInfo = (Port.Info) sourceLine;
-                                // Get the port from the mixer
-                                line = getTargetDataLineForPort(portInfo);
-                                if (line == null) {
-                                    line = getDefaultMicrophone();
-                                    if (line != null) {
-                                        audioFormat = line.getFormat();
-                                    }
-                                } else {
-                                    audioFormat = line.getFormat();
-                                }
+            if (line == null) {
+                for (Line.Info sourceLineInfo : selectedMixer.getSourceLineInfo()) {
+                    if (sourceLineInfo instanceof Port.Info) {
+                        Port.Info portInfo = (Port.Info) sourceLineInfo;
+                        line = getTargetDataLineForPort(portInfo);
+                        if (line == null) {
+                            line = getDefaultMicrophone();
+                            if (line != null) {
+                                audioFormat = line.getFormat();
                             }
+                        } else {
+                            audioFormat = line.getFormat();
                         }
                     }
-                    if (line != null) {
-                        line.open(audioFormat);
-                        line.start();
-                        SourceDataLine speakersLine;
-                        speakersLine = AudioSystem.getSourceDataLine(audioFormat);
-                        speakersLine.open(audioFormat);
-                        speakersLine.start();
+                }
+            }
+            if (line != null) {
+                line.open(audioFormat);
+                line.start();
+                speakersLine = AudioSystem.getSourceDataLine(audioFormat);
+                speakersLine.open(audioFormat);
+                speakersLine.start();
+                byte[] buffer = new byte[1024];
 
-
-                        byte[] buffer = new byte[1024];
+                Task<Void> listenTask = new Task<>() {
+                    @Override
+                    protected Void call() {
 
                         while (capturing) {
                             int bytesRead = line.read(buffer, 0, buffer.length);
                             double rms = calculateRMS(buffer, bytesRead);
                             double normalizedVolume = rmsToProgress(rms);
-                        /*// Send data to speakers (monitoring)
-                        if (speakersLine != null && bytesRead > 0) {
-                            speakersLine.write(buffer, 0, bytesRead);
-                        }*/
+                            // Send data to speakers (monitoring)
+                            if (speakersLine != null && bytesRead > 0) {
+                                speakersLine.write(buffer, 0, bytesRead);
+                            }
                             // Update UI
                             Platform.runLater(() -> progressBar.setProgress(normalizedVolume));
                         }
 
                         line.stop();
                         line.close();
+
+                        return null;
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
+                    @Override
+                    protected void failed() {
+                        super.failed();
+                        // Handle failure if needed
+                        Throwable exc = getException();
+                    }
+                };
 
-        captureThread = new Thread(task);
-        captureThread.setDaemon(true);
-        captureThread.start();
+                // Run the task in a background thread
+                captureThread = new Thread(listenTask);
+                captureThread.setDaemon(true);
+                captureThread.start();
+        }
     }
 
     public void stopAudioCapture() {
         capturing = false;
-        if (captureThread != null) {
+        if (line != null && line.isOpen()) {
+            line.stop();
+            line.close();  // Ensures the blocking `line.read()` unblocks
+        }
+        if (speakersLine != null && speakersLine.isOpen()) {
+            speakersLine.stop();
+            speakersLine.close();
+        }
+        if (captureThread != null && captureThread.isAlive()) {
+            captureThread.interrupt(); // interrupt if blocked
             try {
-                captureThread.join();
+                captureThread.join(); // wait for thread to finish
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            captureThread = null; // cleanup
         }
+        System.out.println("GO STOP AUDIO CAPTURE");
+//        // Optionally, close currentLine if open
+//        if (currentLine != null && currentLine.isOpen()) {
+//            //currentLine.close();
+//            //currentLine = null;
+//        }
+//        if (line != null && line.isOpen()) {
+//            line.stop();
+//            //line.close();
+//            //line = null;
+//        }
+//        if (lineVolume != null && lineVolume.isOpen()) {
+//            //lineVolume.close();
+//            //lineVolume = null;
+//        }
+//        if (volumeMonitorTimeline != null) {
+//            volumeMonitorTimeline.stop();
+//            //volumeMonitorTimeline = null;
+//        }
+//        if (speakersLine != null) {
+//            speakersLine.stop();
+//            //speakersLine.close();
+//            //speakersLine = null;
+//        }
     }
+
 
     public ImageView initAllowedMicrophone() {
         ImageView imageView = new ImageView();
@@ -280,7 +313,11 @@ public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
                     imageView.setImage(new Image(VoiceChatApplication.class.getResourceAsStream("/com/voicechat/client/images/microphone-cut.png")));
                 }
                 else {
-                    startAudioCapture();
+                    try {
+                        startAudioCapture();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                     imageView.setImage(new Image(VoiceChatApplication.class.getResourceAsStream("/com/voicechat/client/images/microphone.png")));
                 }
             });
@@ -352,16 +389,16 @@ public class AudioDeviceSelectorComponent extends AbstractAudioDevice {
 
         currentLine = null;
 
-        Line line = null;
+        lineVolume = null;
         try {
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
             Line.Info[] sourceLines = mixer.getSourceLineInfo();
             if (sourceLines.length > 0) {
-                line = (Line) mixer.getLine(sourceLines[0]);
-                if (!line.isOpen()) {
-                    line.open();
+                lineVolume = (Line) mixer.getLine(sourceLines[0]);
+                if (!lineVolume.isOpen()) {
+                    lineVolume.open();
                 }
-                currentLine = line;
+                currentLine = lineVolume;
 
 
             }

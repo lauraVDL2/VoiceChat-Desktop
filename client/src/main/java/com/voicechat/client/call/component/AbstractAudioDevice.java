@@ -1,14 +1,48 @@
 package com.voicechat.client.call.component;
 
+import de.maxhenkel.opus4j.NativeInitializer;
+import de.maxhenkel.opus4j.OpusDecoder;
+import de.maxhenkel.opus4j.OpusEncoder;
+import javafx.animation.Timeline;
+
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public abstract class AbstractAudioDevice {
+    protected OpusEncoder encoder;
+    protected OpusDecoder decoder;
+    protected TargetDataLine line;
+    protected Line lineVolume;
+    protected Timeline volumeMonitorTimeline;
+    protected Line currentLine; // Keep track of the current line to close/dispose
+    protected SourceDataLine speakersLine;
+
+    public void initializeOpus() {
+        try {
+            //System.loadLibrary("opus"); // optional
+            NativeInitializer.load("libopus4j");
+            encoder = new OpusEncoder(48000, 1, OpusEncoder.Application.VOIP);
+            decoder = new OpusDecoder(48000, 1);
+            decoder.setFrameSize(960);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cleanup() {
+        if (encoder != null) {
+            encoder.close();
+        }
+        if (decoder != null) {
+            decoder.close();
+        }
+    }
 
     public double calculateRMS(byte[] buffer, int bytesRead) {
         ByteBuffer bb = ByteBuffer.wrap(buffer, 0, bytesRead);
-        bb.order(ByteOrder.BIG_ENDIAN); // or LITTLE_ENDIAN depending on your format
+        // Use little-endian byte order to match the audio format created below
+        bb.order(ByteOrder.LITTLE_ENDIAN);
         long sum = 0;
         int sampleCount = bytesRead / 2;
 
@@ -32,7 +66,8 @@ public abstract class AbstractAudioDevice {
 
     public TargetDataLine getDefaultMicrophone() throws LineUnavailableException {
         // Define an audio format (sample rate, sample size, channels, etc.)
-        AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
+        // Use little-endian (false) because many platforms/mixers expect PCM little-endian
+        AudioFormat format = new AudioFormat(16000, 16, 1, true, false);
         // Create info object for TargetDataLine
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
         // Get the line (default microphone)
