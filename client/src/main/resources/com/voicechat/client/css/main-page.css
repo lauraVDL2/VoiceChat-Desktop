@@ -1,18 +1,24 @@
 .leftPane {
-    /*-fx-background-color: "#3581bc";*/
-    -fx-background-color: "#006abc";
+   /* -fx-background-color: "#a1add4";*/
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #a1add4, #006abc);
 }
 
 .mainPane {
-    -fx-background-color: "#f7f7f7";
+    -fx-background-color: "#eaeaea";
 }
 
 .messageConversationSearchedBox {
-    -fx-background-color: "#b6d1ff";
+    /*-fx-background-color: "#b6d1ff";*/
+    -fx-background-color: "#a1add4";
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-padding: 5;
 }
+
+.messageConversationSearchedList, .messageConversationSearched {
+    -fx-background-color: "#e0e0e0" !important;
+}
+
 .messageConversationSearched {
     -fx-cursor: hand;
 }
@@ -26,10 +32,12 @@
 .searchRightPane {
     -fx-border-color: transparent transparent transparent #b6d1ff;
     -fx-border-width: 0 0 0 1;
+    -fx-background-color: "#e0e0e0";
 }
 
 .searchField {
-    -fx-background-color: "#b6d1ff";
+    /*-fx-background-color: "#b6d1ff";*/
+    -fx-background-color: "#eaeaea";
     -fx-min-width: 200;
     -fx-pref-width: 400;
     -fx-max-width: 400;
@@ -43,7 +51,7 @@
 }
 
 .searchLabel {
-    -fx-background-color: "#e7e7e7";
+    -fx-background-color: "#e0e0e0";
     -fx-pref-width: 400;
     -fx-max-width: 400;
     -fx-min-width: 200;
@@ -72,7 +80,7 @@
 }
 
 .titled-pane > .title > .text {
-    -fx-fill: white;
+    -fx-fill: black;
     -fx-font-weight: bold;
     -fx-font-size: 14;
 }
@@ -86,7 +94,7 @@
 
 .conversationNameLabel {
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 .conversationLastMessageLabel {
@@ -94,12 +102,17 @@
     -fx-text-fill: white;
 }
 
+.discussionBox {
+    -fx-padding: 0;
+    -fx-margin: 0;
+}
+
 .conversationClicked {
     -fx-background-color: rgba(182, 209, 255, 0.5);
 }
 
 .conversationClicked Label {
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 .numberUnreadLabel {
@@ -172,8 +185,11 @@
 }
 
 .sendMessageField {
-    -fx-background-color: "#b6d1ff";
-    -fx-control-inner-background: "#b6d1ff";
+    /*-fx-background-color: "#b6d1ff";*/
+    -fx-background-color: "#eaeaea";
+    -fx-control-inner-background: "#eaeaea";
+    -fx-border-color: "#e0e0e0";
+    -fx-border-width: 2;
     -fx-min-height: 40px;
     -fx-pref-height: 40px;
     -fx-pref-width: 600px;
@@ -182,7 +198,8 @@
 }
 
 .searchMessages {
-    -fx-background-color: "#b6d1ff";
+    /*-fx-background-color: "#b6d1ff";*/
+    -fx-background-color: "#eaeaea";
     -fx-min-width: 220px;
     -fx-max-width: 220px;
     -fx-pref-width: 220px;

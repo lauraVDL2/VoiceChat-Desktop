@@ -191,11 +191,13 @@ public class ConversationComponent {
 
             Text messageText = new Text(message.getContent());
             messageText.getStyleClass().add("conversationMessageText");
-            messageText.setWrappingWidth(400);
-            TextFlow messageTextFlow = new TextFlow(messageText);
-            messageTextFlow.setMaxWidth(400);
-            messageTextFlow.setPrefWidth(Region.USE_COMPUTED_SIZE);
-            messageTextFlow.setLineSpacing(2); // optional, for better readability
+            messageText.setWrappingWidth(Math.max(200,
+                    Math.min(messageText.getLayoutBounds().getWidth(), 600)));
+            TextFlow messageTextFlow = new TextFlow();
+            messageTextFlow.setMaxWidth(600);
+            messageTextFlow.setMinWidth(Region.USE_PREF_SIZE);
+            messageTextFlow.getChildren().add(messageText);
+            messageTextFlow.setLineSpacing(2); //For better readability
 
             vBoxSender.getChildren().add(messageText);
 

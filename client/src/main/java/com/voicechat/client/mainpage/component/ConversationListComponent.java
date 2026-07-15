@@ -128,6 +128,7 @@ public class ConversationListComponent {
                                 ImageView imageView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
                                 imageView.setFitWidth(35.);
                                 imageView.setFitHeight(35.);
+                                imageView.setPreserveRatio(true);
                                 stackAvatar.getChildren().add(imageView);
                                 vbox2.getChildren().add(stackAvatar);
                             } catch (Exception e) {
@@ -188,7 +189,7 @@ public class ConversationListComponent {
 
                 TitledPane accordion = new TitledPane("Conversations", contentStackPane);
                 Image accordionImage = new Image(VoiceChatApplication.class.
-                        getResourceAsStream("/com/voicechat/client/images/person_white_icon.png"));
+                        getResourceAsStream("/com/voicechat/client/images/person.png"));
                 ImageView accordionImageView = new ImageView(accordionImage);
                 accordionImageView.setFitWidth(14.);
                 accordionImageView.setFitHeight(14.);
@@ -203,9 +204,9 @@ public class ConversationListComponent {
     public void circleUnread(Integer size, StackPane stackPane) {
         StackPane stackPaneCircle = new StackPane();
         Circle circle = new Circle(10);
-        circle.setFill(Color.BLUE);
-        HBox hBox = new HBox(10);
-        hBox.setPadding(new Insets(5, 10, 5, 10));
+        circle.setFill(Color.STEELBLUE);
+        HBox hBox = new HBox(0);
+        hBox.setPadding(new Insets(0, 10, 0, 10));
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
         if (size > 0) {
