@@ -1,5 +1,6 @@
 .leftPane {
-    -fx-background-color: "#3581bc";
+    /*-fx-background-color: "#3581bc";*/
+    -fx-background-color: "#006abc";
 }
 
 .mainPane {
@@ -58,13 +59,39 @@
     -fx-cursor: hand;
 }
 
+.titled-pane > .title {
+    -fx-background-color: transparent;
+}
+
+.titled-pane > .title > .arrow-button > * {
+    -fx-visible: none;
+    -fx-pref-width: 0;
+    -fx-min-width: 0;
+    -fx-max-width: 0;
+    -fx-shape: null;
+}
+
+.titled-pane > .title > .text {
+    -fx-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+}
+
+.titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
 .conversationNameLabel {
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
 
 .conversationLastMessageLabel {
-    -fx-text-fill: rgba(255, 255, 255, 0.6);
+    /*-fx-text-fill: rgba(255, 255, 255, 0.6);*/
+    -fx-text-fill: white;
 }
 
 .conversationClicked {
@@ -72,7 +99,7 @@
 }
 
 .conversationClicked Label {
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .numberUnreadLabel {
@@ -80,7 +107,7 @@
 }
 
 .conversationClicked .dateDiscussionLabel {
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .searchLabel:hover {

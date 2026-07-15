@@ -3,6 +3,7 @@ package com.voicechat.client.mainpage.component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
+import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.login.component.AuthenticatePopupComponent;
 import com.voicechat.client.mainpage.controller.MainPageController;
@@ -12,6 +13,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -123,8 +126,8 @@ public class ConversationListComponent {
                                 StackPane stackAvatar = new StackPane();
                                 stackAvatar.getStyleClass().add("stackAvatarConversationList");
                                 ImageView imageView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
-                                imageView.setFitWidth(40.);
-                                imageView.setFitHeight(40.);
+                                imageView.setFitWidth(35.);
+                                imageView.setFitHeight(35.);
                                 stackAvatar.getChildren().add(imageView);
                                 vbox2.getChildren().add(stackAvatar);
                             } catch (Exception e) {
@@ -144,27 +147,27 @@ public class ConversationListComponent {
                 displayNames.getChildren().add(conversationName);
                 vBox.getChildren().addAll(displayNames);
 
-                vBox.getChildren().add(addLastMessageLabel(lastMessage));
+                //vBox.getChildren().add(addLastMessageLabel(lastMessage));
 
                 vbox2.setAlignment(Pos.CENTER);
                 vBox.setAlignment(Pos.CENTER);
 
                 //mainVbox.getStyleClass().add("discussionBox");
 
-                hBox.getChildren().add(vbox2);
-                hBox.getChildren().add(vBox);
+                hBox.getChildren().addAll(vbox2, vBox);
 
-                HBox hBoxTime = new HBox();
-                VBox vboxTime = new VBox();
-                Label timeLabel = new Label();
-                timeLabel.setText(DateHandler.transformDate(lastMessage.getTime()));
-                timeLabel.getStyleClass().add("dateDiscussionLabel");
-                hBoxTime.setAlignment(Pos.CENTER);
-                hBoxTime.getStyleClass().add("dateDiscussion");
-                vboxTime.getChildren().add(timeLabel);
-                hBoxTime.getChildren().add(vboxTime);
+//                HBox hBoxTime = new HBox();
+//                VBox vboxTime = new VBox();
+//                Label timeLabel = new Label();
+//                timeLabel.setText(DateHandler.transformDate(lastMessage.getTime()));
+//                timeLabel.getStyleClass().add("dateDiscussionLabel");
+//                hBoxTime.setAlignment(Pos.CENTER);
+//                hBoxTime.getStyleClass().add("dateDiscussion");
 
-                mainVbox.getChildren().addAll(hBoxTime, hBox);
+                //vboxTime.getChildren().add(timeLabel);
+                //hBoxTime.getChildren().add(vboxTime);
+                mainVbox.getChildren().add(hBox);
+                //mainVbox.getChildren().addAll(hBoxTime, hBox);
 
                 // Unread messages
                 List<ReadStatus> readStatuses = conversation.getMessages().stream().flatMap(
@@ -183,7 +186,15 @@ public class ConversationListComponent {
 
                 circleUnread(unreadMessages, contentStackPane);
 
-                leftPane.getChildren().add(contentStackPane);
+                TitledPane accordion = new TitledPane("Conversations", contentStackPane);
+                Image accordionImage = new Image(VoiceChatApplication.class.
+                        getResourceAsStream("/com/voicechat/client/images/person_white_icon.png"));
+                ImageView accordionImageView = new ImageView(accordionImage);
+                accordionImageView.setFitWidth(14.);
+                accordionImageView.setFitHeight(14.);
+                accordion.setGraphic(accordionImageView);
+                accordion.getStyleClass().add("accordionStyle");
+                leftPane.getChildren().addAll(accordion);
                 mainPageController.goToConversation(contentStackPane);
             }
         });
@@ -194,7 +205,7 @@ public class ConversationListComponent {
         Circle circle = new Circle(10);
         circle.setFill(Color.BLUE);
         HBox hBox = new HBox(10);
-        hBox.setPadding(new Insets(25, 10, 10, 10));
+        hBox.setPadding(new Insets(5, 10, 5, 10));
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
         if (size > 0) {

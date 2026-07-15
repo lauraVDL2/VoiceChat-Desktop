@@ -4,33 +4,53 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Label?>
 
+<?import javafx.scene.layout.HBox?>
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" styleClass="infoLeftPane"
       fx:controller="com.voicechat.client.mainpage.controller.LeftPaneController">
     <Region prefHeight="10" />
-    <VBox styleClass="leftPaneButton" fx:id="notificationVBox">
-        <ImageView pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../images/notification.png" />
-            </image>
-        </ImageView>
+    <VBox styleClass="leftPaneVbox" fx:id="notificationVBox">
+        <HBox styleClass="leftPaneButton" fx:id="notificationButtonHBox">
+            <VBox>
+                <Region prefHeight="5" />
+                <ImageView pickOnBounds="true" preserveRatio="true" fx:id="notificationImageView">
+                    <image>
+                        <Image url="@../images/notification_white.png" />
+                    </image>
+                </ImageView>
+                <Region prefHeight="5" />
+            </VBox>
+        </HBox>
         <Label text="Activity" styleClass="leftPaneLabel"/>
     </VBox>
     <Region prefHeight="10" />
-    <VBox styleClass="leftPaneButton, leftPaneButtonClicked" fx:id="chatVBox">
-        <ImageView pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../images/dm.png" />
-            </image>
-        </ImageView>
+    <VBox styleClass="leftPaneVbox" fx:id="chatVBox">
+        <HBox styleClass="leftPaneButton, leftPaneButtonClicked" fx:id="chatButtonHBox">
+            <VBox>
+                <Region prefHeight="5" />
+                <ImageView pickOnBounds="true" preserveRatio="true" fx:id="chatImageView">
+                    <image>
+                        <Image url="@../images/dm_white.png" />
+                    </image>
+                </ImageView>
+                <Region prefHeight="5" />
+            </VBox>
+        </HBox>
         <Label text="Chat" styleClass="leftPaneLabel"/>
     </VBox>
     <Region prefHeight="10" />
-    <VBox styleClass="leftPaneButton" fx:id="calendarVBox">
-        <ImageView pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../images/calendar.png" />
-            </image>
-        </ImageView>
+    <VBox styleClass="leftPaneVbox" fx:id="calendarVBox">
+        <HBox styleClass="leftPaneButton" fx:id="calendarButtonHBox">
+            <VBox>
+                <Region prefHeight="5" />
+                <ImageView pickOnBounds="true" preserveRatio="true"
+                           fx:id="calendarImageView">
+                    <image>
+                        <Image url="@../images/calendar.png" />
+                    </image>
+                </ImageView>
+                <Region prefHeight="5" />
+            </VBox>
+        </HBox>
         <Label text="Calendar" styleClass="leftPaneLabel"/>
     </VBox>
 </VBox>

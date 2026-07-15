@@ -5,17 +5,29 @@
     -fx-alignment: top-center;
 }
 
-.leftPaneButton {
+.leftPaneVbox {
     -fx-alignment: top-center;
     -fx-cursor: hand;
 }
 
+.leftPaneButton {
+    -fx-alignment: top-center;
+    -fx-cursor: hand;
+    -fx-pref-width: 60;
+    -fx-max-width: 60;
+    -fx-hgrow: never;
+}
+
 .leftPaneButtonClicked {
-    -fx-background-color: "#b6d1ff";
+    -fx-background-color: rgba(182, 209, 255, 0.5);
+    /*-fx-background-color: "#b6d1ff";*/
+    /*-fx-background-color: "#3581bc";*/
+    -fx-background-radius: 10;
+    -fx-transition: -fx-background-color 0.2s ease;
 }
 
 .leftPaneLabel {
-    -fx-text-fill: black;
+    -fx-text-fill: white;
     -fx-font-size: 15px;
     -fx-font-family: "Helvetica";
 }

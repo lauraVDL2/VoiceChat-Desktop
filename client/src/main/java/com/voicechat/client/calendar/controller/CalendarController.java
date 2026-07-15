@@ -9,6 +9,7 @@ import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
@@ -40,12 +41,12 @@ public class CalendarController {
     }
 
     public void initializeLeftPaneButton() {
-        VBox calendarVBox = (VBox) includedLeftPane.lookup("#calendarVBox");
+        HBox calendarHBox = (HBox) includedLeftPane.lookup("#calendarButtonHBox");
         var nodes = includedLeftPane.lookupAll(".leftPaneButtonClicked");
         for (var node : nodes) {
             node.getStyleClass().remove("leftPaneButtonClicked");
         }
-        calendarVBox.getStyleClass().add("leftPaneButtonClicked");
+        calendarHBox.getStyleClass().add("leftPaneButtonClicked");
     }
 
     public void deleteEvent(VoiceChatEvent voiceChatEvent) {
