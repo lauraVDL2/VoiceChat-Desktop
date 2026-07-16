@@ -1,5 +1,6 @@
 package com.voicechat.client.mainpage.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import org.shared.JsonMapper;
@@ -51,6 +52,23 @@ public class HeaderService {
         ObjectMapper mapper = JsonMapper.getJsonMapper();
         String json = mapper.writeValueAsString(users);
         Message message = new Message(MessageType.CONVERSATION_SEARCH, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+
+        PrintWriter serverOut = Listener.getServerOut();
+
+        synchronized (serverOut) {
+            serverOut.println(mapper.writeValueAsString(message));
+            serverOut.flush();
+        }
+
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
+
+    public ServerResponse setThemeMode(User user) throws Exception {
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
+        String json = mapper.writeValueAsString(user);
+        Message message = new Message(MessageType.THEME_MODE_SET, json);
         String correlationId = UUID.randomUUID().toString();
         message.setCorrelationId(correlationId);
 

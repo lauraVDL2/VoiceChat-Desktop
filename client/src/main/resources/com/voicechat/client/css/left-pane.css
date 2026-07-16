@@ -1,6 +1,6 @@
 .infoLeftPane {
-    -fx-background-color: "#006abc";
-    -fx-border-color: transparent #b6d1ff transparent transparent; /* top, right, bottom, left */
+    -fx-background-color:-fx-primary-color;
+    -fx-border-color: transparent -fx-third-color transparent transparent; /* top, right, bottom, left */
     -fx-border-width: 0 1 0 0;
     -fx-alignment: top-center;
 }

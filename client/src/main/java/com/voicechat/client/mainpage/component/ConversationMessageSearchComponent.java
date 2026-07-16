@@ -26,6 +26,7 @@ public class ConversationMessageSearchComponent {
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.fitToHeightProperty().set(true);
             scrollPane.setFitToWidth(true);
+            scrollPane.setStyle("-fx-background-color:transparent;");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
             messageList.getStyleClass().add("messageConversationSearchedList");
@@ -47,6 +48,7 @@ public class ConversationMessageSearchComponent {
                 VBox content = new VBox();
                 HBox authorBox = new HBox();
                 Label infoLabel = new Label();
+                infoLabel.getStyleClass().add("infoLabelSearch");
                 infoLabel.setText(message.getSender().getDisplayName() + " - " + DateHandler.transformDate(message.getTime()));
                 authorBox.getChildren().add(infoLabel);
                 HBox labelBox = new HBox();

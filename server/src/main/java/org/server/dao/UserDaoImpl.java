@@ -3,6 +3,7 @@ package org.server.dao;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
+import org.shared.entity.Settings;
 import org.shared.entity.User;
 
 import java.util.*;
@@ -25,6 +26,8 @@ public class UserDaoImpl implements UserDao {
                     Map.of("emailAddress", user.getEmailAddress()));
             if (loggedUser != null) {
                 if (BCrypt.checkpw(user.getPassword(), loggedUser.getPassword())) {
+                    Settings settings = new SettingsDaoImpl(sessionFactory).getOrCreateSettings(user);
+                    loggedUser.setSettings(settings);
                     sessionFactory.close();
                     return loggedUser;
                 }

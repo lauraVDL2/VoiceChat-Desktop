@@ -69,7 +69,7 @@ public class HeaderControllerTest extends FxRobot {
 
         // Show stage
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
+        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.show();

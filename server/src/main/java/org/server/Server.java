@@ -8,6 +8,7 @@ import org.server.action.*;
 import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDaoImpl;
 import org.server.dao.MessageDaoImpl;
+import org.server.dao.SettingsDaoImpl;
 import org.server.dao.UserDaoImpl;
 import org.server.microsoft_graph.pojo.MicrosoftUser;
 import org.server.microsoft_graph.requester.CalendarRequester;
@@ -68,6 +69,7 @@ public class Server {
                     ServerResponse serverResponse = new ServerResponse();
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     UserAction userAction = null;
+                    SettingsAction settingsAction = null;
                     ConversationAction conversationAction = null;
                     MessageAction messageAction = null;
                     UserNotificationAction userNotificationAction = null;
@@ -209,6 +211,10 @@ public class Server {
                         case IS_SCREEN_SHARING:
                             meetingAction = new MeetingAction();
                             meetingAction.captureScreen(objectMapper, messageObj, serverResponse);
+                            break;
+                        case THEME_MODE_SET:
+                            settingsAction = new SettingsAction(new SettingsDaoImpl(sessionFactory));
+                            settingsAction.setThemeMode(objectMapper, messageObj, serverResponse, socket);
                             break;
                     }
                 }

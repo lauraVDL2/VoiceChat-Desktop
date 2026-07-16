@@ -1,0 +1,31 @@
+@import "main-page.css";
+@import "login.css";
+@import "left-pane.css";
+@import "call-window.css";
+@import "calendar.css";
+
+.root {
+    -fx-main-color: #1e1f22;
+    -fx-second-color: #191a1c;
+    -fx-third-color: #393a41;
+    /*-fx-primary-color: #001D64;
+    -fx-secondary-color: #006abc;*/
+    -fx-primary-color: #3B006E;
+    -fx-secondary-color: #4B006E;
+    -fx-tertiary-color: #8b4490;
+    -fx-first-text-color: white;
+    -fx-second-text-color: black;
+}
+
+.myMessageBox {
+    -fx-background-color: -fx-third-color;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.myMessageBox Label{
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.myMessageBox .conversationMessageText {
+    -fx-fill: -fx-first-text-color;
+}

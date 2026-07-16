@@ -204,7 +204,8 @@ public class ConversationListComponent {
     public void circleUnread(Integer size, StackPane stackPane) {
         StackPane stackPaneCircle = new StackPane();
         Circle circle = new Circle(10);
-        circle.setFill(Color.STEELBLUE);
+        circle.getStyleClass().add("notificationCircle");
+        //circle.setFill(Color.STEELBLUE);
         HBox hBox = new HBox(0);
         hBox.setPadding(new Insets(0, 10, 0, 10));
         hBox.setAlignment(Pos.CENTER_RIGHT);

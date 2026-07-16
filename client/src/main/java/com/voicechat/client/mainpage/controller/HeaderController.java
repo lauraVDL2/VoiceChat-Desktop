@@ -8,6 +8,7 @@ import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
+import com.voicechat.client.mainpage.component.DotsMenuComponent;
 import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -22,6 +23,8 @@ import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
+import org.shared.entity.Conversation;
+import org.shared.entity.Settings;
 import org.shared.entity.User;
 
 import java.io.IOException;
@@ -45,6 +48,8 @@ public class HeaderController {
     private StackPane searchStackPane;
     @FXML
     private ImageView myAvatar;
+    @FXML
+    private ImageView threeDots;
 
     private final ServerReader serverReader = Listener.getServerReader();
 
@@ -58,10 +63,17 @@ public class HeaderController {
 
     private final ConversationListComponent conversationListComponent = new ConversationListComponent();
 
+    private final DotsMenuComponent dotsMenuComponent = new DotsMenuComponent();
+
     @FXML
     public void initialize() {
         initializePane();
         searchUsers();
+        topPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                dotsMenuComponent.setDotsMenu(threeDots, newScene, this);
+            }
+        });
     }
 
     public void initializePane() {
@@ -93,6 +105,38 @@ public class HeaderController {
                 e.printStackTrace();
             }
         }, executor);
+    }
+
+    public void changeTheme() {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return headerService.setThemeMode(UserSession.INSTANCE.getUser());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAcceptAsync(serverResponse -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.THEME_MODE_SET) {
+                        try {
+                            ObjectMapper jsonMapper = JsonMapper.getJsonMapper();
+                            Settings settings = jsonMapper.readValue(serverResponse.getBinaryPayload(), Settings.class);
+                            UserSession.INSTANCE.getUser().setSettings(settings);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    System.err.println("ERROR: Failed to scroll messages. Status: " + serverResponse.getServerResponseStatus());
+                }
+            }
+        }, Platform::runLater)
+        .exceptionally(ex -> {
+            System.err.println("Exception while scrolling messages:");
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     public void searchUsers() {

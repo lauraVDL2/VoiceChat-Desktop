@@ -1,22 +1,26 @@
 .leftPane {
    /* -fx-background-color: "#a1add4";*/
-    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #a1add4, #006abc);
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, -fx-secondary-color, -fx-primary-color);
 }
 
 .mainPane {
-    -fx-background-color: "#eaeaea";
+    -fx-background-color: -fx-main-color;
 }
 
 .messageConversationSearchedBox {
     /*-fx-background-color: "#b6d1ff";*/
-    -fx-background-color: "#a1add4";
-    -fx-border-radius: 10;
+    -fx-background-color: -fx-third-color;
     -fx-background-radius: 10;
     -fx-padding: 5;
 }
 
+.contentMessage, .infoLabelSearch {
+    -fx-text-fill: -fx-first-text-color;
+}
+
 .messageConversationSearchedList, .messageConversationSearched {
-    -fx-background-color: "#e0e0e0" !important;
+    -fx-background-color: -fx-second-color !important;
+    -fx-border-width: 0;
 }
 
 .messageConversationSearched {
@@ -24,20 +28,20 @@
 }
 
 .topPane {
-    -fx-background-color: "#006abc";
-    -fx-border-color: transparent transparent #b6d1ff transparent; /* top, right, bottom, left */
+    -fx-background-color: -fx-primary-color;
+    -fx-border-color: transparent transparent -fx-third-color transparent; /* top, right, bottom, left */
     -fx-border-width: 0 0 1 0;
 }
 
 .searchRightPane {
-    -fx-border-color: transparent transparent transparent #b6d1ff;
+    -fx-border-color: transparent transparent transparent -fx-third-color;
     -fx-border-width: 0 0 0 1;
-    -fx-background-color: "#e0e0e0";
+    -fx-background-color: -fx-second-color;
 }
 
 .searchField {
     /*-fx-background-color: "#b6d1ff";*/
-    -fx-background-color: "#eaeaea";
+    -fx-background-color: -fx-third-color;
     -fx-min-width: 200;
     -fx-pref-width: 400;
     -fx-max-width: 400;
@@ -51,7 +55,7 @@
 }
 
 .searchLabel {
-    -fx-background-color: "#e0e0e0";
+    -fx-background-color: -fx-second-color;
     -fx-pref-width: 400;
     -fx-max-width: 400;
     -fx-min-width: 200;
@@ -80,9 +84,13 @@
 }
 
 .titled-pane > .title > .text {
-    -fx-fill: black;
+    -fx-fill: -fx-first-text-color;
     -fx-font-weight: bold;
     -fx-font-size: 14;
+}
+
+.displayNamesLabel {
+    -fx-text-fill: -fx-first-text-color;
 }
 
 .titled-pane > .content {
@@ -94,7 +102,7 @@
 
 .conversationNameLabel {
     -fx-font-weight: bold;
-    -fx-text-fill: black;
+    -fx-text-fill: -fx-first-text-color;
 }
 
 .conversationLastMessageLabel {
@@ -112,7 +120,7 @@
 }
 
 .conversationClicked Label {
-    -fx-text-fill: black;
+    -fx-text-fill: -fx-first-text-color;
 }
 
 .numberUnreadLabel {
@@ -128,14 +136,17 @@
 }
 
 .topConversationBox {
-    -fx-border-color: transparent transparent #006abc transparent; /* top, right, bottom, left */
+    -fx-border-color: transparent transparent -fx-primary-color transparent; /* top, right, bottom, left */
     -fx-border-width: 0 0 1px 0;
 }
 
 .topConversationLabels {
     -fx-font-size: 16px;
     -fx-font-family: "Helvetica";
-    -fx-text-fill: black;
+}
+
+.topConversationLabels Label {
+    -fx-text-fill: -fx-first-text-color;
 }
 
 .labelSender, .labelText {
@@ -159,7 +170,7 @@
 }
 
 .senderMessageBox {
-    -fx-background-color: #006abc;
+    -fx-background-color: -fx-primary-color;
 }
 
 .senderMessageBox Label {
@@ -172,23 +183,19 @@
     -fx-padding: 5 10 5 10;
 }
 
-.myMessageBox {
-    -fx-background-color: #d8d8d8;
-}
-
-.myMessageBox Label {
-    -fx-text-fill: black;
-}
-
 #sendButton {
     -fx-cursor: hand;
 }
 
+.conversationScrollPane {
+    -fx-background-color: -fx-main-color;
+}
+
 .sendMessageField {
     /*-fx-background-color: "#b6d1ff";*/
-    -fx-background-color: "#eaeaea";
-    -fx-control-inner-background: "#eaeaea";
-    -fx-border-color: "#e0e0e0";
+    -fx-background-color: -fx-third-color;
+    -fx-control-inner-background: -fx-third-color;
+    -fx-border-color: -fx-second-color;
     -fx-border-width: 2;
     -fx-min-height: 40px;
     -fx-pref-height: 40px;
@@ -199,7 +206,7 @@
 
 .searchMessages {
     /*-fx-background-color: "#b6d1ff";*/
-    -fx-background-color: "#eaeaea";
+    -fx-background-color: -fx-main-color;
     -fx-min-width: 220px;
     -fx-max-width: 220px;
     -fx-pref-width: 220px;
@@ -214,8 +221,22 @@
     -fx-padding: 0;
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: -fx-main-color;
+}
+
+.scrollBar:vertical .track {
+    -fx-background-color: -fx-main-color;
+    -fx-border-color: -fx-main-color;
+    -fx-border-radius: 1em;
+}
+
+.track-background {
+    -fx-background-color: -fx-main-color;
+}
+
 .scrollBar .thumb {
-    -fx-background-color: "#006abc";
+    -fx-background-color: -fx-primary-color;
     -fx-background-insets: 2;
     -fx-pref-width: 1;
     -fx-background-radius: 5;
@@ -237,4 +258,12 @@
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 4);
+}
+
+.split-pane, .split-pane-divider {
+    -fx-padding: 0;
+}
+
+.notificationCircle {
+    -fx-fill: -fx-tertiary-color;
 }

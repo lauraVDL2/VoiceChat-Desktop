@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.voicechat.client.mainpage.controller.HeaderController"
       fx:id="topPane" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3"
       styleClass="topPane" alignment="CENTER" spacing="10" prefWidth="400">
@@ -30,5 +31,16 @@
     <Region HBox.hgrow="ALWAYS" />
 
     <ImageView fx:id="myAvatar" fitWidth="50" fitHeight="50"/>
+
+    <Region prefWidth="10" />
+
+    <ImageView pickOnBounds="true" preserveRatio="true" fx:id="threeDots" fitHeight="30">
+        <image>
+            <Image url="@../images/dots_white.png" />
+        </image>
+    </ImageView>
+
+    <Region prefWidth="10" />
+
 </HBox>
 

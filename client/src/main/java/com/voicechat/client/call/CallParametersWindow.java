@@ -88,7 +88,7 @@ public class CallParametersWindow {
 
         Scene scene = new Scene(pane, Screen.getPrimary().getVisualBounds().getWidth() - 200,
                 Screen.getPrimary().getVisualBounds().getHeight() - 200);
-        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/call-window.css").toExternalForm());
+        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/dark-theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
@@ -129,7 +129,7 @@ public class CallParametersWindow {
                                             voiceChatEvent.getId(), stage);
                                     audioDeviceSelectorComponent.stopAudioCapture();
                                     Scene scene = new Scene(parent);
-                                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/call-window.css").toExternalForm());
+                                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/dark-theme.css").toExternalForm());
                                     stage.setScene(scene);
                                     stage.setMaximized(true);
                                     stage.show();

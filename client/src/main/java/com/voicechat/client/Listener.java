@@ -96,7 +96,7 @@ public class Listener {
         Platform.runLater(() -> {
             if (loginController != null) {
                 Scene scene = new Scene(loginRoot, 300, 300);
-                scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/login.css").toExternalForm());
+                scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/dark-theme.css").toExternalForm());
                 stage.setScene(scene);
                 loginController.onConnected();
             }

@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.shared.*;
+import org.shared.entity.ThemeMode;
 import org.shared.entity.User;
 import org.shared.pojo.MicrosoftAccount;
 
@@ -31,7 +32,6 @@ public class ConnectController {
                         byte[] payload = serverResponse.getBinaryPayload();
                         User loggedUser = mapper.readValue(payload, User.class);
                         UserSession.INSTANCE.setUser(loggedUser);
-                        microsoftAuthenticate(stage);
                     }
                     // Load FXML
                     FXMLLoader mainPageLoader = new FXMLLoader(VoiceChatApplication.class.getResource("mainpage/main-page-view.fxml"));
@@ -44,8 +44,21 @@ public class ConnectController {
             }).thenAcceptAsync(root -> {
                 if (root != null) {
                     Scene scene = new Scene(root, 300, 300);
-                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/main-page.css").toExternalForm());
-                    scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/left-pane.css").toExternalForm());
+                    User user = UserSession.INSTANCE.getUser();
+                    if (user.getSettings() != null) {
+                        if (user.getSettings().getThemeMode() == ThemeMode.DARK) {
+                            scene.getStylesheets().remove(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
+                            scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/dark-theme.css").toExternalForm());
+                        }
+                        else {
+                            scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
+                        }
+                    }
+                    else {
+                        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
+                    }
+                    microsoftAuthenticate(stage);
+                    //scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/left-pane.css").toExternalForm());
                     Platform.runLater(() -> {
                         stage.setScene(scene);
                     });

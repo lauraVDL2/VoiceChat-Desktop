@@ -86,7 +86,7 @@ public class CalendarControllerTest extends FxRobot {
         voiceChatEvent.setStart(LocalDateTime.now().toString());
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/calendar.css").toExternalForm());
+        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.show();
