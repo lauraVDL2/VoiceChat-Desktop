@@ -33,12 +33,15 @@
     <ImageView fx:id="myAvatar" fitWidth="50" fitHeight="50"/>
 
     <Region prefWidth="10" />
-
-    <ImageView pickOnBounds="true" preserveRatio="true" fx:id="threeDots" fitHeight="30">
-        <image>
-            <Image url="@../images/dots_white.png" />
-        </image>
-    </ImageView>
+        <!-- Optional spacer or container -->
+        <!--<StackPane alignment="CENTER_RIGHT" prefWidth="50">-->
+            <Pane fx:id="dotsMenuPane" prefHeight="5" layoutX="-20" layoutY="-10"/>
+            <ImageView pickOnBounds="true" preserveRatio="true" fx:id="threeDots" fitHeight="30">
+                <image>
+                    <Image url="@../images/dots_white.png" />
+                </image>
+            </ImageView>
+        <!--</StackPane>-->
 
     <Region prefWidth="10" />
 

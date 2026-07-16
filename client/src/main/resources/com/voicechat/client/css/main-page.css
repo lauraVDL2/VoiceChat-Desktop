@@ -267,3 +267,11 @@
 .notificationCircle {
     -fx-fill: -fx-tertiary-color;
 }
+
+.dotsVerticalMenu {
+    -fx-background-color: -fx-third-color;
+    -fx-background-radius: 5;
+    -fx-text-fill: -fx-first-text-color;
+    -fx-font-size: 15;
+    -fx-padding: 5;
+}

@@ -41,6 +41,8 @@ public class HeaderController {
     @FXML
     private Pane searchPane;
     @FXML
+    private Pane dotsMenuPane;
+    @FXML
     private HBox topPane;
     @FXML
     private ImageView searchIcon;
@@ -71,7 +73,7 @@ public class HeaderController {
         searchUsers();
         topPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
-                dotsMenuComponent.setDotsMenu(threeDots, newScene, this);
+                dotsMenuComponent.setDotsMenu(threeDots, dotsMenuPane, newScene, this);
             }
         });
     }
@@ -105,38 +107,6 @@ public class HeaderController {
                 e.printStackTrace();
             }
         }, executor);
-    }
-
-    public void changeTheme() {
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                return headerService.setThemeMode(UserSession.INSTANCE.getUser());
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }, executor).thenAcceptAsync(serverResponse -> {
-            if (serverResponse != null) {
-                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.THEME_MODE_SET) {
-                        try {
-                            ObjectMapper jsonMapper = JsonMapper.getJsonMapper();
-                            Settings settings = jsonMapper.readValue(serverResponse.getBinaryPayload(), Settings.class);
-                            UserSession.INSTANCE.getUser().setSettings(settings);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    System.err.println("ERROR: Failed to scroll messages. Status: " + serverResponse.getServerResponseStatus());
-                }
-            }
-        }, Platform::runLater)
-        .exceptionally(ex -> {
-            System.err.println("Exception while scrolling messages:");
-            ex.printStackTrace();
-            return null;
-        });
     }
 
     public void searchUsers() {
