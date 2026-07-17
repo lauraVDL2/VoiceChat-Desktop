@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-public class CalendarAction {
+public class CalendarAction extends AbstractAction {
 
     public void getEvents(ObjectMapper objectMapper, Message messageObj,
                           ServerResponse serverResponse, Socket socket,
@@ -26,12 +26,8 @@ public class CalendarAction {
             CalendarRequester calendarRequester = new CalendarRequester();
             var page = calendarRequester.getCalendarView(graphServiceClient, calendar.getStartWeekTime(), calendar.getEndWeekTime());
             List<VoiceChatEvent> events = EventMapper.eventListMap(page.getCurrentPage());
-            byte[] bytes = null;
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.EVENTS_GET);
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(events));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            byte[] bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.EVENTS_GET, messageObj.getCorrelationId(),
+                    events, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -46,12 +42,8 @@ public class CalendarAction {
         if (event != null) {
             CalendarRequester calendarRequester = new CalendarRequester();
             VoiceChatEvent voiceChatEvent = calendarRequester.createEventInCalendar(graphServiceClient, event);
-            byte[] bytes = null;
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_CREATED);
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(voiceChatEvent));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            byte[] bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.EVENT_CREATED, messageObj.getCorrelationId(),
+                    voiceChatEvent, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -67,11 +59,8 @@ public class CalendarAction {
             CalendarRequester calendarRequester = new CalendarRequester();
             boolean isDeleted = calendarRequester.deleteEventInCalendar(graphServiceClient, event);
             if (isDeleted) {
-                byte[] bytes = null;
-                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_DELETED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                byte[] bytes = buildSuccessResponse(serverResponse, ServerResponseMessage.EVENT_DELETED, messageObj.getCorrelationId(),
+                        objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -79,12 +68,8 @@ public class CalendarAction {
                 outputStream.flush();
             }
             else {
-                byte[] bytes = null;
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.EVENT_DELETED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setMessage("Could not delete this event !");
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                byte[] bytes = buildFailureResponse(serverResponse, ServerResponseMessage.EVENT_DELETED, messageObj.getCorrelationId(),
+                        "Could not delete this event !", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);

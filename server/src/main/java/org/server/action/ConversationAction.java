@@ -20,7 +20,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Set;
 
-public class ConversationAction {
+public class ConversationAction extends AbstractAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationAction.class);
 
@@ -40,11 +40,8 @@ public class ConversationAction {
             byte[] bytes = null;
             if (fullConversation != null) {
                 logger.info("Conversation found !");
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
-                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.CONVERSATION_GET, messageObj.getCorrelationId(),
+                        fullConversation, objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -53,11 +50,8 @@ public class ConversationAction {
             }
             else {
                 logger.error("Conversation not found !");
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_GET);
-                serverResponse.setMessage("Conversation not found !");
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildFailureResponse(serverResponse, ServerResponseMessage.CONVERSATION_GET, messageObj.getCorrelationId(),
+                        "Conversation not found !", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -89,11 +83,8 @@ public class ConversationAction {
             }
             else {
                 logger.error("Conversation not found !");
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
-                serverResponse.setMessage("Conversation not found !");
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildFailureResponse(serverResponse, ServerResponseMessage.MESSAGE_CONVERSATION_WENT, messageObj.getCorrelationId(),
+                        "Conversation not found !", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -124,11 +115,8 @@ public class ConversationAction {
             }
             else {
                 logger.error("Conversation not found !");
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SCROLLED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setMessage("Conversation not found !");
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildFailureResponse(serverResponse, ServerResponseMessage.CONVERSATION_SCROLLED, messageObj.getCorrelationId(),
+                        "Conversation not found !", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -146,13 +134,9 @@ public class ConversationAction {
             byte[] bytes =  null;
             if (!CollectionUtils.isEmpty(conversations)) {
                 logger.info("Conversations found !");
-                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_DISPLAYED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversations));
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.CONVERSATION_DISPLAYED, messageObj.getCorrelationId(),
+                        conversations, objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-                // Sending side
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
                 outputStream.write(bytes);
@@ -184,11 +168,8 @@ public class ConversationAction {
             byte[] bytes = null;
             if (newConversation != null) {
                 logger.info("Conversation created !");
-                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(newConversation));
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.CONVERSATION_CREATED, messageObj.getCorrelationId(),
+                        newConversation, objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -197,10 +178,8 @@ public class ConversationAction {
             }
             else {
                 logger.info("Conversation could not be created !");
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_CREATED);
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildFailureResponse(serverResponse, ServerResponseMessage.CONVERSATION_CREATED, messageObj.getCorrelationId(),
+                        "Conversation could not be created !", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -224,11 +203,8 @@ public class ConversationAction {
                 byte[] bytes = null;
                 if (conversation != null) {
                     logger.info("Conversation found !");
-                    serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                    serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SEARCHED);
-                    serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(conversation));
-                    serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                    bytes = objectMapper.writeValueAsBytes(serverResponse);
+                    bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.CONVERSATION_SEARCHED, messageObj.getCorrelationId(),
+                            conversation, objectMapper);
                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                     outputStream.writeUTF("JSON_RESPONSE");
                     outputStream.writeInt(bytes.length);

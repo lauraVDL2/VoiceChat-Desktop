@@ -3,6 +3,7 @@ package com.voicechat.client.calendar.component;
 import com.voicechat.client.calendar.controller.CalendarController;
 import com.voicechat.client.call.CallParametersWindow;
 import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.utils.ColorUtil;
 import com.voicechat.client.common.utils.DateHandler;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -16,6 +17,9 @@ import javafx.stage.Popup;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.ToggleSwitch;
+import org.shared.entity.Settings;
+import org.shared.entity.ThemeMode;
+import org.shared.entity.User;
 import org.shared.pojo.VoiceChatEvent;
 
 import java.time.LocalDate;
@@ -37,7 +41,7 @@ public class TooltipComponent {
 
             rectangle.setOnMouseClicked(event -> {
                 if (previousRectangle != null && previousTooltip != null) {
-                    previousRectangle.setFill(Color.LIGHTGRAY);
+                    previousRectangle.setFill(ColorUtil.getRectangleColor());
                     previousTooltip.hide();
                 }
                 VBox vBox = new VBox();
@@ -99,7 +103,7 @@ public class TooltipComponent {
                 vBox.getChildren().addAll(meetingName, margin1, startHbox, endHbox, marginBottom2,
                         toggleHbox, marginBottom3, button);
                 tooltip.getContent().add(vBox);
-                rectangle.setFill(new Color(0.27, 0.51, 0.70, 1));
+                rectangle.setFill(ColorUtil.getSelectedRectangleColor());
                 tooltip.show(rectangle, event.getScreenX(), event.getScreenY() + 10);
                 eventCreateRequestMapping(button, toggleSwitch, startDatePicker, endDatePicker, startHour, endHour, meetingName,
                         calendarController);

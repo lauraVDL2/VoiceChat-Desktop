@@ -21,7 +21,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UserAction {
+public class UserAction extends AbstractAction {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAction.class);
 
@@ -42,10 +42,8 @@ public class UserAction {
         byte[] bytes = null;
         if (userDao.saveUser(user)) {
             logger.info("User saved !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildSuccessResponse(serverResponse, ServerResponseMessage.USER_CREATED, messageObj.getCorrelationId(),
+                    objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -55,11 +53,8 @@ public class UserAction {
         }
         else {
             logger.error("Registration failed !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_CREATED);
-            serverResponse.setMessage(UserDaoImpl.errorMessage);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.USER_CREATED, messageObj.getCorrelationId(),
+                    UserDaoImpl.errorMessage, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -76,11 +71,8 @@ public class UserAction {
         byte[] bytes = null;
         if (resultUser != null) {
             logger.info("User connected !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(resultUser));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.USER_LOGGED_IN, messageObj.getCorrelationId(),
+                    resultUser, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -90,11 +82,8 @@ public class UserAction {
         }
         else {
             logger.error("Connection failed !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_LOGGED_IN);
-            serverResponse.setMessage(UserDaoImpl.errorMessage);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.USER_LOGGED_IN, messageObj.getCorrelationId(),
+                    UserDaoImpl.errorMessage, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -112,11 +101,8 @@ public class UserAction {
         byte[] bytes = null;
         if (!CollectionUtils.isEmpty(users)) {
             logger.info("Users found !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(users));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.USER_SEARCHED, messageObj.getCorrelationId(),
+                    users, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -125,11 +111,8 @@ public class UserAction {
         }
         else {
             logger.info("Users not found !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.USER_SEARCHED);
-            serverResponse.setMessage("No user found !");
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.USER_SEARCHED, messageObj.getCorrelationId(),
+                    "No user found !", objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);

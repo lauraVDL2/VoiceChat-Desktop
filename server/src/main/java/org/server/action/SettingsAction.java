@@ -13,7 +13,7 @@ import org.shared.entity.User;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
-public class SettingsAction {
+public class SettingsAction extends AbstractAction {
     private SettingsDao settingsDao;
 
     public SettingsAction(SettingsDao settingsDao) {
@@ -27,11 +27,8 @@ public class SettingsAction {
         if (user.getSettings() != null) {
             Settings settings = settingsDao.setThemeMode(user);
             if (settings != null) {
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(settings));
-                serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.THEME_MODE_SET);
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.THEME_MODE_SET,
+                        messageObj.getCorrelationId(), settings, objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -39,11 +36,8 @@ public class SettingsAction {
                 outputStream.flush();
             }
             else {
-                serverResponse.setCorrelationId(messageObj.getCorrelationId());
-                serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-                serverResponse.setServerResponseMessage(ServerResponseMessage.THEME_MODE_SET);
-                serverResponse.setMessage(UserDaoImpl.errorMessage);
-                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                bytes = buildFailureResponse(serverResponse, ServerResponseMessage.THEME_MODE_SET, messageObj.getCorrelationId(),
+                        "", objectMapper);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                 outputStream.writeUTF("JSON_RESPONSE");
                 outputStream.writeInt(bytes.length);
@@ -52,11 +46,8 @@ public class SettingsAction {
             }
         }
         else {
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.THEME_MODE_SET);
-            serverResponse.setMessage(UserDaoImpl.errorMessage);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.THEME_MODE_SET, messageObj.getCorrelationId(),
+                    "", objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);

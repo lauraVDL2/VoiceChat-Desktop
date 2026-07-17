@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-public class MessageAction {
+public class MessageAction extends AbstractAction {
     private static final Logger logger = LoggerFactory.getLogger(MessageAction.class);
 
     private final SessionFactory sessionFactory = Neo4jConfig.getSessionFactory();
@@ -37,11 +37,8 @@ public class MessageAction {
         byte[] bytes = null;
         if (message != null) {
             logger.info("Message sent !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(message));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.MESSAGE_SENT,
+                    messageObj.getCorrelationId(), message, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -52,10 +49,8 @@ public class MessageAction {
         }
         else {
             logger.error("Failed to send message !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_SENT);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.MESSAGE_SENT,
+                    messageObj.getCorrelationId(), "Failed to send message", objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -71,12 +66,8 @@ public class MessageAction {
         List<Message> messages = messageDao.searchMessageInConversation(conversation);
         byte[] bytes = null;
         if (CollectionUtils.isNotEmpty(messages)) {
-            logger.info("Message sent !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_SEARCHED);
-            serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(messages));
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.MESSAGE_CONVERSATION_SEARCHED,
+                    messageObj.getCorrelationId(), messages, objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);
@@ -84,11 +75,8 @@ public class MessageAction {
             outputStream.flush();
         }
         else {
-            logger.error("Failed to send message !");
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            serverResponse.setServerResponseStatus(ServerResponseStatus.FAILURE);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_SEARCHED);
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.MESSAGE_CONVERSATION_SEARCHED, messageObj.getCorrelationId(),
+                    "", objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);

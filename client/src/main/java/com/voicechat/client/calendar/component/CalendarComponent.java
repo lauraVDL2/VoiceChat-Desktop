@@ -2,6 +2,8 @@ package com.voicechat.client.calendar.component;
 
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.calendar.controller.CalendarController;
+import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.utils.ColorUtil;
 import com.voicechat.client.common.utils.DateHandler;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -21,6 +23,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 import org.apache.commons.collections4.CollectionUtils;
+import org.shared.entity.Settings;
+import org.shared.entity.ThemeMode;
+import org.shared.entity.User;
 import org.shared.pojo.VoiceChatEvent;
 
 import java.time.LocalDateTime;
@@ -42,6 +47,9 @@ public class CalendarComponent {
         Platform.runLater(() -> {
             rootPane.getChildren().subList(1, rootPane.getChildren().size()).clear();
             GridPane grid = new GridPane();
+            Color meetingColor = ColorUtil.getMeetingColor();
+            Color fillColor = ColorUtil.getRectangleColor();
+            Color strokeColor = ColorUtil.getRectangleBorderColor();
 
             String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
             int startHour = 0;
@@ -82,8 +90,8 @@ public class CalendarComponent {
                 for (int col = 0; col < days.length; col++) {
                     // Background rectangle
                     Rectangle bgRect = new Rectangle(CELL_WIDTH + CELL_WIDTH_PADDING, CELL_HEIGHT);
-                    bgRect.setFill(Color.LIGHTGRAY);
-                    bgRect.setStroke(Color.DARKGRAY);
+                    bgRect.setFill(fillColor);
+                    bgRect.setStroke(strokeColor);
                     bgRect.setArcWidth(10);
                     bgRect.setArcHeight(10);
                     bgRect.setStrokeWidth(0.5);
@@ -138,15 +146,15 @@ public class CalendarComponent {
                         int ovEndEventMinute = eventEnd.getMinute();
                         if (ovDifferenceHour == 1) {
                             oneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
-                                    ovStartEventHour, overlapEvent, calendarController);
+                                    ovStartEventHour, overlapEvent, calendarController, meetingColor);
                         }
                         else if (ovDifferenceHour == 0) {
                             lessOneHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
-                                    ovStartEventHour, overlapEvent, calendarController);
+                                    ovStartEventHour, overlapEvent, calendarController, meetingColor);
                         }
                         else if (ovDifferenceHour > 1) {
                             moreOnHourMeeting(fraction, xAxis, ovStartEventMinute, ovEndEventMinute, ovCol,
-                                    ovStartEventHour, ovEndEventHour, overlapEvent, calendarController);
+                                    ovStartEventHour, ovEndEventHour, overlapEvent, calendarController, meetingColor);
                         }
                         xAxis += fraction;
                     }
@@ -197,7 +205,7 @@ public class CalendarComponent {
                 overlayRect.setArcWidth(10);
                 overlayRect.setArcHeight(10);
                 overlayRect.setStrokeWidth(0.5);
-                overlayRect.setStroke(Color.DARKGRAY);
+                overlayRect.setStroke(ColorUtil.getRectangleBorderColor());
 
                 // Position the rectangle within the cell
                 double xPosition = CELL_WIDTH * xAxis;
@@ -247,42 +255,43 @@ public class CalendarComponent {
     }
 
     public void lessOneHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
-                                   int startEventHour, VoiceChatEvent event, CalendarController calendarController) {
+                                   int startEventHour, VoiceChatEvent event, CalendarController calendarController, Color color) {
         double yAxis = (double) ((double) startEventMinute / 60.);
         int differenceMinutes = endEventMinute - startEventMinute;
         double yFraction = (double) ((double) differenceMinutes / 60.);
         fillCellFraction(col, startEventHour + 1, xFraction, xAxis, yFraction, yAxis, event.getSubject(), event.getOrganizer(),
-                event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                event, calendarController, color);
     }
 
     public void oneHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
-                               int startEventHour, VoiceChatEvent event, CalendarController calendarController) {
+                               int startEventHour, VoiceChatEvent event, CalendarController calendarController, Color color) {
         double yAxis = (double) ((double) startEventMinute / 60.);
         if (startEventMinute == 0 && endEventMinute == 0) {
             fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1, yAxis, event.getSubject(), event.getOrganizer(),
-                    event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                    event, calendarController, color);
         } else if (endEventMinute > 0) {
             double endFraction = (double) ((double) endEventMinute / 60.);
             fillCellFraction(col, startEventHour + 1, xFraction, xAxis,1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
-                    event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                    event, calendarController, color);
             fillCellFraction(col, startEventHour + 2, xFraction, xAxis, endFraction, 0, null, null,
-                    event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                    event, calendarController, color);
         }
     }
 
     public void moreOnHourMeeting(double xFraction, double xAxis, int startEventMinute, int endEventMinute, int col,
-                                  int startEventHour, int endEventHour, VoiceChatEvent event, CalendarController calendarController) {
+                                  int startEventHour, int endEventHour, VoiceChatEvent event, CalendarController calendarController,
+                                  Color color) {
         double yAxis = (double) ((double) startEventMinute / 60.);
         fillCellFraction(col, startEventHour + 1, xFraction, xAxis, 1 - yAxis, yAxis, event.getSubject(), event.getOrganizer(),
-                event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                event, calendarController, color);
         for (int i = startEventHour + 2; i < endEventHour + 1; i++) {
             fillCellFraction(col, i, xFraction, xAxis, 1, 0, null, null,
-                    event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                    event, calendarController, color);
         }
         if (endEventMinute > 0) {
             double endFraction = (double) ((double) endEventMinute / 60.);
             fillCellFraction(col, endEventHour + 1, xFraction, xAxis, endFraction, 0, null, null,
-                    event, calendarController, new Color(0.27, 0.51, 0.70, 0.8));
+                    event, calendarController, color);
         }
     }
 

@@ -4,6 +4,7 @@ import com.voicechat.client.calendar.component.CalendarComponent;
 import com.voicechat.client.calendar.component.DatePickerComponent;
 import com.voicechat.client.calendar.component.TooltipComponent;
 import com.voicechat.client.calendar.controller.CalendarController;
+import com.voicechat.client.common.UserSession;
 import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.shared.entity.Settings;
+import org.shared.entity.ThemeMode;
+import org.shared.entity.User;
 import org.shared.pojo.VoiceChatEvent;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
@@ -49,6 +53,13 @@ public class CalendarComponentTest extends FxRobot {
         Field datePickerComponentField = CalendarComponent.class.getDeclaredField("datePickerComponent");
         datePickerComponentField.setAccessible(true);
         datePickerComponentField.set(calendarComponent, datePickerComponent);
+
+        User user = new User();
+        user.setEmailAddress("toto.toto@yahoo.fr");
+        Settings settings = new Settings();
+        settings.setThemeMode(ThemeMode.LIGHT);
+        user.setSettings(settings);
+        UserSession.INSTANCE.setUser(user);
 
         voiceChatEvent = new VoiceChatEvent();
         voiceChatEvent.setId("123");

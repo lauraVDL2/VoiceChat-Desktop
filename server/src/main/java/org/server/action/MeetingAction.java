@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.*;
 
-public class MeetingAction {
+public class MeetingAction extends AbstractAction {
 
     public void captureScreen(ObjectMapper objectMapper, Message messageObj,
                               ServerResponse serverResponse) throws IOException {
@@ -92,11 +92,8 @@ public class MeetingAction {
                           ServerResponse serverResponse, Socket socket) throws IOException {
         VoiceChatEvent event = objectMapper.readValue(messageObj.getPayload(), VoiceChatEvent.class);
         if (event != null) {
-            byte[] bytes = null;
-            serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-            serverResponse.setServerResponseMessage(ServerResponseMessage.MEETING_CONNECTED);
-            serverResponse.setCorrelationId(messageObj.getCorrelationId());
-            bytes = objectMapper.writeValueAsBytes(serverResponse);
+            byte[] bytes = buildSuccessResponse(serverResponse, ServerResponseMessage.MEETING_CONNECTED, messageObj.getCorrelationId(),
+                    objectMapper);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("JSON_RESPONSE");
             outputStream.writeInt(bytes.length);

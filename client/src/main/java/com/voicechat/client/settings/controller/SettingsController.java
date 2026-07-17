@@ -7,6 +7,7 @@ import com.voicechat.client.settings.component.GeneralTabComponent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.GridPane;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -18,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class SettingsController {
     @FXML
+    private GridPane settingsMainPane;
+    @FXML
     private ChoiceBox<String> choiceBoxTheme;
 
     private final SettingsService settingsService = new SettingsService();
@@ -26,6 +29,10 @@ public class SettingsController {
 
     @FXML
     public void initialize() {
+        var nodes = settingsMainPane.lookupAll(".leftPaneButtonClicked");
+        for (var node : nodes) {
+            node.getStyleClass().remove("leftPaneButtonClicked");
+        }
         generalTabComponent.setDefaultThemeValue(choiceBoxTheme);
         choiceBoxTheme.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {

@@ -4,6 +4,10 @@
     -fx-font-family: "Helvetica";
 }
 
+#gridCalendarPane {
+    -fx-background-color: -fx-first-color;
+}
+
 .scrollPaneCalendar {
     -fx-padding: 0;
     -fx-background-color: transparent;
@@ -20,8 +24,8 @@
 .calendarTooltip {
     -fx-padding: 10;
     -fx-font: 14px 'Helvetica';
-    -fx-background-color: #ffffff;
-    -fx-border-color: #cccccc;
+    -fx-background-color: -fx-third-color;
+    -fx-border-color: -fx-second-color;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-padding: 10;
@@ -29,17 +33,17 @@
 }
 
 .calendarComboBox {
-    -fx-background-color: #f0f0f0;
-    -fx-border-color: #ccc;
+    -fx-background-color: -fx-third-color;
+    -fx-border-color: -fx-second-color;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
 }
 
 .calendarMainTextfield {
-    -fx-background-color: #ffffff;
+    -fx-background-color: -fx-third-color;
     -fx-background-radius: 5;
     -fx-border-radius: 5;
-    -fx-border-color: #cccccc;
+    -fx-border-color: -fx-second-color;
     -fx-border-width: 1;
     -fx-padding: 8 15 8 15;
     -fx-font-size: 20;
@@ -48,7 +52,7 @@
 }
 
 .eventButton {
-    -fx-background-color: #006abc;
+    -fx-background-color: -fx-primary-color;
 }
 
 .eventButton, .eventDeleteButton {
