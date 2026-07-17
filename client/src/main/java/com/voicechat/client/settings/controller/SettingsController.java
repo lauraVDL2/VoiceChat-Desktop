@@ -41,13 +41,13 @@ public class SettingsController {
         });
     }
 
-    public void changeTheme(ChoiceBox<String> choiceBox) {
+    public void changeTheme() {
         CompletableFuture.supplyAsync(() -> {
             try {
                 User user = UserSession.INSTANCE.getUser();
                 Settings sendTheme = user.getSettings();
                 if (sendTheme != null) {
-                    switch (choiceBox.getValue()) {
+                    switch (choiceBoxTheme.getValue()) {
                         case "LIGHT":
                             sendTheme.setThemeMode(ThemeMode.LIGHT);
                             break;

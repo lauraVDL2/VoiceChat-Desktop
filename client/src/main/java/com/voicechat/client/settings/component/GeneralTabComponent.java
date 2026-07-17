@@ -47,7 +47,7 @@ public class GeneralTabComponent {
                 settings.setThemeMode(ThemeMode.DARK);
                 user.setSettings(settings);
             }
-            settingsController.changeTheme(choiceBox);
+            settingsController.changeTheme();
         });
     }
 }
