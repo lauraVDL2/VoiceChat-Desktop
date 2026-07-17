@@ -50,6 +50,21 @@ public class SettingsDaoImplTest {
         assertNotNull(settings);
     }
 
+    @Test
+    void testChangeTheme() {
+        User user = createDummyUser("toto1.toto@yahoo.fr", "toto1", "toto1");
+
+        Settings settings = settingsDao.getOrCreateSettings(user);
+
+        settings.setThemeMode(ThemeMode.DARK);
+        user.setSettings(settings);
+
+        Settings newSettings = settingsDao.setThemeMode(user);
+
+        assertNotNull(newSettings);
+        assertEquals(ThemeMode.DARK, newSettings.getThemeMode());
+    }
+
     private User createDummyUser(String emailAddress, String username, String password) {
         User user = new User();
         user.setEmailAddress(emailAddress);
