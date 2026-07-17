@@ -28,10 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
-import org.shared.entity.Conversation;
-import org.shared.entity.Message;
-import org.shared.entity.ReadStatus;
-import org.shared.entity.User;
+import org.shared.entity.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

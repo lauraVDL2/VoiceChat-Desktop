@@ -3,11 +3,10 @@ package com.voicechat.client.settings.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.common.UserSession;
 import com.voicechat.client.settings.service.SettingsService;
-import com.voicechat.client.settings.components.GeneralTabComponent;
+import com.voicechat.client.settings.component.GeneralTabComponent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
@@ -64,6 +63,7 @@ public class SettingsController {
                         try {
                             ObjectMapper jsonMapper = JsonMapper.getJsonMapper();
                             Settings settings = jsonMapper.readValue(serverResponse.getBinaryPayload(), Settings.class);
+                            System.out.println(settings.getThemeMode() + " settings theme mode");
                             UserSession.INSTANCE.getUser().setSettings(settings);
                         } catch (Exception e) {
                             e.printStackTrace();

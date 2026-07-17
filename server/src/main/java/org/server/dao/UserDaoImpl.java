@@ -22,7 +22,7 @@ public class UserDaoImpl implements UserDao {
     public User login(User user) {
         try {
             Session session = sessionFactory.openSession();
-            User loggedUser = session.queryForObject(User.class, "MATCH (u:User {emailAddress:$emailAddress}) RETURN u",
+            User loggedUser = session.queryForObject(User.class, "MATCH (u:User {emailAddress:$emailAddress}) RETURN u LIMIT 1",
                     Map.of("emailAddress", user.getEmailAddress()));
             if (loggedUser != null) {
                 if (BCrypt.checkpw(user.getPassword(), loggedUser.getPassword())) {
@@ -47,6 +47,8 @@ public class UserDaoImpl implements UserDao {
         try {
             //this.createConstraints();
             Session session = this.sessionFactory.openSession();
+            Settings settings = new SettingsDaoImpl(sessionFactory).getOrCreateSettings(user);
+            user.setSettings(settings);
             session.save(user);
             this.sessionFactory.close();
             return true;
@@ -64,7 +66,7 @@ public class UserDaoImpl implements UserDao {
     public User findUserByEmailAddress(String emailAddress) {
         try {
             Session session = sessionFactory.openSession();
-            return session.queryForObject(User.class, "MATCH (u:User {emailAddress: $emailAddress}) RETURN u",
+            return session.queryForObject(User.class, "MATCH (u:User {emailAddress: $emailAddress}) RETURN u LIMIT 1",
                     Map.of("emailAddress", emailAddress));
         }
         catch (Exception e) {

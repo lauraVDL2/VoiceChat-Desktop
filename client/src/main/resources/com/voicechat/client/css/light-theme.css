@@ -3,6 +3,7 @@
 @import "left-pane.css";
 @import "call-window.css";
 @import "calendar.css";
+@import "settings.css";
 
 .root {
     -fx-main-color: #eaeaea;

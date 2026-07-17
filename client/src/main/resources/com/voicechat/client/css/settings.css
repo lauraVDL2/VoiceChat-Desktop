@@ -1,0 +1,32 @@
+#settingsPane, .tabSettingsPane {
+    -fx-background-color: -fx-second-color;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+/*#settingsPane > * {*/
+/*    -fx-text-fill: -fx-first-text-color;*/
+/*    -fx-fill: -fx-first-text-color;*/
+/*}*/
+
+.tab-label, .choice-box .label {
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.tab-header-background {
+    -fx-background: -fx-first-color;
+    -fx-border-color: -fx-tertiary-color;
+    -fx-border-width: 2;
+}
+
+#settingsPane ChoiceBox {
+    -fx-text-fill: -fx-first-text-color;
+    -fx-background-color: -fx-third-color;
+}
+
+.tabSettingsLabel {
+    -fx-text-fill: -fx-first-text-color;
+}
+
+/*#settingsMainPane {
+    -fx-background-color: -fx-first-color;
+}*/

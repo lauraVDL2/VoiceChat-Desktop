@@ -33,7 +33,7 @@ public class SettingsDaoImpl implements SettingsDao {
                 Settings newSettings = session.queryForObject(Settings.class, cypher,
                         Map.of("settingsId", settings.getId(), "newThemeMode", themeMode));
                 sessionFactory.close();
-                return settings;
+                return newSettings;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +57,6 @@ public class SettingsDaoImpl implements SettingsDao {
                 Settings settings = session.queryForObject(Settings.class, cypher,
                         Map.of("emailAddress", user.getEmailAddress()));
                 if (settings == null) {
-                    System.out.println("settings null !");
                     cypher = """
                                 MERGE (u:User {emailAddress: $emailAddress})
                                 WITH u
