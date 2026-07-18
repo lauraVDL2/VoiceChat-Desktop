@@ -31,6 +31,7 @@ import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
+import org.shared.pojo.Page;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
@@ -110,7 +111,7 @@ public class MainPageControllerTest extends FxRobot {
         ServerResponse serverResponse = new ServerResponse();
         serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
         serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
-        serverResponse.setOffset(0);
+        serverResponse.setPage(new Page());
         // Mock JSON payload
         Conversation convFromPayload = new Conversation();
         byte[] payloadBytes = JsonMapper.getJsonMapper().writeValueAsBytes(convFromPayload);

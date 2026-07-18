@@ -18,6 +18,7 @@ import org.shared.ServerResponse;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
@@ -102,7 +103,7 @@ public class MainPageServiceTest {
 
     @Test
     void testScrollMessages_writesCorrectJsonMessage() throws Exception {
-        mainPageService.scrollMessages(conversation, 1);
+        mainPageService.scrollMessages(conversation, new Page());
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(printWriter).println(captor.capture());

@@ -100,7 +100,7 @@ public class ConversationActionTest {
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
-        when(conversationDao.scrollConversationMessages(any(Conversation.class), anyInt())).thenReturn(conversation);
+        when(conversationDao.scrollConversationMessages(any(Conversation.class), any())).thenReturn(conversation);
 
         // Capture socket output
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -139,7 +139,7 @@ public class ConversationActionTest {
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
-        when(conversationDao.scrollConversationMessages(any(Conversation.class), anyInt())).thenReturn(conversation);
+        when(conversationDao.scrollConversationMessages(any(Conversation.class), any())).thenReturn(conversation);
 
         // Capture socket output
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

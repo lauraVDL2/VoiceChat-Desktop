@@ -28,6 +28,7 @@ import org.shared.ServerResponseStatus;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.util.WaitForAsyncUtils;
@@ -148,7 +149,7 @@ public class ConversationComponentTest extends FxRobot {
                 .addMessageBox(any(HBox.class), any(VBox.class), any(Message.class), any(User.class));
 
         doReturn(new ScrollPane()).when(spyConversationComponent)
-                .addMessagesScrollPane(any(MainPageController.class), any(VBox.class), any(Conversation.class));
+                .addMessagesScrollPane(any(MainPageController.class), any(VBox.class), any(Conversation.class), any(Page.class));
 
         spyConversationComponent.addMessageComponents(new MainPageController(), mainPane, serverResponse,
                 conversation);
@@ -210,7 +211,7 @@ public class ConversationComponentTest extends FxRobot {
                 .addMessageBox(any(HBox.class), any(VBox.class), any(Message.class), any(User.class));
 
         ScrollPane scrollPane = spyConversationComponent.addConversationMessagesScrollPane(new MainPageController(),
-                conversation, gridPane, user);
+                conversation, gridPane, user, new Page(), null);
 
         assertNotNull(scrollPane);
         assertNotNull(scrollPane.getContent());
@@ -232,7 +233,7 @@ public class ConversationComponentTest extends FxRobot {
         VBox vBox = new VBox();
 
         ScrollPane scrollPane = conversationComponent.addMessagesScrollPane(new MainPageController(),
-                vBox, conversation);
+                vBox, conversation, new Page());
 
         assertNotNull(scrollPane);
         assertNotNull(scrollPane.getContent());

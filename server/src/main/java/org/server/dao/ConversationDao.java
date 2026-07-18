@@ -3,6 +3,7 @@ package org.server.dao;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ public interface ConversationDao {
     Set<User> getConversationParticipants(Conversation conversation);
     List<Conversation> searchUserConversations(User user);
     int getOffset(Conversation conversation);
-    Conversation scrollConversationMessages(Conversation conversation, int offset);
+    Conversation scrollConversationMessages(Conversation conversation, Page page);
     Conversation getConversation(Conversation conversation);
     Conversation createConversation(Set<User> users, Message message, User sender);
 }

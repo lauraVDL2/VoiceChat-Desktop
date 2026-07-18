@@ -10,6 +10,7 @@ import org.server.dao.ConversationDaoImpl;
 import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,13 +67,14 @@ public class ConversationAction extends AbstractAction {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         if (conversation != null) {
             int offset = conversationDao.getOffset(conversation);
-            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, offset);
+            Page page = new Page(offset, 20);
+            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, page);
             byte[] bytes = null;
             if (fullConversation != null) {
                 serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.MESSAGE_CONVERSATION_WENT);
-                serverResponse.setOffset(offset);
+                serverResponse.setPage(page);
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -98,13 +100,13 @@ public class ConversationAction extends AbstractAction {
                                    ServerResponse serverResponse, Socket socket) throws IOException {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         if (conversation != null) {
-            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, messageObj.getOffset());
+            Conversation fullConversation = conversationDao.scrollConversationMessages(conversation, messageObj.getPage());
             byte[] bytes = null;
             if (fullConversation != null) {
                 serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
                 serverResponse.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SCROLLED);
                 serverResponse.setBinaryPayload(objectMapper.writeValueAsBytes(fullConversation));
-                serverResponse.setOffset(messageObj.getOffset());
+                serverResponse.setPage(messageObj.getPage());
                 serverResponse.setCorrelationId(messageObj.getCorrelationId());
                 bytes = objectMapper.writeValueAsBytes(serverResponse);
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());

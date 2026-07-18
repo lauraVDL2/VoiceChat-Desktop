@@ -44,8 +44,6 @@ public class Listener {
 
     private static volatile ServerReader serverReader;
 
-    private static int offset = 0;
-
     /**
      * Initialize connection and server reader
      */
@@ -135,19 +133,4 @@ public class Listener {
         return serverReader;
     }
 
-    public static int getOffset() {
-        return offset;
-    }
-
-    public static int incrementOffset() {
-        return ++offset;
-    }
-
-    public static int decrementOffset() {
-        return --offset;
-    }
-
-    public static void setOffset(int offset) {
-        Listener.offset = offset;
-    }
 }

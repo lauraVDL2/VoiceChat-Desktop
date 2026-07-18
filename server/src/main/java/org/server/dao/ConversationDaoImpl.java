@@ -8,6 +8,7 @@ import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,16 +187,17 @@ public class ConversationDaoImpl implements ConversationDao {
     }
 
     @Override
-    public Conversation scrollConversationMessages(Conversation conversation, int offset) {
+    public Conversation scrollConversationMessages(Conversation conversation, Page page) {
         try {
             Session session = this.sessionFactory.openSession();
-            int skip = offset * 20;
+            int skip = page.getOffset() * page.getLimit();
             String cypher = """
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)
-                    RETURN msg, u ORDER BY msg.time DESC SKIP $skip LIMIT 20
+                    RETURN msg, u ORDER BY msg.time DESC SKIP $skip LIMIT $limit
                     """;
-            Result records = session.query(cypher, Map.of("id", conversation.getId(), "skip", skip));
+            Result records = session.query(cypher, Map.of("id", conversation.getId(), "skip", skip,
+                    "limit", page.getLimit()));
             List<Message> messages = new ArrayList<>();
             for (var record : records) {
                 Message message = (Message) record.get("msg");

@@ -18,10 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,6 +26,7 @@ import org.shared.JsonMapper;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
 import org.shared.entity.*;
+import org.shared.pojo.Page;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -115,13 +113,15 @@ public class MainPageController {
                             if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                                 if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_CONVERSATION_WENT) {
                                     try {
-                                        Listener.setOffset(serverResponse.getOffset());
+                                        Page page = serverResponse.getPage();
+                                        conversationComponent.setPage(page);
                                         Conversation conversation1 = JsonMapper.getJsonMapper()
                                                 .readValue(serverResponse.getBinaryPayload(), Conversation.class);
                                         Platform.runLater(() -> {
                                             mainPane.setCenter(
                                                     conversationComponent.addConversationMessagesScrollPane(
-                                                            this, conversation1, gridMainPane, UserSession.INSTANCE.getUser()
+                                                            this, conversation1, gridMainPane, UserSession.INSTANCE.getUser(),
+                                                            page, (ScrollPane) gridMainPane.lookup("#conversationScrollPane")
                                                     )
                                             );
                                         });
@@ -142,10 +142,10 @@ public class MainPageController {
         });
     }
 
-    public void scrollConversationMessages(Conversation conversation, int offset) {
+    public void loadMoreConversationMessages(Conversation conversation, Page page, ScrollPane scrollPane, Runnable runnable) {
         CompletableFuture.supplyAsync(() -> {
                     try {
-                        return mainPageService.scrollMessages(conversation, offset);
+                        return mainPageService.scrollMessages(conversation, page);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return null;
@@ -157,7 +157,46 @@ public class MainPageController {
                                 try {
                                     Conversation conversation1 = JsonMapper.getJsonMapper().readValue(serverResponse.getBinaryPayload(), Conversation.class);
                                     Platform.runLater(() -> {
-                                        mainPane.setCenter(conversationComponent.addConversationMessagesScrollPane(this, conversation1, gridMainPane, UserSession.INSTANCE.getUser()));
+                                        mainPane.setCenter(conversationComponent.addConversationMessagesScrollPane(this, conversation1,
+                                                gridMainPane, UserSession.INSTANCE.getUser(), page, scrollPane));
+                                        // Execute the runnable after UI update
+                                        if (runnable != null) {
+                                            runnable.run();
+                                        }
+                                    });
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } else {
+                            System.err.println("ERROR: Failed to scroll messages. Status: " + serverResponse.getServerResponseStatus());
+                        }
+                    }
+                }, Platform::runLater)
+                .exceptionally(ex -> {
+                    System.err.println("Exception while scrolling messages:");
+                    ex.printStackTrace();
+                    return null;
+                });
+    }
+
+    public void scrollConversationMessages(Conversation conversation, Page page) {
+        CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return mainPageService.scrollMessages(conversation, page);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executor).thenAcceptAsync(serverResponse -> {
+                    if (serverResponse != null) {
+                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SCROLLED) {
+                                try {
+                                    Conversation conversation1 = JsonMapper.getJsonMapper().readValue(serverResponse.getBinaryPayload(), Conversation.class);
+                                    Platform.runLater(() -> {
+                                        mainPane.setCenter(conversationComponent.addConversationMessagesScrollPane(this, conversation1, gridMainPane, UserSession.INSTANCE.getUser(), page,
+                                                (ScrollPane) gridMainPane.lookup("#conversationScrollPane")));
                                     });
                                 } catch (IOException e) {
                                     e.printStackTrace();

@@ -4,15 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.utils.AnimationUtil;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
 import com.voicechat.client.mainpage.service.MainPageService;
 import com.voicechat.client.common.utils.DateHandler;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -31,6 +36,7 @@ import org.shared.ServerResponse;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -38,6 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ConversationComponent {
 
@@ -46,6 +53,12 @@ public class ConversationComponent {
     private final OnlineUsersScheduler onlineUsersScheduler = new OnlineUsersScheduler();
 
     private final ConversationMessageSearchComponent conversationMessageSearchComponent = new ConversationMessageSearchComponent();
+
+    private Page page = new Page();
+
+    private double vvalue = 1.;
+
+    private ScrollPane scrollPane;
 
     public void setConversationComponents(BorderPane mainPane, ServerResponse serverResponse) throws IOException {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
@@ -104,7 +117,7 @@ public class ConversationComponent {
 
                 VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
                 VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, conversation);
+                ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, conversation, page);
                 mainPane.setCenter(scrollPane);
             });
         });
@@ -142,7 +155,7 @@ public class ConversationComponent {
 
                             VBox messageContentBox = (VBox) mainPane.lookup("#messageContentBox");
                             VBox vbox = addMessageBox(hBoxAvatar, messageContentBox, lastMessage, currentUser);
-                            ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, initialConversation);
+                            ScrollPane scrollPane = addMessagesScrollPane(mainPageController, vbox, initialConversation, page);
                             mainPane.setCenter(scrollPane);
                         });
 
@@ -270,15 +283,16 @@ public class ConversationComponent {
         
         return hBox;
     }
-    
+
     public ScrollPane addConversationMessagesScrollPane(MainPageController mainPageController, Conversation conversation, GridPane gridMainPane,
-                                                        User currentUser) {
+                                                        User currentUser, Page page, ScrollPane scrollPane) {
         VBox messageContentBox = new VBox();
         messageContentBox.setId("messageContentBox");
         messageContentBox.setPadding(new Insets(10, 10, 10, 10));
+        Platform.runLater(() -> {
         for (Message message : conversation.getMessages()) {
             // Asynchronous avatar loading
-            Platform.runLater(() -> {
+            //Platform.runLater(() -> {
                 try {
                     HBox hBoxAvatar = new HBox();
                     String correlationId = UUID.randomUUID().toString();
@@ -292,14 +306,25 @@ public class ConversationComponent {
                     avatarBox.setAlignment(Pos.CENTER);
                     hBoxAvatar.getChildren().add(avatarBox);
                     addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
+                    AnimationUtil.fadeInNode(messageContentBox);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            //});
+        }});
+
+        this.scrollPane = scrollPane;
+
+        if (this.scrollPane == null) {
+            this.scrollPane = addMessagesScrollPane(mainPageController, messageContentBox, conversation, page);
+        }
+        else {
+            Platform.runLater(() -> {
+                this.scrollPane.setContent(messageContentBox);
             });
         }
-        ScrollPane scrollPane = addMessagesScrollPane(mainPageController, messageContentBox, conversation);
-        
-        return scrollPane;
+
+       return this.scrollPane;
     }
     
     public HBox addConversationSendMessageBox(MainPageController mainPageController, Conversation conversation,
@@ -344,7 +369,7 @@ public class ConversationComponent {
             mainPane.setTop(addConversationTopBox(conversation.getParticipants(), currentUser));
 
             // MIDDLE (messages)
-            mainPane.setCenter(addConversationMessagesScrollPane(mainPageController, conversation, gridMainPane, currentUser));
+            mainPane.setCenter(addConversationMessagesScrollPane(mainPageController, conversation, gridMainPane, currentUser, new Page(), this.scrollPane));
 
             // Bottom send box
             mainPane.setBottom(addConversationSendMessageBox(mainPageController, conversation, ConversationAction.CONTINUE));
@@ -359,7 +384,8 @@ public class ConversationComponent {
         });
     }
 
-    public ScrollPane addMessagesScrollPane(MainPageController mainPageController, VBox vBox, Conversation conversation) {
+    public ScrollPane addMessagesScrollPane(MainPageController mainPageController, VBox vBox, Conversation conversation,
+                                            Page page) {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setId("conversationScrollPane");
         scrollPane.setContent(vBox);
@@ -379,11 +405,29 @@ public class ConversationComponent {
                     scrollPane.setVvalue(1.0);
                 });
             }
-            PauseTransition delay = new PauseTransition(Duration.millis(500));
-            delay.setOnFinished(event -> {
-                loadMoreMessages(mainPageController, scrollPane, conversation);
+            // Calculate the target vvalue based on current content height
+            Platform.runLater(() -> {
+                VBox messageBox = (VBox) scrollPane.lookup("#messageContentBox");
+                if (messageBox != null) {
+                    double contentHeight = messageBox.getHeight();
+                    double viewportHeight = scrollPane.getViewportBounds().getHeight();
+                    double targetVvalue = (contentHeight - viewportHeight) > 0 ? scrollPane.getVvalue() : 1.0;
+
+                    // For example, scroll to bottom:
+                    targetVvalue = 1.0;
+
+                    // Animate to the target position
+                    AnimationUtil.smoothVScrollTo(scrollPane, targetVvalue);
+
+                    // Then, load more messages after the animation completes
+                    // Optionally, you can set a delay or listen for animation completion
+                    // But for simplicity, just call loadMoreMessages after a small delay
+                    Timeline delay = new Timeline(new KeyFrame(Duration.millis(300), e -> {
+                        loadMoreMessages(mainPageController, scrollPane, conversation);
+                    }));
+                    delay.play();
+                }
             });
-            delay.play();
         });
 
         return scrollPane;
@@ -392,31 +436,100 @@ public class ConversationComponent {
     public void loadMoreMessages(MainPageController mainPageController, ScrollPane scrollPane, Conversation conversation) {
         PauseTransition pause = new PauseTransition(Duration.millis(200));
         scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            // Reset the timer on each scroll event
             pause.stop();
             pause.setOnFinished(ev -> {
+
+                double oldContentHeight = scrollPane.getContent().getBoundsInLocal().getHeight();
+                double oldViewportHeight = scrollPane.getViewportBounds().getHeight();
+                double pixelPosition = scrollPane.getVvalue() * (oldContentHeight - oldViewportHeight);
+
+                var box = (VBox) scrollPane.lookup("#messageContentBox");
+                double oldHeight = box.getHeight();
+                // Save current pixel position of the viewport
+
+                int offset = page.getOffset();
+                int limit = page.getLimit();
+
                 if (scrollPane.getVvalue() >= 1.0) {
                     if (event.getDeltaY() < 0) {
-                        System.out.println("bottom");
-                        if (Listener.getOffset() >= 0) {
-                            mainPageController.scrollConversationMessages(conversation, Listener.decrementOffset());
+                        if (offset >= 0) {
+                            // Scrolling down at bottom
+                            if (conversation.getMessages().size() >= 60) {
+                                if (offset >= 0) {
+                                    limit = 20;
+                                    --offset;
+                                    page.setLimit(limit);
+                                    page.setOffset(offset);
+                                    mainPageController.scrollConversationMessages(conversation, page);
+                                }
+                            } else {
+                                limit += 20;
+                                page.setLimit(limit);
+                                page.setOffset(offset);
+                                mainPageController.loadMoreConversationMessages(conversation, page, scrollPane, () -> {
+                                    listenAndSetVvalue(scrollPane);
+                                });
+                            }
                         }
                     }
-                }
-                else if (scrollPane.getVvalue() <= 0.0) {
+                } else if (scrollPane.getVvalue() <= 0.0) {
                     if (event.getDeltaY() > 0) {
-                        try {
-                            System.out.println( "AT TOP" );
-                            mainPageController.scrollConversationMessages(conversation, Listener.incrementOffset());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        // Scrolling up at top
+                        if (conversation.getMessages().size() >= 60) {
+                            limit = 20;
+                            ++offset;
+                            page.setLimit(limit);
+                            page.setOffset(offset);
+                            mainPageController.scrollConversationMessages(conversation, page);
+                        } else {
+                            limit += 20;
+                            page.setLimit(limit);
+                            page.setOffset(offset);
+                            mainPageController.loadMoreConversationMessages(conversation, page, scrollPane, () -> {
+                                listenAndSetVvalue(scrollPane);
+                            });
                         }
                     }
                 }
-                System.out.println("offset = " + Listener.getOffset());
             });
             pause.playFromStart();
         });
+
+    }
+
+    public void listenAndSetVvalue(ScrollPane scrollPane) {
+        scrollPane.contentProperty().addListener((obs, oldContent, newContent) -> {
+            if (newContent != null) {
+                // Wait for layout pass to complete
+                newContent.boundsInParentProperty().addListener((observable, oldBounds, newBounds) -> {
+                    if (newBounds.getWidth() > 0 && newBounds.getHeight() > 0) {
+                        Node content = scrollPane.getContent();
+                        if (content != null) {
+                            var messageBox = (VBox) scrollPane.lookup("#messageContentBox");
+                            vvalue = (messageBox.getHeight() - scrollPane.getViewportBounds().getHeight())/messageBox.getHeight();
+                        }
+                        if (scrollPane.getVvalue() <= 0.0 && vvalue > 0 && vvalue < 1) {
+                            Platform.runLater(() -> {
+                                smoothScrollTo(scrollPane, vvalue);
+                            });
+                        }
+                        else if (scrollPane.getVvalue() >= 1. && vvalue > 0 && vvalue < 1) {
+                            Platform.runLater(() -> {
+                                smoothScrollTo(scrollPane, vvalue);
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void smoothScrollTo(ScrollPane scrollPane, double targetVvalue) {
+        Timeline timeline = new Timeline();
+        KeyValue kv = new KeyValue(scrollPane.vvalueProperty(), targetVvalue);
+        KeyFrame kf = new KeyFrame(Duration.millis(300), kv); // 300ms for smoothness
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
     }
 
     public void newConversationComponents(User targetUser, MainPageController parentController,
@@ -430,13 +543,22 @@ public class ConversationComponent {
             mainPane.setTop(addConversationTopBox(Set.of(currentUser, targetUser), currentUser));
 
             // MIDDLE (messages)
-            mainPane.setCenter(addConversationMessagesScrollPane(parentController, new Conversation(), gridPane, currentUser));
+            mainPane.setCenter(addConversationMessagesScrollPane(parentController, new Conversation(), gridPane, currentUser, new Page(),
+                    this.scrollPane));
 
             // Bottom send box
             mainPane.setBottom(addConversationSendMessageBox(parentController, null, ConversationAction.START));
 
             parentController.sendMessage();
         });
+    }
+
+    public Page getPage() {
+        return page;
+    }
+
+    public void setPage(Page page) {
+        this.page = page;
     }
 
 }

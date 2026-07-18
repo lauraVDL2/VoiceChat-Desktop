@@ -5,6 +5,7 @@ import com.voicechat.client.Listener;
 import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
+import org.shared.pojo.Page;
 
 import java.io.*;
 import java.util.UUID;
@@ -28,13 +29,13 @@ public class MainPageService {
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }
 
-    public ServerResponse scrollMessages(Conversation conversation, int offset) throws Exception {
+    public ServerResponse scrollMessages(Conversation conversation, Page page) throws Exception {
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         String json = objectMapper.writeValueAsString(conversation);
         Message message = new Message(MessageType.CONVERSATION_SCROLL, json);
         String correlationId = UUID.randomUUID().toString();
         message.setCorrelationId(correlationId);
-        message.setOffset(offset);
+        message.setPage(page);
         PrintWriter serverOut = Listener.getServerOut();
 
         synchronized (serverOut) {
