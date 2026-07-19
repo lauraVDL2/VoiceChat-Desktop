@@ -37,6 +37,7 @@ import org.shared.entity.Conversation;
 import org.shared.entity.Message;
 import org.shared.entity.User;
 import org.shared.pojo.Page;
+import org.shared.pojo.ScrollDirection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -454,18 +455,20 @@ public class ConversationComponent {
                     if (event.getDeltaY() < 0) {
                         if (offset >= 0) {
                             // Scrolling down at bottom
-                            if (conversation.getMessages().size() >= 60) {
+                            if (limit >= 60) {
                                 if (offset >= 0) {
                                     limit = 20;
                                     --offset;
                                     page.setLimit(limit);
                                     page.setOffset(offset);
+                                    page.setScrollDirection(ScrollDirection.BOTTOM);
                                     mainPageController.scrollConversationMessages(conversation, page);
                                 }
                             } else {
                                 limit += 20;
                                 page.setLimit(limit);
                                 page.setOffset(offset);
+                                page.setScrollDirection(ScrollDirection.BOTTOM);
                                 mainPageController.loadMoreConversationMessages(conversation, page, scrollPane, () -> {
                                     listenAndSetVvalue(scrollPane);
                                 });
@@ -475,16 +478,18 @@ public class ConversationComponent {
                 } else if (scrollPane.getVvalue() <= 0.0) {
                     if (event.getDeltaY() > 0) {
                         // Scrolling up at top
-                        if (conversation.getMessages().size() >= 60) {
+                        if (limit >= 60) {
                             limit = 20;
                             ++offset;
                             page.setLimit(limit);
                             page.setOffset(offset);
+                            page.setScrollDirection(ScrollDirection.TOP);
                             mainPageController.scrollConversationMessages(conversation, page);
                         } else {
                             limit += 20;
                             page.setLimit(limit);
                             page.setOffset(offset);
+                            page.setScrollDirection(ScrollDirection.TOP);
                             mainPageController.loadMoreConversationMessages(conversation, page, scrollPane, () -> {
                                 listenAndSetVvalue(scrollPane);
                             });

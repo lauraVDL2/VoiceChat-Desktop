@@ -9,6 +9,7 @@ import org.shared.entity.Message;
 import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 import org.shared.pojo.Page;
+import org.shared.pojo.ScrollDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,11 +187,25 @@ public class ConversationDaoImpl implements ConversationDao {
         return 0;
     }
 
+    private int computesSkip(int limit, int size, ScrollDirection scrollDirection) {
+        if (limit == 20) {
+            return limit * size;
+        } else if (scrollDirection != null) {
+            if (scrollDirection == ScrollDirection.BOTTOM) {
+                return 20 * size - 20;
+            }
+            else {
+                return 20 * size + 20;
+            }
+        }
+        return 0;
+    }
+
     @Override
     public Conversation scrollConversationMessages(Conversation conversation, Page page) {
         try {
             Session session = this.sessionFactory.openSession();
-            int skip = page.getOffset() * page.getLimit();
+            int skip = computesSkip(page.getLimit(), page.getOffset(), page.getScrollDirection());
             String cypher = """
                     MATCH (c:Conversation)-[:CONTAINS]->(msg:Message) WHERE id(c) = $id
                     WITH msg MATCH (msg:Message)<-[:SENT_BY]-(u:User)

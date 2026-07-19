@@ -52,7 +52,7 @@ repositories {
 }
 
 dependencies {
-    implementation("shared-lib:voicechat-common:1.0.77")
+    implementation("shared-lib:voicechat-common:1.0.78")
     implementation("de.maxhenkel.opus4j:opus4j:2.1.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
