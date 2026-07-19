@@ -8,7 +8,7 @@
 */
 
 #topMenuBox {
-    -fx-background-color: #3581bc;
+    -fx-background-color: -fx-primary-color;
 }
 
 .callTestSwitch .thumb-area, callTestSwitch.selected .thumb-area {
@@ -20,53 +20,61 @@
 }
 
 .callComboBox {
-    -fx-background-color: #f0f0f0;
-    -fx-border-color: #ccc;
+    -fx-background-color: -fx-third-color;
+    -fx-border-color: -fx-second-color;
+    -fx-text-fill: -fx-first-text-color;
+    -fx-fill: -fx-first-text-color;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
 }
 
+.callComboBox .text {
+    -fx-text-fill: -fx-first-text-color;
+    -fx-fill: -fx-first-text-color;
+}
+
 .callTestLabel {
-    -fx-text-fill: black;
+    -fx-text-fill: -fx-first-text-color;
     -fx-font-size: 20;
     -fx-font-weight: bold;
 }
 
 .voiceTestBox {
-    -fx-background-color: #D3D3D3;
-    -fx-border-color: #A9A9A9;
+    -fx-background-color: -fx-first-color;
+    -fx-border-color: -fx-second-color;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
 }
 
 .volumeSlider .thumb {
-    -fx-background-color: #2196F3; /* Blue color for thumb */
+    -fx-background-color: -fx-primary-color; /* Blue color for thumb */
     -fx-background-radius: 50%;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
     -fx-cursor: hand;
 }
 
 .volumeSlider .thumb:hover {
-    -fx-background-color: #1976D2; /* Darker blue on hover */
+    -fx-background-color: -fx-secondary-color; /* Darker blue on hover */
 }
 
 .progressMicTest {
-    -fx-accent: #006abc;
+    -fx-accent: -fx-tertiary-color;
     -fx-background-radius: 4;
     -fx-border-radius: 4;
 }
 
 .callEventButton {
-    -fx-background-color: #006abc;
-}
-
-.callEventButton {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: -fx-first-text-color;
     -fx-background-radius: 4;
     -fx-border-radius: 4;
     -fx-font-size: 16px;
-    -fx-text-fill: white;
     -fx-font-family: "Helvetica";
     -fx-padding: 8 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
+
+#rootCall, #gridCallPane {
+    -fx-background-color: -fx-main-color;
 }

@@ -2,10 +2,11 @@
     -fx-font-weight: bold;
     -fx-font-size: 16px;
     -fx-font-family: "Helvetica";
+    -fx-text-fill: -fx-first-text-color;
 }
 
 #gridCalendarPane {
-    -fx-background-color: -fx-first-color;
+    -fx-background-color: -fx-main-color;
 }
 
 .scrollPaneCalendar {
@@ -15,10 +16,14 @@
 }
 
 .scrollPaneCalendar .thumb {
-    -fx-background-color: "#006abc";
+    -fx-background-color: -fx-primary-color;
     -fx-background-insets: 2;
     -fx-pref-width: 1;
     -fx-background-radius: 5;
+}
+
+.timeCalendarLabel {
+    -fx-text-fill: -fx-first-text-color;
 }
 
 .calendarTooltip {

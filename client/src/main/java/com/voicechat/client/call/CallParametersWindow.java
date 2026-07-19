@@ -41,6 +41,7 @@ public class CallParametersWindow {
         stage.setTitle(event.getSubject());
         StackPane pane = new StackPane();
         HBox root = new HBox();
+        pane.setId("rootCall");
         root.setAlignment(Pos.CENTER);
         VBox rootVBox = new VBox();
         rootVBox.setAlignment(Pos.CENTER);

@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import org.shared.entity.Settings;
 import org.shared.entity.ThemeMode;
 import org.shared.entity.User;
@@ -19,6 +20,7 @@ public class DotsMenuComponent {
 
     public void setDotsMenu(ImageView threeDotsView, Pane menuPane,
                             Scene scene, HeaderController headerController) {
+        Popup popup = new Popup();
         VBox verticalMenu = new VBox();
         verticalMenu.getStyleClass().add("dotsVerticalMenu");
         Label settingsLabel = new Label("Settings");
@@ -26,7 +28,9 @@ public class DotsMenuComponent {
         verticalMenu.getChildren().addAll(settingsLabel, statusLabel);
         threeDotsView.setOnMouseClicked((event) -> {
             menuPane.getChildren().clear();
-            menuPane.getChildren().add(verticalMenu);
+            popup.getContent().clear();
+            popup.getContent().add(verticalMenu);
+            popup.show(threeDotsView, event.getScreenX() - threeDotsView.getFitWidth(), event.getScreenY() - 10);
             settingsLabel.setOnMouseClicked(event1 -> {
                 try {
                     FXMLLoader loader = new FXMLLoader(VoiceChatApplication.class.getResource("settings/settings.fxml"));

@@ -28,7 +28,7 @@ public class ColorUtil {
         if (settings != null) {
             ThemeMode themeMode = settings.getThemeMode();
             if (themeMode == ThemeMode.DARK) {
-                color = new Color(0.11, 0.11, 0.11, 1);
+                color = Color.web("#393a41");
             }
         }
         return color;

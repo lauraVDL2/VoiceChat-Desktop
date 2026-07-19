@@ -104,24 +104,25 @@ public class ScreenShareComponent {
                 }
             });
 
-            sendImage(screenChoiceList, stackPane, meetingId);
+            sendImage(screenChoiceList, popup, stackPane, meetingId);
 
             HBox container = new HBox(screenChoiceList);
             container.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-color: black;");
             popup.getContent().add(container);
 
             // Show popup near the button
-            HBox hBox = (HBox) shareScreenButton.getParent();
+            HBox hBox = (HBox) shareScreenButton.getParent().getParent();
             popup.show(hBox, event.getScreenX(), event.getScreenY() + 10);
         });
     }
 
-    public void sendImage(ListView<Screen> screenChoiceList, StackPane stackPane, String meetingId) {
+    public void sendImage(ListView<Screen> screenChoiceList, Popup popup, StackPane stackPane, String meetingId) {
         setupScreenSharing();
         screenChoiceList.setOnMouseClicked(e -> {
             Screen selectedScreen = screenChoiceList.getSelectionModel().getSelectedItem();
             if (selectedScreen != null) {
                 isSharing = true;
+                popup.hide();
 
                 // Cancel existing timer if running
                 if (serviceSend != null) {

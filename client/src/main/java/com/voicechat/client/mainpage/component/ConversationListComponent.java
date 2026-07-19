@@ -25,10 +25,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
-import org.shared.entity.Conversation;
-import org.shared.entity.Message;
-import org.shared.entity.ReadStatus;
-import org.shared.entity.User;
+import org.shared.entity.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -188,8 +185,15 @@ public class ConversationListComponent {
                 circleUnread(unreadMessages, contentStackPane);
 
                 TitledPane accordion = new TitledPane("Conversations", contentStackPane);
+                User user = UserSession.INSTANCE.getUser();
                 Image accordionImage = new Image(VoiceChatApplication.class.
                         getResourceAsStream("/com/voicechat/client/images/person.png"));
+                if (user.getSettings() != null) {
+                    if (user.getSettings().getThemeMode() == ThemeMode.DARK) {
+                        accordionImage = new Image(VoiceChatApplication.class.
+                                getResourceAsStream("/com/voicechat/client/images/person_white_icon.png"));
+                    }
+                }
                 ImageView accordionImageView = new ImageView(accordionImage);
                 accordionImageView.setFitWidth(14.);
                 accordionImageView.setFitHeight(14.);

@@ -18,11 +18,23 @@
     </rowConstraints>
     <HBox GridPane.vgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"
         fx:id="topMenuBox">
-        <ImageView pickOnBounds="true" preserveRatio="true" fx:id="shareScreen">
-            <image>
-                <Image url="@../images/share_screen.png" />
-            </image>
-        </ImageView>
+        <Region HBox.hgrow="ALWAYS" />
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView pickOnBounds="true" preserveRatio="true" fitHeight="35" fx:id="shareScreen">
+                <image>
+                    <Image url="@../images/share_screen_white.png" />
+                </image>
+            </ImageView>
+        </VBox>
+        <Region prefWidth="10" />
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView pickOnBounds="true" preserveRatio="true" fitHeight="35" fx:id="leaveCall">
+                <image>
+                    <Image url="@../images/phone-call-end.png" />
+                </image>
+            </ImageView>
+        </VBox>
+        <Region prefWidth="10" />
     </HBox>
     <StackPane fx:id="imageStackPane" GridPane.columnIndex="0" GridPane.rowIndex="1">
     </StackPane>

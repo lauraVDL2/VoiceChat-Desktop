@@ -271,7 +271,14 @@
 .dotsVerticalMenu {
     -fx-background-color: -fx-third-color;
     -fx-background-radius: 5;
-    -fx-text-fill: -fx-first-text-color;
     -fx-font-size: 15;
     -fx-padding: 5;
+}
+
+.dotsVerticalMenu Label {
+    -fx-text-fill: -fx-first-text-color;
+}
+
+#threeDots {
+    -fx-cursor: hand;
 }

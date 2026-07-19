@@ -23,6 +23,11 @@
     -fx-background-color: -fx-third-color;
 }
 
+#choiceBoxTheme .text {
+    -fx-text-fill: -fx-first-text-color;
+    -fx-fill: -fx-first-text-color;
+}
+
 .tabSettingsLabel {
     -fx-text-fill: -fx-first-text-color;
 }

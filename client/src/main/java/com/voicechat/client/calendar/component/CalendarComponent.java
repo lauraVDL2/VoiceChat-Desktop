@@ -84,6 +84,7 @@ public class CalendarComponent {
                 HBox hBoxTime = new HBox();
                 hBoxTime.setAlignment(Pos.TOP_CENTER);
                 Label timeLabel = new Label((startHour + row - 1) + ":00");
+                timeLabel.getStyleClass().add("timeCalendarLabel");
                 hBoxTime.getChildren().add(timeLabel);
                 gridCalendar.add(hBoxTime, 0, row);
 
