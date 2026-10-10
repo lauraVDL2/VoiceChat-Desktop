@@ -13,9 +13,7 @@
             <VBox>
                 <Region prefHeight="5" />
                 <ImageView pickOnBounds="true" preserveRatio="true" fx:id="notificationImageView">
-                    <image>
-                        <Image url="@../images/notification_white.png" />
-                    </image>
+                    <Image url="@../images/notification_white.png" />
                 </ImageView>
                 <Region prefHeight="5" />
             </VBox>

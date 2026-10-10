@@ -21,6 +21,8 @@ import static org.mockito.Mockito.*;
 public class SettingsDaoImplTest {
     private static SettingsDaoImpl settingsDao;
 
+    private static UserDaoImpl userDao;
+
     private static SessionFactory sessionFactory;
 
     private static Session session;
@@ -39,11 +41,14 @@ public class SettingsDaoImplTest {
         session = sessionFactory.openSession();
 
         settingsDao = new SettingsDaoImpl(sessionFactory);
+        userDao = new UserDaoImpl(sessionFactory);
     }
 
     @Test
     void testGetOrCreateSettings() {
         User user = createDummyUser("toto1.toto@yahoo.fr", "toto1", "toto1");
+
+        userDao.saveUser(user);
 
         Settings settings = settingsDao.getOrCreateSettings(user);
 
@@ -53,6 +58,8 @@ public class SettingsDaoImplTest {
     @Test
     void testChangeTheme() {
         User user = createDummyUser("toto1.toto@yahoo.fr", "toto1", "toto1");
+
+        userDao.saveUser(user);
 
         Settings settings = settingsDao.getOrCreateSettings(user);
 

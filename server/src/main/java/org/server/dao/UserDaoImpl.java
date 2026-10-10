@@ -47,9 +47,9 @@ public class UserDaoImpl implements UserDao {
         try {
             //this.createConstraints();
             Session session = this.sessionFactory.openSession();
+            session.save(user);
             Settings settings = new SettingsDaoImpl(sessionFactory).getOrCreateSettings(user);
             user.setSettings(settings);
-            session.save(user);
             this.sessionFactory.close();
             return true;
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import org.shared.entity.User;
 import org.shared.pojo.Page;
 
 import java.io.*;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,6 +28,26 @@ public class MainPageService {
         }
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+    }
+
+    public ServerResponse getConversationByUsers(Set<User> users) throws Exception {
+        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+        String json = objectMapper.writeValueAsString(users);
+        for (var user : users) {
+            System.out.println(user.getEmailAddress());
+        }
+        Message message = new Message(MessageType.CONVERSATION_GET_BY_PARTICIPANTS, json);
+        String correlationId = UUID.randomUUID().toString();
+        message.setCorrelationId(correlationId);
+        PrintWriter serverOut = Listener.getServerOut();
+
+        synchronized (serverOut) {
+            serverOut.println(objectMapper.writeValueAsString(message));
+            serverOut.flush();
+        }
+
+        return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
+
     }
 
     public ServerResponse scrollMessages(Conversation conversation, Page page) throws Exception {
@@ -145,6 +166,8 @@ public class MainPageService {
             serverOut.println(objectMapper.writeValueAsString(message));
             serverOut.flush();
         }
+
+        System.out.println(conversation.getId() + " conv");
 
         return Listener.getServerReader().getServerResponseByCorrelationId(correlationId);
     }

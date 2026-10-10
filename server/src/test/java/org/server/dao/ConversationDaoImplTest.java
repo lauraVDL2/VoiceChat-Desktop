@@ -55,6 +55,29 @@ public class ConversationDaoImplTest {
     }
 
     @Test
+    public void testGetConversationByUsers() {
+        User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
+        User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");
+        User user3 = createDummyUser("test3.test@yahoo.fr", "Test 3");
+
+        Message message = fillDummyMessage();
+        var users = Set.of(user1, user2, user3);
+
+        // Firstly, save conversation in db
+        conversationDao.createConversation(users, message, user1);
+
+        Conversation conversation = conversationDao.getConversationByUsers(users);
+
+        Assertions.assertNotNull(conversation);
+        Assertions.assertNotNull(conversation.getId());
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(conversation.getMessages()));
+        Assertions.assertNotNull(conversation.getMessages().getFirst());
+        Assertions.assertEquals("Test message", conversation.getMessages().getFirst().getContent());
+        Assertions.assertNotNull(conversation.getParticipants());
+        Assertions.assertEquals(3, conversation.getParticipants().size());
+    }
+
+    @Test
     public void testGetConversation() {
         User user1 = createDummyUser("test1.test@yahoo.fr", "Test 1");
         User user2 = createDummyUser("test2.test@yahoo.fr", "Test 2");

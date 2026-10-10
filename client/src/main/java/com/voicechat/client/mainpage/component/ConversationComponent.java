@@ -35,16 +35,20 @@ import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.entity.Conversation;
 import org.shared.entity.Message;
+import org.shared.entity.ReadStatus;
 import org.shared.entity.User;
 import org.shared.pojo.Page;
 import org.shared.pojo.ScrollDirection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConversationComponent {
@@ -76,16 +80,18 @@ public class ConversationComponent {
                 Message message = user.getMessages().stream()
                         .filter(userMessage -> Objects.equals(userMessage.getId(), conversationMessage.getId()))
                         .findFirst().orElse(null);
-                labelTime.setText(" - " + message.getTime());
-                vBox1.getChildren().add(labelName);
-                vBox1.getChildren().add(labelTime);
-                hBox.getChildren().add(vBox1);
+                if (message != null) {
+                    labelTime.setText(" - " + message.getTime());
+                    vBox1.getChildren().add(labelName);
+                    vBox1.getChildren().add(labelTime);
+                    hBox.getChildren().add(vBox1);
 
-                VBox vBox2 = new VBox();
-                Label messageContent = new Label();
-                messageContent.setText(message.getContent());
-                vBox2.getChildren().add(messageContent);
-                hBox.getChildren().add(vBox2);
+                    VBox vBox2 = new VBox();
+                    Label messageContent = new Label();
+                    messageContent.setText(message.getContent());
+                    vBox2.getChildren().add(messageContent);
+                    hBox.getChildren().add(vBox2);
+                }
             }
         }
         mainPane.setCenter(hBox);
@@ -248,16 +254,15 @@ public class ConversationComponent {
         for (User participant : participants) {
             if (!StringUtils.equals(currentUser.getEmailAddress(), participant.getEmailAddress())) {
                 if (i == 0) {
-                    try {
-                        String correlationId = UUID.randomUUID().toString();
-                        mainPageService.sendAvatarInfo(correlationId, participant);
-                        ImageView avatarView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
-                        avatarView.setFitHeight(40.);
-                        avatarView.setFitWidth(40.);
-                        targetUserInfo.getChildren().add(avatarView);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    loadAvatar(participant).thenAccept(avatarView -> {
+                        if (avatarView != null) {
+                            Platform.runLater(() -> {
+                                avatarView.setFitHeight(40.);
+                                avatarView.setFitWidth(40.);
+                                targetUserInfo.getChildren().add(0, avatarView);
+                            });
+                        }
+                    });
                 }
                 i++;
                 Label displayNameLabel = new Label();
@@ -285,47 +290,51 @@ public class ConversationComponent {
         return hBox;
     }
 
-    public ScrollPane addConversationMessagesScrollPane(MainPageController mainPageController, Conversation conversation, GridPane gridMainPane,
-                                                        User currentUser, Page page, ScrollPane scrollPane) {
+    public ScrollPane addConversationMessagesScrollPane(
+            MainPageController mainPageController,
+            Conversation conversation,
+            GridPane gridMainPane,
+            User currentUser,
+            Page page,
+            ScrollPane scrollPane) {
+
         VBox messageContentBox = new VBox();
         messageContentBox.setId("messageContentBox");
         messageContentBox.setPadding(new Insets(10, 10, 10, 10));
+
+        this.scrollPane = scrollPane != null
+                ? scrollPane
+                : addMessagesScrollPane(mainPageController, messageContentBox, conversation, page);
+
+        this.scrollPane.setContent(messageContentBox);
+
         Platform.runLater(() -> {
-        for (Message message : conversation.getMessages()) {
-            // Asynchronous avatar loading
-            //Platform.runLater(() -> {
-                try {
-                    HBox hBoxAvatar = new HBox();
-                    String correlationId = UUID.randomUUID().toString();
-                    mainPageService.sendAvatarInfo(correlationId, message.getSender());
-                    VBox avatarBox = new VBox();
+            System.out.println("size conv = " + conversation.getMessages().size());
+            for (Message message : conversation.getMessages()) {
+                ImageView avatarView = new ImageView();
+                avatarView.setFitWidth(40.);
+                avatarView.setFitHeight(40.);
 
-                    ImageView imageView = Listener.getServerReader().getAvatarByCorrelationId(correlationId);
-                    imageView.setFitWidth(40.);
-                    imageView.setFitHeight(40.);
-                    avatarBox.getChildren().add(imageView);
-                    avatarBox.setAlignment(Pos.CENTER);
-                    hBoxAvatar.getChildren().add(avatarBox);
-                    addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
-                    AnimationUtil.fadeInNode(messageContentBox);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                VBox avatarBox = new VBox(avatarView);
+                avatarBox.setAlignment(Pos.CENTER);
+
+                HBox hBoxAvatar = new HBox(avatarBox);
+                addMessageBox(hBoxAvatar, messageContentBox, message, currentUser);
+                AnimationUtil.fadeInNode(messageContentBox);
+
+                User sender = message.getSender();
+                if (sender != null) {
+                    loadAvatar(sender).thenAccept(loadedAvatar -> {
+                        if (loadedAvatar != null && loadedAvatar.getImage() != null) {
+                            Platform.runLater(() ->
+                                    avatarView.setImage(loadedAvatar.getImage()));
+                        }
+                    });
                 }
-            //});
-        }});
+            }
+        });
 
-        this.scrollPane = scrollPane;
-
-        if (this.scrollPane == null) {
-            this.scrollPane = addMessagesScrollPane(mainPageController, messageContentBox, conversation, page);
-        }
-        else {
-            Platform.runLater(() -> {
-                this.scrollPane.setContent(messageContentBox);
-            });
-        }
-
-       return this.scrollPane;
+        return this.scrollPane;
     }
     
     public HBox addConversationSendMessageBox(MainPageController mainPageController, Conversation conversation,
@@ -347,7 +356,23 @@ public class ConversationComponent {
         imageView.setImage(image);
 
         if (conversationAction == ConversationAction.CONTINUE) {
-            mainPageController.sendMessageToExistingConversation(imageView, conversation);
+            imageView.setOnMouseClicked(event -> {
+                //mainPageController.sendMessageToExistingConversation(conversation);
+                User sender = UserSession.INSTANCE.getUser();
+                String content = messageField.getText();
+
+                if (sender == null || content == null || content.isBlank()) {
+                    return;
+                }
+
+                Message message = new Message();
+                message.setContent(content);
+                message.setSender(sender);
+                message.setTime(LocalDateTime.now());
+
+                mainPageController.sendMessageToExistingConversation(conversation, message);
+                messageField.clear();
+            });
         }
 
         Region spacer = new Region();
@@ -377,8 +402,8 @@ public class ConversationComponent {
 
             mainPane.setPadding(new Insets(0, 0, 10, 0));
 
-            messagesNotificationScheduler.schedule(currentUser.getEmailAddress(), mainPageController, mainPane, mainPageController.getLeftPane(), this,
-                   conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
+            //messagesNotificationScheduler.schedule(currentUser.getEmailAddress(), mainPageController, mainPane, mainPageController.getLeftPane(), this,
+                   //conversationListComponent, conversation, gridMainPane, onlineUsersScheduler);
 
             // RIGHT pane
             conversationMessageSearchComponent.setSearchMessageField(rightSearchPane, mainPageController, conversation);
@@ -432,6 +457,21 @@ public class ConversationComponent {
         });
 
         return scrollPane;
+    }
+
+    private final ExecutorService avatarExecutor = Executors.newFixedThreadPool(4);
+
+    private CompletableFuture<ImageView> loadAvatar(User user) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String correlationId = UUID.randomUUID().toString();
+                mainPageService.sendAvatarInfo(correlationId, user);
+                return Listener.getServerReader().getAvatarByCorrelationId(correlationId);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, avatarExecutor);
     }
 
     public void loadMoreMessages(MainPageController mainPageController, ScrollPane scrollPane, Conversation conversation) {
@@ -554,7 +594,33 @@ public class ConversationComponent {
             // Bottom send box
             mainPane.setBottom(addConversationSendMessageBox(parentController, null, ConversationAction.START));
 
-            parentController.sendMessage();
+            ImageView btn = (ImageView) mainPane.lookup("#sendButton");
+            btn.setOnMouseClicked((event) -> {
+                TextArea sendMessage = (TextArea) mainPane.lookup("#sendMessage");
+                Conversation conversation = new Conversation();
+                targetUser.setDisplayName(((Label) mainPane.lookup("#displayNameLabelConv")).getText());
+                Label emailAddressField = (Label) mainPane.lookup("#emailAddressLabelConv");
+                String targetUserEmailAddress = emailAddressField.getText();
+                targetUser.setEmailAddress(targetUserEmailAddress);
+                conversation.setParticipants(Set.of(currentUser, targetUser));
+                Message message = new Message();
+                message.setContent(sendMessage.getText());
+                message.setTime(LocalDateTime.now());
+
+                ReadStatus readStatus = new ReadStatus(false, message, targetUser);
+                ReadStatus currentUserReadStatus = new ReadStatus(true, message, currentUser);
+                message.setReadStatuses(List.of(currentUserReadStatus, readStatus));
+                message.setSender(currentUser);
+
+                List<Message> currentUserMessages = currentUser.getMessages();
+                currentUserMessages.add(message);
+
+                currentUser.setMessages(currentUserMessages);
+
+                conversation.setMessages(List.of(message));
+
+                parentController.sendMessage(conversation);
+            });
         });
     }
 

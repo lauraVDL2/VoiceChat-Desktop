@@ -58,13 +58,10 @@ public class SettingsDaoImpl implements SettingsDao {
                         Map.of("emailAddress", user.getEmailAddress()));
                 if (settings == null) {
                     cypher = """
-                                MERGE (u:User {emailAddress: $emailAddress})
-                                WITH u
-                                OPTIONAL MATCH (u)-[:HAS]->(s:Settings)
-                                WHERE s IS NULL
-                                CREATE (newSettings:Settings { themeMode: 'LIGHT' })
-                                CREATE (u)-[:HAS]->(newSettings)
-                                RETURN newSettings
+                               MATCH (u:User {emailAddress: $emailAddress})
+                               MERGE (u)-[:HAS]->(s:Settings)
+                               ON CREATE SET s.themeMode = 'LIGHT'
+                               RETURN s
                             """;
                     settings = session.queryForObject(Settings.class, cypher,
                             Map.of("emailAddress", user.getEmailAddress()));

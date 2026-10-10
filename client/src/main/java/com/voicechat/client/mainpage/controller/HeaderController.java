@@ -100,9 +100,18 @@ public class HeaderController {
             try {
                 String correlationId = UUID.randomUUID().toString();
                 headerService.sendAvatarInfo(correlationId, UserSession.INSTANCE.getUser());
-                myAvatar.setImage(serverReader.getAvatarByCorrelationId(correlationId).getImage());
-                myAvatar.setFitWidth(40.);
-                myAvatar.setFitHeight(40.);
+                ImageView avatar = serverReader.getAvatarByCorrelationId(correlationId);
+
+                if (avatar == null || avatar.getImage() == null || avatar.getImage().isError()) {
+                    System.err.println("Avatar response timed out or contained no valid image");
+                    return;
+                }
+
+                Platform.runLater(() -> {
+                    myAvatar.setImage(avatar.getImage());
+                    myAvatar.setFitWidth(40.);
+                    myAvatar.setFitHeight(40.);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }

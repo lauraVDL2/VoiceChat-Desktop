@@ -6,10 +6,7 @@ import com.microsoft.graph.requests.GraphServiceClient;
 import org.neo4j.ogm.session.SessionFactory;
 import org.server.action.*;
 import org.server.config.Neo4jConfig;
-import org.server.dao.ConversationDaoImpl;
-import org.server.dao.MessageDaoImpl;
-import org.server.dao.SettingsDaoImpl;
-import org.server.dao.UserDaoImpl;
+import org.server.dao.*;
 import org.server.microsoft_graph.pojo.MicrosoftUser;
 import org.server.microsoft_graph.requester.CalendarRequester;
 import org.server.microsoft_graph.GraphClient;
@@ -151,19 +148,23 @@ public class Server {
                             userAction.getOnlineUsers(messageObj, objectMapper, serverResponse, socket, onlineUsers);
                             break;
                         case CONVERSATION_SEARCH:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.conversationSearchIfExists(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_CREATE:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.createConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_DISPLAY:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.searchUserConversations(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case CONVERSATION_SCROLL:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.scrollConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case READ_TARGET_AVATAR:
@@ -171,8 +172,14 @@ public class Server {
                             userAction.searchTargetUser(objectMapper, messageObj, dataOutputStream, serverResponse);
                             break;
                         case CONVERSATION_GET:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.getConversation(objectMapper, messageObj, serverResponse, socket);
+                            break;
+                        case CONVERSATION_GET_BY_PARTICIPANTS:
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
+                            conversationAction.getConversationByParticipants(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MESSAGE_SEND:
                             sendMessageToUser(objectMapper, messageObj, serverResponse, socket);
@@ -182,7 +189,8 @@ public class Server {
                             messageAction.searchMessageInConversation(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MESSAGE_CONVERSATION_GO:
-                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory));
+                            conversationAction = new ConversationAction(new ConversationDaoImpl(sessionFactory),
+                                    new GroupDaoImpl(sessionFactory));
                             conversationAction.goToMessage(objectMapper, messageObj, serverResponse, socket);
                             break;
                         case MEETING_CONNECT:

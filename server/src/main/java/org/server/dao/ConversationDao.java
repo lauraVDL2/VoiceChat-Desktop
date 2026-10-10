@@ -16,5 +16,6 @@ public interface ConversationDao {
     int getOffset(Conversation conversation);
     Conversation scrollConversationMessages(Conversation conversation, Page page);
     Conversation getConversation(Conversation conversation);
+    Conversation getConversationByUsers(Set<User> users);
     Conversation createConversation(Set<User> users, Message message, User sender);
 }

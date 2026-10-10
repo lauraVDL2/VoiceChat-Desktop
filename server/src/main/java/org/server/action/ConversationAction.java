@@ -7,6 +7,7 @@ import org.neo4j.ogm.session.SessionFactory;
 import org.server.config.Neo4jConfig;
 import org.server.dao.ConversationDao;
 import org.server.dao.ConversationDaoImpl;
+import org.server.dao.GroupDao;
 import org.shared.*;
 import org.shared.entity.Conversation;
 import org.shared.entity.User;
@@ -29,7 +30,10 @@ public class ConversationAction extends AbstractAction {
 
     private ConversationDao conversationDao;
 
-    public ConversationAction(ConversationDao conversationDao) {
+    private GroupDao groupDao;
+
+    public ConversationAction(ConversationDao conversationDao, GroupDao groupDao) {
+        this.groupDao = groupDao;
         this.conversationDao = conversationDao;
     }
 
@@ -59,6 +63,47 @@ public class ConversationAction extends AbstractAction {
                 outputStream.write(bytes);
                 outputStream.flush();
             }
+        }
+    }
+
+    public void getConversationByParticipants(ObjectMapper objectMapper,  Message messageObj,
+                                              ServerResponse serverResponse, Socket socket) throws IOException {
+        Set<User> users = objectMapper.readValue(messageObj.getPayload(), new TypeReference<Set<User>>() {});
+        byte[] bytes = null;
+        if (!CollectionUtils.isEmpty(users)) {
+            Conversation conversation = conversationDao.getConversationByUsers(users);
+            if (conversation != null) {
+                logger.info("Conversation found !");
+                bytes = buildSuccessResponseWithPayload(serverResponse, ServerResponseMessage.CONVERSATION_GET_BY_PARTICIPANTS,
+                        messageObj.getCorrelationId(), conversation, objectMapper);
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+            else {
+                logger.info("Conversation does not exist !");
+                serverResponse.setCorrelationId(messageObj.getCorrelationId());
+                serverResponse.setServerResponseStatus(ServerResponseStatus.INFO);
+                serverResponse.setServerResponseMessage(serverResponse.getServerResponseMessage());
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                bytes = objectMapper.writeValueAsBytes(serverResponse);
+                outputStream.writeUTF("JSON_RESPONSE");
+                outputStream.writeInt(bytes.length);
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+        }
+        else {
+            logger.error("Error : no users");
+            bytes = buildFailureResponse(serverResponse, ServerResponseMessage.CONVERSATION_GET_BY_PARTICIPANTS, messageObj.getCorrelationId(),
+                    "Error : no users", objectMapper);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("JSON_RESPONSE");
+            outputStream.writeInt(bytes.length);
+            outputStream.write(bytes);
+            outputStream.flush();
         }
     }
 
@@ -165,8 +210,17 @@ public class ConversationAction extends AbstractAction {
         Conversation conversation = objectMapper.readValue(messageObj.getPayload(), Conversation.class);
         if (conversation != null) {
             Set<User> participants = conversation.getParticipants();
-            org.shared.entity.Message message = conversation.getMessages().get(0);
-            Conversation newConversation = conversationDao.createConversation(participants, message, message.getSender());
+            org.shared.entity.Message message = conversation.getMessages().getFirst();
+            Conversation newConversation = null;
+            if (!CollectionUtils.isEmpty(participants)) {
+                if (participants.size() == 2) {
+                    newConversation = conversationDao.createConversation(participants, message, message.getSender());
+                }
+                else if (participants.size() > 2) {
+                    newConversation = groupDao.createConversation(participants, message, message.getSender());
+                }
+            }
+
             byte[] bytes = null;
             if (newConversation != null) {
                 logger.info("Conversation created !");

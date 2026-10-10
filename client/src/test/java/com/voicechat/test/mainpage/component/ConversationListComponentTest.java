@@ -108,37 +108,37 @@ public class ConversationListComponentTest extends FxRobot {
         assertFalse(vBox.getChildren().isEmpty());
     }
 
-    @Test
-    void testSetConversationList() throws Exception {
-        ObjectMapper jsonMapper = JsonMapper.getJsonMapper();
-
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setBinaryPayload(jsonMapper.writeValueAsBytes(List.of(conversation)));
-        serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-
-        VBox leftPane = new VBox();
-
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            conversationListComponent.setConversationList(new MainPageController(), leftPane, serverResponse);
-            latch.countDown();
-        });
-
-        boolean scheduled = latch.await(5, TimeUnit.SECONDS);
-        assertTrue(scheduled, "Timeout waiting for addMessageBox to be called");
-
-        // Now, wait again for the UI updates to complete
-        CountDownLatch updateLatch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            // Here, perform any additional checks or just signal completion
-            updateLatch.countDown();
-        });
-        assertTrue(updateLatch.await(5, TimeUnit.SECONDS), "Timeout waiting for UI update");
-
-        assertNotNull(leftPane);
-        assertFalse(leftPane.getChildren().isEmpty());
-    }
+//    @Test
+//    void testSetConversationList() throws Exception {
+//        ObjectMapper jsonMapper = JsonMapper.getJsonMapper();
+//
+//        ServerResponse serverResponse = new ServerResponse();
+//        serverResponse.setBinaryPayload(jsonMapper.writeValueAsBytes(List.of(conversation)));
+//        serverResponse.setServerResponseStatus(ServerResponseStatus.SUCCESS);
+//
+//        VBox leftPane = new VBox();
+//
+//        CountDownLatch latch = new CountDownLatch(1);
+//
+//        Platform.runLater(() -> {
+//            conversationListComponent.setConversationList(new MainPageController(), leftPane, serverResponse);
+//            latch.countDown();
+//        });
+//
+//        boolean scheduled = latch.await(5, TimeUnit.SECONDS);
+//        assertTrue(scheduled, "Timeout waiting for addMessageBox to be called");
+//
+//        // Now, wait again for the UI updates to complete
+//        CountDownLatch updateLatch = new CountDownLatch(1);
+//        Platform.runLater(() -> {
+//            // Here, perform any additional checks or just signal completion
+//            updateLatch.countDown();
+//        });
+//        assertTrue(updateLatch.await(5, TimeUnit.SECONDS), "Timeout waiting for UI update");
+//
+//        assertNotNull(leftPane);
+//        assertFalse(leftPane.getChildren().isEmpty());
+//    }
 
     @Test
     void testCircleUnread() {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
+import com.voicechat.client.common.component.MarginComponent;
 import com.voicechat.client.login.component.AuthenticatePopupComponent;
 import com.voicechat.client.mainpage.controller.MainPageController;
 import com.voicechat.client.mainpage.service.MainPageService;
@@ -16,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,6 +39,10 @@ public class ConversationListComponent {
     private final MainPageService mainPageService = new MainPageService();
 
     private final AvatarComponent avatarComponent = new AvatarComponent();
+
+    private final MarginComponent marginComponent = new MarginComponent();
+
+    //private final ConversationCreationComponent conversationCreationComponent = new ConversationCreationComponent();
 
     public void setConversationClicked(VBox leftPane, ServerResponse serverResponse) {
         Platform.runLater(() -> {
@@ -88,7 +94,8 @@ public class ConversationListComponent {
         });
     }
 
-    public void setConversationList(MainPageController mainPageController, VBox leftPane, ServerResponse serverResponse) {
+    public void setConversationList(MainPageController mainPageController, BorderPane mainPane,
+                                    VBox leftPane, ServerResponse serverResponse) {
         Platform.runLater(() -> {
             ObjectMapper objectMapper = JsonMapper.getJsonMapper();
             List<Conversation> conversations = null;
@@ -102,6 +109,39 @@ public class ConversationListComponent {
             AuthenticatePopupComponent.closePopup();
             User currentUser = UserSession.INSTANCE.getUser();
             currentUser.setConversation(conversations);
+
+            TitledPane accordion = new TitledPane();
+            User user = UserSession.INSTANCE.getUser();
+            Image accordionImage = new Image(VoiceChatApplication.class.
+                    getResourceAsStream("/com/voicechat/client/images/person.png"));
+            Image plusImage = new Image(VoiceChatApplication.class.
+                    getResourceAsStream("/com/voicechat/client/images/plus_black.png"));
+            if (user.getSettings() != null) {
+                if (user.getSettings().getThemeMode() == ThemeMode.DARK) {
+                    accordionImage = new Image(VoiceChatApplication.class.
+                            getResourceAsStream("/com/voicechat/client/images/person_white_icon.png"));
+                    plusImage = new Image(VoiceChatApplication.class.
+                            getResourceAsStream("/com/voicechat/client/images/plus_white.png"));
+                }
+            }
+
+            HBox imageBox = new HBox();
+            imageBox.setAlignment(Pos.CENTER_RIGHT);
+            ImageView plusImageView = new ImageView(plusImage);
+            plusImageView.setFitHeight(25.);
+            plusImageView.setFitWidth(25.);
+            plusImageView.setMouseTransparent(false);
+            plusImageView.setPickOnBounds(true); // Click anywhere within its bounds
+            imageBox.getChildren().addAll(marginComponent.initHorizontalMargin(8), plusImageView,
+                    marginComponent.initHorizontalMargin(8));
+
+            ImageView accordionImageView = new ImageView(accordionImage);
+            accordionImageView.setFitWidth(14.);
+            accordionImageView.setFitHeight(14.);
+            accordion.setGraphic(accordionImageView);
+            accordion.getStyleClass().add("accordionStyle");
+            List<StackPane> stackPanes = new ArrayList<>();
+
             for (Conversation conversation : conversations) {
                 VBox mainVbox = new VBox();
                 HBox hBox = new HBox();
@@ -181,27 +221,22 @@ public class ConversationListComponent {
                 StackPane contentStackPane = new StackPane();
                 contentStackPane.getChildren().add(mainVbox);
                 contentStackPane.getStyleClass().add("discussionBox");
+                stackPanes.add(contentStackPane);
 
                 circleUnread(unreadMessages, contentStackPane);
 
-                TitledPane accordion = new TitledPane("Conversations", contentStackPane);
-                User user = UserSession.INSTANCE.getUser();
-                Image accordionImage = new Image(VoiceChatApplication.class.
-                        getResourceAsStream("/com/voicechat/client/images/person.png"));
-                if (user.getSettings() != null) {
-                    if (user.getSettings().getThemeMode() == ThemeMode.DARK) {
-                        accordionImage = new Image(VoiceChatApplication.class.
-                                getResourceAsStream("/com/voicechat/client/images/person_white_icon.png"));
-                    }
-                }
-                ImageView accordionImageView = new ImageView(accordionImage);
-                accordionImageView.setFitWidth(14.);
-                accordionImageView.setFitHeight(14.);
-                accordion.setGraphic(accordionImageView);
-                accordion.getStyleClass().add("accordionStyle");
-                leftPane.getChildren().addAll(accordion);
+                mainPageController.createConversationBoxes(plusImageView);
+                //conversationCreationComponent.createConversationBoxes(mainPageController, plusImageView, mainPane);
                 mainPageController.goToConversation(contentStackPane);
             }
+            VBox vBox = new VBox();
+            for (var node : stackPanes) {
+                vBox.getChildren().add(node);
+            }
+            accordion.setText("Conversations");
+            accordion.setContent(vBox);
+            leftPane.getChildren().addAll(marginComponent.initVerticalMargin(8), imageBox,
+                    marginComponent.initVerticalMargin(8), accordion);
         });
     }
 

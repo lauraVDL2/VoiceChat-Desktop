@@ -1,13 +1,11 @@
 package org.server.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.transaction.Transaction;
-import org.shared.entity.Conversation;
-import org.shared.entity.Message;
-import org.shared.entity.ReadStatus;
-import org.shared.entity.User;
+import org.shared.entity.*;
 import org.shared.pojo.Page;
 import org.shared.pojo.ScrollDirection;
 import org.slf4j.Logger;
@@ -18,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ConversationDaoImpl implements ConversationDao {
     private static final Logger log = LoggerFactory.getLogger(ConversationDaoImpl.class);
-    private SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
     public static String errorMessage = "";
 
     public ConversationDaoImpl(SessionFactory sessionFactory) {
@@ -292,8 +290,79 @@ public class ConversationDaoImpl implements ConversationDao {
     }
 
     @Override
+    public Conversation getConversationByUsers(Set<User> users) {
+        if (CollectionUtils.isEmpty(users)) {
+            return null;
+        }
+
+        try {
+            Session session = this.sessionFactory.openSession();
+
+            String cypher = """
+                    MATCH (c:Conversation)-[:HAS]->(u:User)
+                    WHERE u.emailAddress IN $emails
+                    WITH c, collect(DISTINCT u.emailAddress) AS matchedEmails
+                    WHERE all(email IN $emails WHERE email IN matchedEmails)
+                    RETURN c
+                    ORDER BY id(c)
+                    LIMIT 1
+                    """;
+
+            List<String> emails = users.stream()
+                    .map(User::getEmailAddress)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("emails", emails);
+
+            Conversation conversation = null;
+            for (var record : session.query(cypher, params)) {
+                conversation = (Conversation) record.get("c");
+                break;
+            }
+            if (conversation == null) {
+                return null;
+            }
+
+            String participantsQuery = """
+                    MATCH (c:Conversation)-[:HAS]->(u:User)
+                    WHERE id(c) = $id
+                    RETURN u
+                    """;
+            Set<User> participants = new LinkedHashSet<>();
+            for (var record : session.query(participantsQuery, Map.of("id", conversation.getId()))) {
+                participants.add((User) record.get("u"));
+            }
+            conversation.setParticipants(participants);
+
+            String messagesQuery = """
+                    MATCH (c:Conversation)-[:CONTAINS]->(m:Message)<-[:SENT_BY]-(sender:User)
+                    WHERE id(c) = $id
+                    RETURN m, sender
+                    ORDER BY m.time DESC
+                    LIMIT 20
+                    """;
+            List<Message> messages = new ArrayList<>();
+            for (var record : session.query(messagesQuery, Map.of("id", conversation.getId()))) {
+                Message message = (Message) record.get("m");
+                message.setSender((User) record.get("sender"));
+                messages.add(message);
+            }
+
+            conversation.setMessages(messages.stream()
+                    .sorted(Comparator.comparing(Message::getTime))
+                    .collect(Collectors.toList()));
+            return conversation;
+        } catch (Exception e) {
+            log.error("Error getting conversation by users: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Conversation createConversation(Set<User> users, Message message, User sender) {
         try {
+            Conversation fullConversation = null;
             Session session = this.sessionFactory.openSession();
             // Start a transaction
             try (Transaction tx = session.beginTransaction()) {
@@ -307,11 +376,10 @@ public class ConversationDaoImpl implements ConversationDao {
                 Message createdMessage = session.queryForObject(Message.class, createMessageCypher,
                         Map.of("content", message.getContent(), "time", message.getTime(), "emailAddress",
                                 sender.getEmailAddress()));
-
                 List<String> userEmailAddresses = users.stream().map(User::getEmailAddress).toList();
 
                 String linkUsersCypher =
-                        "CREATE (conv:Conversation)\n" +
+                        "CREATE (conv:Conversation {type: 'conversation'})\n" +
                                 "WITH conv\n" +
                                 "UNWIND $usersEmailAddresses AS email\n" +
                                 "MATCH (u:User {emailAddress: email})\n" +
@@ -321,7 +389,7 @@ public class ConversationDaoImpl implements ConversationDao {
                                 "WHERE id(m) = $messageId\n" +
                                 "MERGE (conv)-[:CONTAINS]->(m)\n" +
                                 "RETURN conv";
-                Conversation fullConversation = session.queryForObject(Conversation.class, linkUsersCypher, Map.of("usersEmailAddresses", userEmailAddresses,"messageId",
+                fullConversation = session.queryForObject(Conversation.class, linkUsersCypher, Map.of("usersEmailAddresses", userEmailAddresses, "messageId",
                         createdMessage.getId()));
 
                 tx.commit();

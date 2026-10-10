@@ -45,14 +45,15 @@ public class ServerReader {
     }
 
     /**
-     * Blocking retrieval of avatar by correlationId.
+     * Retrieval of avatar by correlationId.
      * @param correlationId correlation id to wait for
      * @return ImageView avatar
      * @throws InterruptedException if interrupted while waiting
      */
     public ImageView getAvatarByCorrelationId(String correlationId) throws InterruptedException {
-        BlockingQueue<ImageView> queue = avatarQueues.computeIfAbsent(correlationId, k -> new LinkedBlockingQueue<>());
-        return queue.take();
+        BlockingQueue<ImageView> queue =
+                avatarQueues.computeIfAbsent(correlationId, key -> new LinkedBlockingQueue<>());
+        return queue.poll(10, TimeUnit.SECONDS);
     }
 
     /**

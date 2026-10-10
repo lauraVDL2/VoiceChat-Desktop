@@ -53,7 +53,7 @@ public class ConversationActionTest {
     @Test
     void getConversation_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
@@ -96,7 +96,7 @@ public class ConversationActionTest {
     @Test
     void goToMessage_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
@@ -135,7 +135,7 @@ public class ConversationActionTest {
     @Test
     void scrollConversation_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
@@ -174,7 +174,7 @@ public class ConversationActionTest {
     @Test
     void searchUserConversations_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
@@ -213,7 +213,7 @@ public class ConversationActionTest {
     @Test
     void createConversation_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 
@@ -253,7 +253,7 @@ public class ConversationActionTest {
     @Test
     void conversationSearchIfExists_success_writesJsonResponse() throws Exception {
         ConversationDao conversationDao = mock(ConversationDao.class);
-        ConversationAction conversationAction = new ConversationAction(conversationDao);
+        ConversationAction conversationAction = new ConversationAction(conversationDao, null);
         ObjectMapper jsonMapper = new ObjectMapper();
         ServerResponse serverResponse = new ServerResponse();
 

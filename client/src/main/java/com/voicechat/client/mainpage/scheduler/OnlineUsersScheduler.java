@@ -27,22 +27,22 @@ public class OnlineUsersScheduler {
     private Timeline onlineTimeline = null;
 
     public void schedule(GridPane gridPane, OnlineFetch onlineFetch) {
-        if (onlineTimeline == null) {
-            // Create a Timeline that triggers every 60 seconds
-            onlineTimeline = new Timeline(
-                    new KeyFrame(Duration.seconds(60), event -> {
-                        try {
-                            String correlationId = UUID.randomUUID().toString();
-                            fetchLoggedUsers(correlationId, gridPane, onlineFetch);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    })
-            );
-        }
-        // Set it to repeat indefinitely
-        onlineTimeline.setCycleCount(Timeline.INDEFINITE);
-        onlineTimeline.play();
+//        if (onlineTimeline == null) {
+//            // Create a Timeline that triggers every 60 seconds
+//            onlineTimeline = new Timeline(
+//                    new KeyFrame(Duration.seconds(60), event -> {
+//                        try {
+//                            String correlationId = UUID.randomUUID().toString();
+//                            fetchLoggedUsers(correlationId, gridPane, onlineFetch);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    })
+//            );
+//        }
+//        // Set it to repeat indefinitely
+//        onlineTimeline.setCycleCount(Timeline.INDEFINITE);
+//        onlineTimeline.play();
     }
 
     public void fetchLoggedUsers(String correlationId, GridPane gridPane, OnlineFetch onlineFetch) throws IOException, InterruptedException {

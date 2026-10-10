@@ -204,6 +204,18 @@
     -fx-margin: 10 10 10 10;
 }
 
+.searchUserField {
+    -fx-background-color: -fx-third-color;
+    -fx-control-inner-background: -fx-third-color;
+    -fx-border-color: -fx-second-color;
+    -fx-border-width: 2;
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 300px;
+    -fx-min-width: 200px;
+    -fx-margin: 10 10 10 10;
+}
+
 .searchMessages {
     /*-fx-background-color: "#b6d1ff";*/
     -fx-background-color: -fx-main-color;

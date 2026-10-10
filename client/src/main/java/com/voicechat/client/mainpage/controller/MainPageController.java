@@ -5,13 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voicechat.client.Listener;
 import com.voicechat.client.VoiceChatApplication;
 import com.voicechat.client.common.UserSession;
-import com.voicechat.client.mainpage.component.AvatarComponent;
-import com.voicechat.client.mainpage.component.ConversationComponent;
-import com.voicechat.client.mainpage.component.ConversationListComponent;
-import com.voicechat.client.mainpage.component.ConversationMessageSearchComponent;
+import com.voicechat.client.mainpage.component.*;
 import com.voicechat.client.mainpage.scheduler.MessagesNotificationScheduler;
 import com.voicechat.client.mainpage.scheduler.OnlineFetch;
 import com.voicechat.client.mainpage.scheduler.OnlineUsersScheduler;
+import com.voicechat.client.mainpage.service.HeaderService;
 import com.voicechat.client.mainpage.service.MainPageService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -53,6 +51,10 @@ public class MainPageController {
     private HeaderController headerController;
 
     private final MainPageService mainPageService = new MainPageService();
+
+    private final HeaderService headerService = new HeaderService();
+
+    private final ConversationCreationComponent conversationCreationComponent = new ConversationCreationComponent();
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -96,6 +98,44 @@ public class MainPageController {
                 onlineUsersScheduler.schedule(gridMainPane, OnlineFetch.CONVERSATION_LIST);
             });
         });
+    }
+
+    public void createConversationBoxes(ImageView plusImageView) {
+        conversationCreationComponent.createConversationBoxes(this, plusImageView, mainPane);
+    }
+
+    public void searchUsers(HBox hBox, VBox vBox, TextField searchField) {
+        String searchDisplayName = searchField.getText().trim();
+
+        // Avoid empty searches
+        if (searchDisplayName.isEmpty()) {
+            return;
+        }
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return headerService.searchUser(searchDisplayName);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAcceptAsync((serverResponse) -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_SEARCHED) {
+                        try {
+                            ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                            List<User> users = objectMapper.readValue(serverResponse.getBinaryPayload(),
+                                    new TypeReference<List<User>>() {
+                                    });
+                            conversationCreationComponent.setSearchUsersContent(this, vBox, hBox, users);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }, executor);
     }
 
     public void goToMessage(HBox hBox, Conversation conversation, Message message) {
@@ -230,7 +270,7 @@ public class MainPageController {
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_DISPLAYED) {
-                            conversationListComponent.setConversationList(this, leftPane, serverResponse);
+                            conversationListComponent.setConversationList(this, mainPane, leftPane, serverResponse);
                         }
                     }
                     else {
@@ -251,34 +291,34 @@ public class MainPageController {
         }
     }
     
-    public void sendMessage() {
+    public void sendMessage(Conversation conversation) {
         Platform.runLater(() -> {
-            ImageView btn = (ImageView) mainPane.lookup("#sendButton");
-            btn.setOnMouseClicked((event) -> {
-                TextArea sendMessage = (TextArea) mainPane.lookup("#sendMessage");
-                Conversation conversation = new Conversation();
-                User currentUser = UserSession.INSTANCE.getUser();
-                User targetUser = new User();
-                targetUser.setDisplayName(((Label) mainPane.lookup("#displayNameLabelConv")).getText());
-                Label emailAddressField = (Label) mainPane.lookup("#emailAddressLabelConv");
-                String targetUserEmailAddress = emailAddressField.getText();
-                targetUser.setEmailAddress(targetUserEmailAddress);
-                conversation.setParticipants(Set.of(currentUser, targetUser));
-                Message message = new Message();
-                message.setContent(sendMessage.getText());
-                message.setTime(LocalDateTime.now());
-
-                ReadStatus readStatus = new ReadStatus(false, message, targetUser);
-                ReadStatus currentUserReadStatus = new ReadStatus(true, message, currentUser);
-                message.setReadStatuses(List.of(currentUserReadStatus, readStatus));
-                message.setSender(currentUser);
-
-                List<Message> currentUserMessages = currentUser.getMessages();
-                currentUserMessages.add(message);
-
-                currentUser.setMessages(currentUserMessages);
-
-                conversation.setMessages(List.of(message));
+//            ImageView btn = (ImageView) mainPane.lookup("#sendButton");
+//            btn.setOnMouseClicked((event) -> {
+//                TextArea sendMessage = (TextArea) mainPane.lookup("#sendMessage");
+//                Conversation conversation = new Conversation();
+//                User currentUser = UserSession.INSTANCE.getUser();
+//                User targetUser = new User();
+//                targetUser.setDisplayName(((Label) mainPane.lookup("#displayNameLabelConv")).getText());
+//                Label emailAddressField = (Label) mainPane.lookup("#emailAddressLabelConv");
+//                String targetUserEmailAddress = emailAddressField.getText();
+//                targetUser.setEmailAddress(targetUserEmailAddress);
+//                conversation.setParticipants(Set.of(currentUser, targetUser));
+//                Message message = new Message();
+//                message.setContent(sendMessage.getText());
+//                message.setTime(LocalDateTime.now());
+//
+//                ReadStatus readStatus = new ReadStatus(false, message, targetUser);
+//                ReadStatus currentUserReadStatus = new ReadStatus(true, message, currentUser);
+//                message.setReadStatuses(List.of(currentUserReadStatus, readStatus));
+//                message.setSender(currentUser);
+//
+//                List<Message> currentUserMessages = currentUser.getMessages();
+//                currentUserMessages.add(message);
+//
+//                currentUser.setMessages(currentUserMessages);
+//
+//                conversation.setMessages(List.of(message));
 
                 CompletableFuture.supplyAsync(() -> {
                     try {
@@ -305,7 +345,85 @@ public class MainPageController {
                     }
                 }, executor);
             });
-        });
+//        });
+    }
+
+    public void getOrCreateConversationIfExists(Set<User> users, Message message) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return mainPageService.getConversationByUsers(users);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAcceptAsync((serverResponse) -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_GET_BY_PARTICIPANTS) {
+                        System.out.println("conversation exists !");
+                        Platform.runLater(() -> {
+                            try {
+                                mainPane.getChildren().clear();
+                                ObjectMapper objectMapper = JsonMapper.getJsonMapper();
+                                Conversation conversation = objectMapper.readValue(serverResponse.getBinaryPayload(), Conversation.class);
+                                conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane,
+                                        serverResponse, conversationListComponent, messagesNotificationScheduler);
+                                //conversationComponent.setConversationComponents(mainPane, serverResponse);
+                                sendMessageToExistingConversation(conversation, message);
+                                mainPane.requestLayout();
+                                System.out.println("VA ICI");
+                                if (conversation != null) {
+                                    System.out.println(conversation.getId());
+                                }
+
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    }
+                }
+                else if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_GET_BY_PARTICIPANTS) {
+                        Platform.runLater(() -> {
+                            mainPane.getChildren().clear();
+                            createConversation(users, message);
+                        });
+                    }
+                }
+            }
+        }, executor);
+    }
+
+    public void createConversation(Set<User> users, Message message) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                Conversation conversation = new Conversation();
+                conversation.setParticipants(users);
+                conversation.setMessages(List.of(message));
+                return mainPageService.createConversation(conversation);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAcceptAsync((serverResponse) -> {
+            if (serverResponse != null) {
+                if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
+                    if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_CREATED) {
+                        System.out.println("conversation exists !");
+                        try {
+                            conversationComponent.setMessagesComponents(this, gridMainPane, rightSearchPane, mainPane,
+                                    serverResponse, conversationListComponent, messagesNotificationScheduler);
+                            conversationComponent.setConversationComponents(mainPane, serverResponse);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                else {
+                    System.out.println("ERROR");
+                }
+            }
+        }, executor);
     }
 
     public void goToConversation(StackPane contentStackPane) {
@@ -383,28 +501,28 @@ public class MainPageController {
         });
     }
 
-    public void sendMessageToExistingConversation(ImageView imageView, Conversation conversation) {
-        imageView.setOnMouseClicked((event -> {
-            CompletableFuture.supplyAsync(() -> {
-                try {
-                    Conversation conversation1 = new Conversation();
-                    conversation1.setId(conversation.getId());
-                    Message message = new Message();
-                    String content = ((TextArea) mainPane.lookup("#sendMessage")).getText();
-                    User sender = UserSession.INSTANCE.getUser();
-                    message.setContent(content);
-                    message.setSender(sender);
-                    message.setTime(LocalDateTime.now());
-                    conversation1.setMessages(List.of(message));
-                    onlineUsersScheduler.waitOnlineScheduleToBeDone();
-                    messagesNotificationScheduler.waitMessageScheduleToBeDone();
-                    String correlationId = UUID.randomUUID().toString();
-                    return mainPageService.sendMessage(correlationId, conversation1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }, executor).thenAcceptAsync((serverResponse) -> {
+    public void sendMessageToExistingConversation(Conversation conversation, Message message) {
+        //imageView.setOnMouseClicked((event -> {
+        if (conversation == null || message == null) {
+            return;
+        }
+
+        String correlationId = UUID.randomUUID().toString();
+
+        Conversation outgoing = new Conversation();
+        outgoing.setId(conversation.getId());
+        outgoing.setMessages(List.of(message));
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                onlineUsersScheduler.waitOnlineScheduleToBeDone();
+                messagesNotificationScheduler.waitMessageScheduleToBeDone();
+                return mainPageService.sendMessage(correlationId, outgoing);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAcceptAsync((serverResponse) -> {
                 if (serverResponse != null) {
                     if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
                         if (serverResponse.getServerResponseMessage() == ServerResponseMessage.MESSAGE_SENT) {
@@ -424,7 +542,7 @@ public class MainPageController {
                     }
                 }
             }, executor);
-        }));
+        //}));
     }
 
     public BorderPane getMainPane() {
