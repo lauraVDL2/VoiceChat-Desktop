@@ -4,6 +4,7 @@
 @import "call-window.css";
 @import "calendar.css";
 @import "settings.css";
+@import "header.css";
 
 .root {
     -fx-main-color: #eaeaea;

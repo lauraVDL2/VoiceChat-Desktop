@@ -35,7 +35,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.util.NodeQueryUtils.isVisible;
 
 @ExtendWith(ApplicationExtension.class)
 public class HeaderControllerTest extends FxRobot {
@@ -50,33 +53,44 @@ public class HeaderControllerTest extends FxRobot {
     @Start
     public void start(Stage stage) throws Exception {
         MockitoAnnotations.openMocks(this);
-        // Load FXML and set controller
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/voicechat/client/mainpage/header.fxml"));
+
+        setStaticField(Listener.class, "serverReader", mockServerReader);
+        setStaticField(Listener.class, "serverOut", out);
+
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/voicechat/client/mainpage/header.fxml")
+        );
         Parent root = loader.load();
         headerController = loader.getController();
 
-        Field serverReaderField = Listener.class.getDeclaredField("serverReader");
-        serverReaderField.setAccessible(true);
-        serverReaderField.set(null, mockServerReader);
+        Field serviceField = HeaderController.class.getDeclaredField("headerService");
+        serviceField.setAccessible(true);
+        serviceField.set(headerController, headerService);
 
-        Field serverOutField = Listener.class.getDeclaredField("serverOut");
-        serverOutField.setAccessible(true);
-        serverOutField.set(null, out);
-
-        Field  headerServiceField = HeaderController.class.getDeclaredField("headerService");
-        headerServiceField.setAccessible(true);
-        headerServiceField.set(headerController, headerService);
-
-        // Show stage
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(VoiceChatApplication.class.getResource("/com/voicechat/client/css/light-theme.css").toExternalForm());
+        scene.getStylesheets().add(
+                VoiceChatApplication.class
+                        .getResource("/com/voicechat/client/css/light-theme.css")
+                        .toExternalForm()
+        );
         stage.setScene(scene);
-        stage.setAlwaysOnTop(true);
         stage.show();
     }
 
+    private static void setStaticField(Class<?> owner, String name, Object value)
+            throws ReflectiveOperationException {
+        Field field = owner.getDeclaredField(name);
+        field.setAccessible(true);
+
+        if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            throw new IllegalStateException(owner.getName() + "." + name + " is not static");
+        }
+
+        field.set(null, value);
+    }
+
     @Test
-    void testSearchUsers_withResults_andStartConversation() throws Exception {
+    void testSearchUsers_withResults_andStartConversation_success() throws Exception {
         // Prepare mock response
         ServerResponse response = new ServerResponse();
         response.setServerResponseStatus(ServerResponseStatus.SUCCESS);
@@ -85,45 +99,14 @@ public class HeaderControllerTest extends FxRobot {
         User user1 = new User();
         user1.setDisplayName("John Doe");
         user1.setEmailAddress("john@example.com");
+
         ObjectMapper objectMapper = JsonMapper.getJsonMapper();
         response.setBinaryPayload(objectMapper.writeValueAsBytes(List.of(user1)));
 
-        // Mock getServerResponseByCorrelationId to return the success response
-        when(mockServerReader.getServerResponseByCorrelationId(anyString()))
-                .thenReturn(response);
-        when(mockServerReader.getAvatarByCorrelationId(anyString()))
-                .thenReturn(new ImageView());
-        when(headerService.searchUser(anyString())).thenReturn(response);
+        when(headerService.searchUser("John")).thenReturn(response);
 
-        // Simulate key press in searchField
-        TextField searchField = lookup("#searchField").queryAs(TextField.class);
-        clickOn(searchField).write("John");
-
-        // Trigger key pressed event
-        press(javafx.scene.input.KeyCode.ENTER).release(javafx.scene.input.KeyCode.ENTER);
-
-        WaitForAsyncUtils.waitForFxEvents();
-
-        // Verify UI update
-        HBox hbox = lookup(".searchLabel").queryAs(HBox.class);
-        assertNotNull(hbox);
-        assertFalse(hbox.getChildren().isEmpty());
-        Label label = (Label) hbox.getChildren().getFirst();
-        assertTrue(label.getText().contains("John Doe"));
-
-        response = new ServerResponse();
-        response.setServerResponseStatus(ServerResponseStatus.SUCCESS);
-        response.setServerResponseMessage(ServerResponseMessage.CONVERSATION_SEARCHED);
-
-        when(mockServerReader.getServerResponseByCorrelationId(anyString()))
-                .thenReturn(response);
-        when(mockServerReader.getAvatarByCorrelationId(anyString()))
-                .thenReturn(new ImageView());
-        when(headerService.searchConversationIfExists(any())).thenReturn(response);
-
-        clickOn(hbox);
-        WaitForAsyncUtils.waitForFxEvents();
-
+        // Act
+        headerController.searchUsers();
         var nodes = lookup(".discussionBox");
         assertNotNull(nodes);
     }

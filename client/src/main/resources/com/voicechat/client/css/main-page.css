@@ -294,3 +294,88 @@
 #threeDots {
     -fx-cursor: hand;
 }
+
+/* Create group */
+
+.group-composer {
+    -fx-background-color: -fx-main-color;
+}
+
+.group-composer-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.group-composer-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -fx-tertiary-color;
+}
+
+.recipient-row {
+    -fx-padding: 8px 0;
+    -fx-border-color: transparent transparent -fx-third-color transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.recipient-to-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-tertiary-color;
+}
+
+.recipient-search {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -fx-first-text-color;
+    -fx-prompt-text-fill: -fx-tertiary-color;
+    -fx-padding: 8px 4px;
+}
+
+.recipient-chip {
+    -fx-background-color: -fx-primary-color;
+    -fx-background-radius: 14px;
+    -fx-padding: 5px 9px;
+}
+
+.recipient-chip .label {
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.recipient-chip-remove {
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.user-search-results {
+    -fx-background-color: -fx-second-color;
+}
+
+.user-search-row {
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.user-search-row:hover {
+    -fx-background-color: -fx-third-color;
+}
+
+.user-avatar {
+    -fx-min-width: 34px;
+    -fx-min-height: 34px;
+    -fx-alignment: center;
+    -fx-background-color: -fx-secondary-color;
+    -fx-background-radius: 17px;
+    -fx-text-fill: -fx-first-text-color;
+    -fx-font-weight: bold;
+}
+
+.user-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.user-email,
+.search-empty-label {
+    -fx-text-fill: -fx-tertiary-color;
+}

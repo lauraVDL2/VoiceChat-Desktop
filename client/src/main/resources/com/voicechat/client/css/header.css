@@ -1,0 +1,36 @@
+.search-results {
+    -fx-background-color: -fx-second-color;
+    -fx-background-radius: 10px;
+    -fx-padding: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 14, 0.15, 0, 4);
+}
+
+.search-user-row {
+    -fx-padding: 9px 12px;
+    -fx-background-radius: 7px;
+    -fx-cursor: hand;
+}
+
+.search-user-row:hover {
+    -fx-background-color: -fx-third-color;
+}
+
+.search-user-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-first-text-color;
+}
+
+.search-user-email {
+    -fx-font-size: 11px;
+    -fx-text-fill: -fx-tertiary-color;
+}
+
+.search-user-arrow {
+    -fx-font-size: 22px;
+    -fx-text-fill: -fx-tertiary-color;
+}
+
+.search-user-avatar {
+    -fx-background-color: -fx-third-color;
+}

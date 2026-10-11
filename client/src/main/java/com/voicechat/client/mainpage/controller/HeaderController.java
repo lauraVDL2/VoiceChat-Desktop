@@ -9,26 +9,24 @@ import com.voicechat.client.common.UserSession;
 import com.voicechat.client.mainpage.component.ConversationComponent;
 import com.voicechat.client.mainpage.component.ConversationListComponent;
 import com.voicechat.client.mainpage.component.DotsMenuComponent;
+import com.voicechat.client.mainpage.component.UserSearchComponent;
 import com.voicechat.client.mainpage.service.HeaderService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.TextField;
 import org.shared.JsonMapper;
 import org.shared.ServerResponse;
 import org.shared.ServerResponseMessage;
 import org.shared.ServerResponseStatus;
-import org.shared.entity.Conversation;
-import org.shared.entity.Settings;
 import org.shared.entity.User;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -54,63 +52,74 @@ public class HeaderController {
     private ImageView threeDots;
 
     private final ServerReader serverReader = Listener.getServerReader();
-
     private final HeaderService headerService = new HeaderService();
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private MainPageController parentController;
 
-    private final ConversationComponent conversationComponent = new ConversationComponent();
-
-    private final ConversationListComponent conversationListComponent = new ConversationListComponent();
-
-    private final DotsMenuComponent dotsMenuComponent = new DotsMenuComponent();
+    private final ConversationComponent conversationComponent =
+            new ConversationComponent();
+    private final ConversationListComponent conversationListComponent =
+            new ConversationListComponent();
+    private final DotsMenuComponent dotsMenuComponent =
+            new DotsMenuComponent();
+    private final UserSearchComponent searchUserComponent =
+            new UserSearchComponent();
 
     @FXML
     public void initialize() {
         initializePane();
         searchUsers();
+
         topPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
-                dotsMenuComponent.setDotsMenu(threeDots, dotsMenuPane, newScene, this);
+                dotsMenuComponent.setDotsMenu(
+                        threeDots, dotsMenuPane, newScene, this
+                );
             }
         });
     }
 
     public void initializePane() {
         Platform.runLater(() -> {
-            // Top Pane
-            Image searchImage = new Image(VoiceChatApplication.class.getResourceAsStream("images/search.png"));
-            searchIcon.setImage(searchImage);
+            var searchResource =
+                    VoiceChatApplication.class.getResourceAsStream("images/search.png");
+
+            if (searchResource != null) {
+                searchIcon.setImage(new Image(searchResource));
+            }
+
             searchStackPane.setMargin(searchIcon, new Insets(0, 0, 0, 5));
 
-            try {
-                initializeAvatar();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            initializeAvatar();
             topPane.toFront();
         });
     }
 
     public void initializeAvatar() {
-
         CompletableFuture.runAsync(() -> {
             try {
                 String correlationId = UUID.randomUUID().toString();
-                headerService.sendAvatarInfo(correlationId, UserSession.INSTANCE.getUser());
-                ImageView avatar = serverReader.getAvatarByCorrelationId(correlationId);
+                headerService.sendAvatarInfo(
+                        correlationId, UserSession.INSTANCE.getUser()
+                );
 
-                if (avatar == null || avatar.getImage() == null || avatar.getImage().isError()) {
-                    System.err.println("Avatar response timed out or contained no valid image");
+                ImageView avatar =
+                        serverReader.getAvatarByCorrelationId(correlationId);
+
+                if (avatar == null
+                        || avatar.getImage() == null
+                        || avatar.getImage().isError()) {
+                    System.err.println(
+                            "Avatar response timed out or contained no valid image"
+                    );
                     return;
                 }
 
                 Platform.runLater(() -> {
                     myAvatar.setImage(avatar.getImage());
-                    myAvatar.setFitWidth(40.);
-                    myAvatar.setFitHeight(40.);
+                    myAvatar.setFitWidth(40);
+                    myAvatar.setFitHeight(40);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,121 +128,107 @@ public class HeaderController {
     }
 
     public void searchUsers() {
-        searchField.setOnKeyPressed((event) -> {
-            String searchDisplayName = searchField.getText().trim();
+        searchField.setOnKeyReleased(event -> {
+            String query = searchField.getText().trim();
 
-            searchPane.getChildren().clear();
-
-            // Avoid empty searches
-            if (searchDisplayName.isEmpty()) {
+            if (query.isEmpty()) {
+                clearSearchField();
                 return;
             }
 
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    return headerService.searchUser(searchDisplayName);
+                    return headerService.searchUser(query);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
-            }, executor).thenAcceptAsync((serverResponse) -> {
-                if (serverResponse != null) {
-                    if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                        if (serverResponse.getServerResponseMessage() == ServerResponseMessage.USER_SEARCHED) {
-                            try {
-                                searchUserComponents(serverResponse);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+            }, executor).thenAccept(response -> {
+                if (response == null) {
+                    return;
+                }
+
+                if (response.getServerResponseStatus()
+                        == ServerResponseStatus.SUCCESS
+                        && response.getServerResponseMessage()
+                        == ServerResponseMessage.USER_SEARCHED) {
+                    try {
+                        searchUserComponents(response);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-            }, executor);
+            });
         });
     }
 
-    public void searchUserComponents(ServerResponse serverResponse) throws IOException {
-        ObjectMapper objectMapper = JsonMapper.getJsonMapper();
-        List<User> users = objectMapper.readValue(serverResponse.getBinaryPayload(),
-                new TypeReference<List<User>>() {
-                });
-        // Update UI on JavaFX thread
-        Platform.runLater(() -> {
-            VBox vBox = new VBox();
-            for (User user : users) {
-                HBox hBox = new HBox();
-                hBox.getStyleClass().add("searchLabel");
-                Label displayLabel = new Label();
-                displayLabel.setText(user.getDisplayName());
-                displayLabel.setLineSpacing(3);
-                Label emailAddress = new Label();
-                emailAddress.setText("(" + user.getEmailAddress() + ")");
-                emailAddress.setLineSpacing(3);
-                hBox.toFront();
-                hBox.getChildren().add(displayLabel);
-                hBox.getChildren().add(emailAddress);
-                vBox.toFront();
-                vBox.getChildren().add(hBox);
-            }
-            searchPane.getChildren().add(vBox);
-            for (var hBox : vBox.getChildren()) {
-                startConversation((HBox) hBox);
-            }
-        });
+    public List<User> deserializeUsers(ServerResponse response)
+            throws IOException {
+        ObjectMapper mapper = JsonMapper.getJsonMapper();
+
+        return mapper.readValue(
+                response.getBinaryPayload(),
+                new TypeReference<List<User>>() {}
+        );
     }
 
-    public void startConversation(HBox hBox) {
-        hBox.setOnMouseClicked((mouseEvent -> {
-            Node node = hBox.getChildren().get(1);
-            Node displayNameNode = hBox.getChildren().get(0);
-            if (node instanceof Label && displayNameNode instanceof Label) {
-                Label label = (Label) node;
-                Label displayNameLabel = (Label) displayNameNode;
-                String targetEmailAddress = label.getText()
-                        .replace("(", "").replace(")", "");
-                String targetDisplayName = displayNameLabel.getText();
-                org.shared.entity.User user = UserSession.INSTANCE.getUser();
-                User targetUser = new User();
-                targetUser.setEmailAddress(targetEmailAddress);
-                targetUser.setDisplayName(targetDisplayName);
-                List<User> users = new ArrayList<>();
-                users.add(user);
-                users.add(targetUser);
-                CompletableFuture.supplyAsync(() -> {
+    private void searchUserComponents(ServerResponse response)
+            throws IOException {
+        List<User> users = deserializeUsers(response);
+        searchUserComponent.searchUserComponents(this, searchPane, users);
+    }
+
+    public void startConversation(User targetUser) {
+        User currentUser = UserSession.INSTANCE.getUser();
+        List<User> users = List.of(currentUser, targetUser);
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return headerService.searchConversationIfExists(users);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }, executor).thenAccept(response -> {
+            if (response == null) {
+                return;
+            }
+
+            if (response.getServerResponseStatus()
+                    == ServerResponseStatus.SUCCESS
+                    && response.getServerResponseMessage()
+                    == ServerResponseMessage.CONVERSATION_SEARCHED) {
+                Platform.runLater(() -> {
                     try {
-                        return headerService.searchConversationIfExists(users);
-                    } catch (Exception e) {
+                        conversationListComponent.setConversationClicked(
+                                parentController.getLeftPane(), response
+                        );
+                        conversationComponent.setMessagesComponents(
+                                parentController,
+                                parentController.getGridMainPane(),
+                                parentController.getRightSearchPane(),
+                                parentController.getMainPane(),
+                                response,
+                                conversationListComponent,
+                                parentController.getMessagesNotificationScheduler()
+                        );
+                    } catch (IOException e) {
                         e.printStackTrace();
-                        return null;
                     }
-                }, executor).thenAcceptAsync((serverResponse) -> {
-                    if (serverResponse != null) {
-                        if (serverResponse.getServerResponseStatus() == ServerResponseStatus.SUCCESS) {
-                            if (serverResponse.getServerResponseMessage() == ServerResponseMessage.CONVERSATION_SEARCHED) {
-                                System.out.println("conversation exists !");
-                                try {
-                                    conversationListComponent.setConversationClicked(parentController.getLeftPane(), serverResponse);
-                                    conversationComponent.setMessagesComponents(parentController, parentController.getGridMainPane(),
-                                            parentController.getRightSearchPane(), parentController.getMainPane(), serverResponse, conversationListComponent,
-                                            parentController.getMessagesNotificationScheduler());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        else if (serverResponse.getServerResponseStatus() == ServerResponseStatus.INFO) {
-                            conversationComponent.newConversationComponents(targetUser, parentController, parentController.getGridMainPane(), searchPane);
-                        }
-                        else {
-                            System.out.println("ERROR");
-                        }
-                    }
-                }, executor);
+                });
+            } else if (response.getServerResponseStatus()
+                    == ServerResponseStatus.INFO) {
+                Platform.runLater(() ->
+                        conversationComponent.newConversationComponents(
+                                targetUser,
+                                parentController,
+                                parentController.getGridMainPane(),
+                                searchPane
+                        )
+                );
             }
-        }));
+        });
     }
-
-
 
     public void clearSearchField() {
         searchPane.getChildren().clear();
@@ -248,7 +243,6 @@ public class HeaderController {
     }
 
     public MainPageController getParentController() {
-        return this.parentController;
+        return parentController;
     }
-
 }
